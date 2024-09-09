@@ -4,8 +4,11 @@
 
 ```ts
 
+import { HassApi } from 'homeassistant-ws';
+
 // @alpha (undocumented)
 export class LegoClient {
+    constructor(client: HassApi);
 }
 
 // (No @packageDocumentation comment for this package)
