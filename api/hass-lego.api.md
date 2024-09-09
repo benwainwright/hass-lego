@@ -8,7 +8,33 @@ import { HassApi } from 'homeassistant-ws';
 
 // @alpha (undocumented)
 export class LegoClient {
-    constructor(client: HassApi);
+    // Warning: (ae-forgotten-export) The symbol "EventBus" needs to be exported by the entry point index.d.ts
+    constructor(client: HassApi, bus: EventBus);
+    // Warning: (ae-forgotten-export) The symbol "AutomationSequenceEvent" needs to be exported by the entry point index.d.ts
+    // Warning: (ae-forgotten-export) The symbol "Automation" needs to be exported by the entry point index.d.ts
+    //
+    // (undocumented)
+    addAutomationTrigger<A extends ReadonlyArray<AutomationSequenceEvent<any, any>>, I = any, O = any>(id: string, automation: Automation<A, I, O>): void;
+    // (undocumented)
+    callService<T, A>(domain: string, service: string, extraArgs?: A, options?: {
+        returnResponse?: boolean;
+    }): Promise<T>;
+    // (undocumented)
+    getEntity(id: string): HassEntity;
+    // (undocumented)
+    getState(id: string): string;
+    // (undocumented)
+    init(): Promise<void>;
+    // Warning: (ae-forgotten-export) The symbol "HassStateChangedEvent" needs to be exported by the entry point index.d.ts
+    //
+    // (undocumented)
+    onStateChanged(id: string, callback: (event: HassStateChangedEvent) => void): void;
+    // (undocumented)
+    registerAutomation<A extends ReadonlyArray<AutomationSequenceEvent<any, any>>, I = any, O = any>(automation: Automation<A, I, O>): void;
+    // Warning: (ae-forgotten-export) The symbol "HassEntity" needs to be exported by the entry point index.d.ts
+    //
+    // (undocumented)
+    states: Map<string, HassEntity> | undefined;
 }
 
 // (No @packageDocumentation comment for this package)
