@@ -83,7 +83,7 @@ export class Automation<
       async (previousPromise, nextItem) => {
         const lastExecution = await previousPromise;
         if (!lastExecution.continue) {
-          return { continue: false, result: "" };
+          return lastExecution;
         }
 
         if (nextItem instanceof Action || nextItem instanceof Automation) {
