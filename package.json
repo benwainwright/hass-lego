@@ -10,6 +10,7 @@
   ],
   "types": "dist/hass-lego.d.ts",
   "exports": {
+    "types": "./dist/hass-lego.d.ts",
     "default": "./dist/src/index.js"
   },
   "scripts": {
