@@ -1,5 +1,6 @@
 {
   "exclude": "node_modules/",
+  "sourceMaps": true,
   "jsc": {
     "parser": {
       "syntax": "typescript",
@@ -28,6 +29,7 @@
     }
   },
   "module": {
+    "resolveFully": true,
     "type": "nodenext"
   }
 }
