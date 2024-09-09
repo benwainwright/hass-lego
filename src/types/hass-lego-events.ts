@@ -10,7 +10,7 @@ import { HassStateChangedEvent } from "./hass-events.ts";
 /**
  * @alpha
  */
-export type HassLegoEvent<I, O> =
+export type HassLegoEvent<I = unknown, O = unknown> =
   | ActionStarted<I, O>
   | ActionFailed<I, O>
   | ActionFinished<I, O>

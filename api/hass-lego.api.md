@@ -329,7 +329,7 @@ export type HassEventBase = {
 };
 
 // @alpha (undocumented)
-export type HassLegoEvent<I, O> = ActionStarted<I, O> | ActionFailed<I, O> | ActionFinished<I, O> | AssertionStarted<I, O> | AssertionFinished<I, O> | AssertionFailed<I, O> | AutomationFailed<any, I, O> | AutomationFinished<any, I, O> | AutomationStarted<any, I, O> | AutomationRegistered<any, I, O> | GeneralFailure | StateChanged;
+export type HassLegoEvent<I = unknown, O = unknown> = ActionStarted<I, O> | ActionFailed<I, O> | ActionFinished<I, O> | AssertionStarted<I, O> | AssertionFinished<I, O> | AssertionFailed<I, O> | AutomationFailed<any, I, O> | AutomationFinished<any, I, O> | AutomationStarted<any, I, O> | AutomationRegistered<any, I, O> | GeneralFailure | StateChanged;
 
 // @alpha (undocumented)
 export type HassStateChangedEvent = HassEventBase & {
@@ -371,7 +371,7 @@ export class LegoClient {
 export type OutputType<T extends Block<any, any>> = Exclude<T["outputType"], undefined> extends Promise<infer T> ? T : Exclude<T["outputType"], undefined>;
 
 // @alpha (undocumented)
-export const renderSimpleLog: (bus: EventBus) => void;
+export const renderSimpleLog: (bus: EventBus, staticLog: boolean) => void;
 
 // @alpha (undocumented)
 export interface StateChanged {

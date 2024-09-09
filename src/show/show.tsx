@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { StaticLogView } from "./static-log-view.tsx";
 import { Box, Text } from "ink";
 import { HassLegoEvent, StateChanged } from "@types";
+import { SummaryView } from "./summary-view.tsx";
 
 interface ShowProps {
   staticLog: boolean;
@@ -26,7 +27,11 @@ export const Show = ({ staticLog, events }: ShowProps) => {
       <Text color="green" bold>
         Hass Lego started...
       </Text>
-      {staticLog ? <StaticLogView events={logs} /> : <Text>Coming Soon</Text>}
+      {staticLog ? (
+        <StaticLogView events={logs} />
+      ) : (
+        <SummaryView events={logs} />
+      )}
     </Box>
   );
 };

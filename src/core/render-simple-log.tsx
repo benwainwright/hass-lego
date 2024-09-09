@@ -5,6 +5,6 @@ import { Show } from "@show";
 /**
  * @alpha
  */
-export const renderSimpleLog = (bus: EventBus) => {
-  render(<Show staticLog events={bus} />);
+export const renderSimpleLog = (bus: EventBus, staticLog: boolean) => {
+  render(<Show events={bus} staticLog={staticLog} />);
 };
