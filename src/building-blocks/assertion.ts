@@ -9,7 +9,8 @@ import { Block } from "./block.ts";
 export interface AssertionConfig<I, O> {
   readonly name: string;
   readonly predicate: (
-    client: LegoClient
+    client: LegoClient,
+    input?: I
   ) =>
     | boolean
     | { result: boolean; output: O }
@@ -42,7 +43,7 @@ export class Assertion<I = void, O = void> extends Block<I, O> {
       parent,
     });
 
-    const callbackResult = this.config.predicate(client);
+    const callbackResult = this.config.predicate(client, input);
     const result =
       callbackResult instanceof Promise ? await callbackResult : callbackResult;
 
