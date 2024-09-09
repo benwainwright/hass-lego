@@ -1,19 +1,38 @@
 {
   "name": "hass-lego",
   "version": "1.0.0",
+  "type": "module",
   "description": "",
-  "main": "index.js",
+  "main": "./dist/src/index.js",
+  "files": [
+    "dist/src",
+    "dist/hass-lego.d.ts"
+  ],
+  "types": "dist/hass-lego.d.ts",
+  "exports": {
+    "default": "./dist/src/index.js"
+  },
   "scripts": {
-    "build": "swc"
+    "build:js": "swc src --out-dir dist",
+    "build:types": "tsc --project tsconfig.dist.json",
+    "build:api-rollup": "npm run build:types && tsconfig-replace-paths --project tsconfig.dist.json && vite-node ./src/tools/generate-api-report.ts",
+    "clear:dist": "rm -rf dist",
+    "build": "npm run clear:dist && npm run build:js && npm run build:api-rollup"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@swc/plugin-transform-imports": "^3.0.2",
-    "@types/node": "^22.5.4",
-    "swc": "^1.0.11",
-    "typescript": "^5.5.4",
-    "vitest": "^2.0.5"
+    "@microsoft/api-extractor": "^7.47.7",
+    "@swc/plugin-transform-imports": "3.0.2",
+    "@types/node": "22.5.4",
+    "tsconfig-replace-paths": "^0.0.14",
+    "typescript": "5.5.4",
+    "vite-node": "^2.0.5",
+    "vitest": "2.0.5"
+  },
+  "devDependencies": {
+    "@swc/cli": "0.4.0",
+    "@swc/core": "1.7.24"
   }
 }

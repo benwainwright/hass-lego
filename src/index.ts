@@ -1,0 +1,1 @@
+export { LegoClient } from "@core";
