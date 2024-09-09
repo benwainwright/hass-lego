@@ -21,9 +21,11 @@ interface AssertionConfig<I, O> {
  * @alpha
  */
 export class Assertion<I = void, O = void> extends Block<I, O> {
-  public constructor(private config: AssertionConfig<I, O>) {
+  public constructor(public config: AssertionConfig<I, O>) {
     super();
+    this.name = this.config.name;
   }
+  public readonly name: string;
 
   public async runPredicate(
     client: LegoClient,
@@ -35,6 +37,7 @@ export class Assertion<I = void, O = void> extends Block<I, O> {
       type: "assertion",
       status: "started",
       assertion: this,
+      name: this.config.name,
       parent,
     });
 
@@ -48,6 +51,7 @@ export class Assertion<I = void, O = void> extends Block<I, O> {
     events.emit({
       type: "assertion",
       status: "finished",
+      name: this.config.name,
       assertion: this,
       result: finalResult,
       parent,

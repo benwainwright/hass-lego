@@ -25,6 +25,7 @@ export class Action<I = void, O = void> extends Block<I, O> {
       events.emit({
         type: "action",
         status: "started",
+        name: this.name,
         action: this,
         parent,
       });
@@ -37,6 +38,7 @@ export class Action<I = void, O = void> extends Block<I, O> {
 
       events.emit({
         type: "action",
+        name: this.name,
         status: "finished",
         action: this,
         result,
@@ -49,6 +51,7 @@ export class Action<I = void, O = void> extends Block<I, O> {
           type: "action",
           status: "failed",
           action: this,
+          name: this.name,
           error,
           parent,
           message: error.message,

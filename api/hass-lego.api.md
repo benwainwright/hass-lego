@@ -24,8 +24,13 @@ export class Action<I = void, O = void> extends Block<I, O> {
 
 // @alpha (undocumented)
 export class Assertion<I = void, O = void> extends Block<I, O> {
-    // Warning: (ae-forgotten-export) The symbol "AssertionConfig" needs to be exported by the entry point index.d.ts
     constructor(config: AssertionConfig<I, O>);
+    // Warning: (ae-forgotten-export) The symbol "AssertionConfig" needs to be exported by the entry point index.d.ts
+    //
+    // (undocumented)
+    config: AssertionConfig<I, O>;
+    // (undocumented)
+    readonly name: string;
     // (undocumented)
     runPredicate(client: LegoClient, events: EventBus, input: I, parent?: AutomationSequenceEvent<unknown, unknown>): Promise<{
         result: boolean;
@@ -46,10 +51,18 @@ export class Automation<A extends readonly Block<unknown, unknown>[], I = GetSeq
     // (undocumented)
     attachTrigger(client: LegoClient, bus: EventBus): void;
     // (undocumented)
+    config: {
+        name: string;
+        actions: A & ValidInputOutputSequence<I, O, A>;
+        trigger?: Trigger;
+    };
+    // (undocumented)
     execute(client: LegoClient, events: EventBus, input?: I, parent?: AutomationSequenceEvent<unknown, unknown>, triggeredBy?: Trigger): Promise<{
         output: O | undefined;
         success: boolean;
     }>;
+    // (undocumented)
+    readonly name: string;
 }
 
 // @alpha (undocumented)
@@ -59,7 +72,9 @@ export class EventBus {
     // (undocumented)
     emit<I, O>(event: HassLegoEvent<I, O>): void;
     // (undocumented)
-    subscribe<I, O>(callback: (event: HassLegoEvent<I, O>) => void): void;
+    subscribe<I, O>(callback: (event: HassLegoEvent<I, O> & {
+        id: string;
+    }) => void): void;
 }
 
 // @alpha (undocumented)
@@ -90,6 +105,9 @@ export class LegoClient {
 }
 
 // @alpha (undocumented)
+export const renderSimpleLog: (bus: EventBus) => void;
+
+// @alpha (undocumented)
 export class Trigger {
     constructor(name: string, id: string, predicate?: ((event: StateChanged) => boolean) | undefined);
     // (undocumented)
@@ -106,7 +124,7 @@ export class Trigger {
 
 // Warnings were encountered during analysis:
 //
-// src/building-blocks/automation.ts:27:7 - (ae-forgotten-export) The symbol "ValidInputOutputSequence" needs to be exported by the entry point index.d.ts
+// src/building-blocks/automation.ts:28:7 - (ae-forgotten-export) The symbol "ValidInputOutputSequence" needs to be exported by the entry point index.d.ts
 
 // (No @packageDocumentation comment for this package)
 

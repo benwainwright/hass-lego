@@ -55,6 +55,7 @@ export class LegoClient {
   >(id: string, automation: Automation<A, I, O>) {
     this.onStateChanged(id, async (event: HassStateChangedEvent) => {
       const change: StateChanged = {
+        type: "hass-state-changed",
         entity: event.data.entity_id,
         hassEvent: event,
       };
@@ -72,6 +73,7 @@ export class LegoClient {
     this.bus.emit({
       type: "automation",
       status: "registered",
+      name: automation.config.name,
       automation,
     });
   }

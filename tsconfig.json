@@ -11,6 +11,7 @@
     "target": "es2022",
     "declaration": true,
     "declarationMap": true,
+    "jsx": "react-jsx",
     "emitDeclarationOnly": true,
     "outDir": "./dist/types",
     "strict": true,
@@ -20,12 +21,13 @@
     "rootDir": "./",
     "baseUrl": "./",
     "paths": {
+      "@show": ["src/show/index.ts"],
       "@core": ["src/core/index.ts"],
       "@types": ["src/types/index.ts"],
       "@utils": ["src/utils/index.ts"],
       "@building-blocks": ["src/building-blocks/index.ts"]
     }
   },
-  "include": ["./src/**/*.ts"],
+  "include": ["./src/**/*.ts", "./src/**/*.tsx"],
   "exclude": ["dist"]
 }

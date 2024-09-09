@@ -6,6 +6,11 @@
       "syntax": "typescript",
       "topLevelAwait": true
     },
+    "transform": {
+      "react": {
+        "runtime": "automatic"
+      }
+    },
     "target": "esnext",
     "baseUrl": ".",
     "experimental": {
@@ -18,11 +23,22 @@
               "transform": "{{matches.[1]}}.js"
             }
           }
+        ],
+
+        [
+          "@swc/plugin-transform-imports",
+          {
+            "^(.*?)(\\.tsx)$": {
+              "skipDefaultConversion": true,
+              "transform": "{{matches.[1]}}.js"
+            }
+          }
         ]
       ]
     },
 
     "paths": {
+      "@show": ["./src/show/index.ts"],
       "@core": ["./src/core/index.ts"],
       "@types": ["./src/types/index.ts"],
       "@utils": ["./src/utils/index.ts"],

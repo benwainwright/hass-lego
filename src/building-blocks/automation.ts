@@ -21,14 +21,16 @@ export class Automation<
   I = GetSequenceInput<A>,
   O = GetSequenceOutput<A>
 > extends Block<I, O> {
+  public readonly name: string;
   public constructor(
-    private config: {
+    public config: {
       name: string;
       actions: A & ValidInputOutputSequence<I, O, A>;
       trigger?: Trigger;
     }
   ) {
     super();
+    this.name = this.config.name;
   }
 
   public attachTrigger(client: LegoClient, bus: EventBus) {
@@ -38,6 +40,7 @@ export class Automation<
         const newEvent: StateChanged = {
           entity: event.data.entity_id,
           hassEvent: event,
+          type: "hass-state-changed",
         };
         if (!trigger.predicate || trigger.predicate(newEvent)) {
           await this.execute(client, bus, undefined, this, trigger);
@@ -58,6 +61,7 @@ export class Automation<
     events.emit({
       type: "automation",
       status: "started",
+      name: this.config.name,
       automation: this,
       triggeredBy,
       parent,

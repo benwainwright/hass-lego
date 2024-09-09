@@ -17,6 +17,7 @@ export type HassLegoEvent<I, O> =
   | StateChanged;
 
 export interface StateChanged {
+  type: "hass-state-changed";
   entity: string;
   hassEvent: HassStateChangedEvent;
 }
@@ -28,6 +29,7 @@ export interface AutomationRegistered<
 > {
   type: "automation";
   status: "registered";
+  name: string;
   automation: Automation<A, I, O>;
 }
 
@@ -47,6 +49,7 @@ export interface AutomationStarted<
   status: "started";
   automation: Automation<A, I, O>;
   triggeredBy?: Trigger;
+  name: string;
   parent?: AutomationSequenceEvent<unknown, unknown>;
 }
 
@@ -59,6 +62,7 @@ export interface AutomationFinished<
   status: "finished";
   automation: Automation<A, I, O>;
   result: O;
+  name: string;
   parent?: AutomationSequenceEvent<unknown, unknown>;
 }
 
@@ -71,6 +75,7 @@ export interface AutomationFailed<
   status: "failed";
   automation: Automation<A, I, O>;
   message: string;
+  name: string;
   error: Error;
   parent?: AutomationSequenceEvent<unknown, unknown>;
 }
@@ -78,6 +83,7 @@ export interface AutomationFailed<
 export interface ActionStarted<I = unknown, O = unknown> {
   type: "action";
   status: "started";
+  name: string;
   action: Action<I, O>;
   parent?: AutomationSequenceEvent<unknown, unknown>;
 }
@@ -87,6 +93,7 @@ export interface ActionFinished<I = unknown, O = unknown> {
   status: "finished";
   action: Action<I, O>;
   result: O;
+  name: string;
   parent?: AutomationSequenceEvent<unknown, unknown>;
 }
 
@@ -96,6 +103,7 @@ export interface ActionFailed<I = unknown, O = unknown> {
   parent?: AutomationSequenceEvent<unknown, unknown>;
   action: Action<I, O>;
   message: string;
+  name: string;
   error: Error;
 }
 
@@ -103,6 +111,7 @@ export interface AssertionStarted<I = unknown, O = unknown> {
   type: "assertion";
   status: "started";
   parent?: AutomationSequenceEvent<unknown, unknown>;
+  name: string;
   assertion: Assertion<I, O>;
 }
 
@@ -111,6 +120,7 @@ export interface AssertionFinished<I = unknown, O = unknown> {
   status: "finished";
   assertion: Assertion<I, O>;
   parent?: AutomationSequenceEvent<unknown, unknown>;
+  name: string;
   result: { result: boolean; output: O };
 }
 
@@ -119,6 +129,7 @@ export interface AssertionFailed<I = unknown, O = unknown> {
   status: "failed";
   parent?: AutomationSequenceEvent<unknown, unknown>;
   assertion: Assertion<I, O>;
+  name: string;
   message: string;
   error: Error;
 }
