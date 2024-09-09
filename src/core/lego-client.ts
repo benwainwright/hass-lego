@@ -1,4 +1,7 @@
+import { HassApi } from "homeassistant-ws";
 /**
  * @alpha
  */
-export class LegoClient {}
+export class LegoClient {
+  public constructor(client: HassApi) {}
+}

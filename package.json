@@ -26,6 +26,7 @@
     "@microsoft/api-extractor": "^7.47.7",
     "@swc/plugin-transform-imports": "3.0.2",
     "@types/node": "22.5.4",
+    "homeassistant-ws": "^0.2.3",
     "tsconfig-replace-paths": "^0.0.14",
     "typescript": "5.5.4",
     "vite-node": "^2.0.5",
