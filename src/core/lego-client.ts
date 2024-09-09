@@ -2,7 +2,6 @@ import { HassApi } from "homeassistant-ws";
 import { Automation } from "@building-blocks";
 import {
   StateChanged,
-  HassLegoEvent,
   HassEntity,
   HassStateChangedEvent,
   AutomationSequenceEvent,

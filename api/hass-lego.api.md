@@ -6,13 +6,65 @@
 
 import { HassApi } from 'homeassistant-ws';
 
+// Warning: (ae-forgotten-export) The symbol "Block" needs to be exported by the entry point index.d.ts
+//
+// @alpha (undocumented)
+export class Action<I = void, O = void> extends Block<I, O> {
+    constructor(name: string, callback: ((client: LegoClient, input: I) => O) | ((client: LegoClient, input: I) => Promise<O>));
+    // Warning: (ae-forgotten-export) The symbol "AutomationSequenceEvent" needs to be exported by the entry point index.d.ts
+    //
+    // (undocumented)
+    execute(client: LegoClient, events: EventBus, input: I, parent?: AutomationSequenceEvent<unknown, unknown>): Promise<{
+        output: O | undefined;
+        success: boolean;
+    }>;
+    // (undocumented)
+    readonly name: string;
+}
+
+// @alpha (undocumented)
+export class Assertion<I = void, O = void> extends Block<I, O> {
+    // Warning: (ae-forgotten-export) The symbol "AssertionConfig" needs to be exported by the entry point index.d.ts
+    constructor(config: AssertionConfig<I, O>);
+    // (undocumented)
+    runPredicate(client: LegoClient, events: EventBus, input: I, parent?: AutomationSequenceEvent<unknown, unknown>): Promise<{
+        result: boolean;
+        output: O;
+    }>;
+}
+
+// Warning: (ae-forgotten-export) The symbol "GetSequenceInput" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "GetSequenceOutput" needs to be exported by the entry point index.d.ts
+//
+// @alpha (undocumented)
+export class Automation<A extends readonly Block<unknown, unknown>[], I = GetSequenceInput<A>, O = GetSequenceOutput<A>> extends Block<I, O> {
+    constructor(config: {
+        name: string;
+        actions: A & ValidInputOutputSequence<I, O, A>;
+        trigger?: Trigger;
+    });
+    // (undocumented)
+    attachTrigger(client: LegoClient, bus: EventBus): void;
+    // (undocumented)
+    execute(client: LegoClient, events: EventBus, input?: I, parent?: AutomationSequenceEvent<unknown, unknown>, triggeredBy?: Trigger): Promise<{
+        output: O | undefined;
+        success: boolean;
+    }>;
+}
+
+// @alpha (undocumented)
+export class EventBus {
+    // Warning: (ae-forgotten-export) The symbol "HassLegoEvent" needs to be exported by the entry point index.d.ts
+    //
+    // (undocumented)
+    emit<I, O>(event: HassLegoEvent<I, O>): void;
+    // (undocumented)
+    subscribe<I, O>(callback: (event: HassLegoEvent<I, O>) => void): void;
+}
+
 // @alpha (undocumented)
 export class LegoClient {
-    // Warning: (ae-forgotten-export) The symbol "EventBus" needs to be exported by the entry point index.d.ts
     constructor(client: HassApi, bus: EventBus);
-    // Warning: (ae-forgotten-export) The symbol "AutomationSequenceEvent" needs to be exported by the entry point index.d.ts
-    // Warning: (ae-forgotten-export) The symbol "Automation" needs to be exported by the entry point index.d.ts
-    //
     // (undocumented)
     addAutomationTrigger<A extends ReadonlyArray<AutomationSequenceEvent<any, any>>, I = any, O = any>(id: string, automation: Automation<A, I, O>): void;
     // (undocumented)
@@ -36,6 +88,25 @@ export class LegoClient {
     // (undocumented)
     states: Map<string, HassEntity> | undefined;
 }
+
+// @alpha (undocumented)
+export class Trigger {
+    constructor(name: string, id: string, predicate?: ((event: StateChanged) => boolean) | undefined);
+    // (undocumented)
+    doTrigger(event: StateChanged, events: EventBus): boolean;
+    // (undocumented)
+    readonly id: string;
+    // (undocumented)
+    readonly name: string;
+    // Warning: (ae-forgotten-export) The symbol "StateChanged" needs to be exported by the entry point index.d.ts
+    //
+    // (undocumented)
+    readonly predicate?: ((event: StateChanged) => boolean) | undefined;
+}
+
+// Warnings were encountered during analysis:
+//
+// src/building-blocks/automation.ts:27:7 - (ae-forgotten-export) The symbol "ValidInputOutputSequence" needs to be exported by the entry point index.d.ts
 
 // (No @packageDocumentation comment for this package)
 

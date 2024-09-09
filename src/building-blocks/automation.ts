@@ -1,30 +1,38 @@
 import { Action } from "./action.ts";
 import { LegoClient, EventBus } from "@core";
 import { Trigger } from "./trigger.ts";
-import { AutomationSequenceEvent, StateChanged } from "@types";
-import { ValidInputOutputSequence } from "../types/valid-input-output-sequence.ts";
+import {
+  AutomationSequenceEvent,
+  StateChanged,
+  ValidInputOutputSequence,
+  GetSequenceInput,
+  GetSequenceOutput,
+} from "@types";
 
+import { Block } from "./block.ts";
+
+import { Assertion } from "./assertion.ts";
+
+/**
+ * @alpha
+ */
 export class Automation<
-  A extends ReadonlyArray<AutomationSequenceEvent<any, any>>,
-  I = any,
-  O = any
-> {
+  A extends readonly Block<unknown, unknown>[],
+  I = GetSequenceInput<A>,
+  O = GetSequenceOutput<A>
+> extends Block<I, O> {
   public constructor(
-    public readonly name: string,
-    private config:
-      | {
-          trigger?: Trigger;
-          actions: ValidInputOutputSequence<I, O, A>;
-        }
-      | ValidInputOutputSequence<I, O, A>
-  ) {}
+    private config: {
+      name: string;
+      actions: A & ValidInputOutputSequence<I, O, A>;
+      trigger?: Trigger;
+    }
+  ) {
+    super();
+  }
 
   public attachTrigger(client: LegoClient, bus: EventBus) {
-    if (
-      !Array.isArray(this.config) &&
-      "trigger" in this.config &&
-      this.config.trigger
-    ) {
+    if (this.config.trigger) {
       const { trigger } = this.config;
       client.onStateChanged(trigger.id, async (event) => {
         const newEvent: StateChanged = {
@@ -52,9 +60,10 @@ export class Automation<
       status: "started",
       automation: this,
       triggeredBy,
+      parent,
     });
-    const sequence =
-      "actions" in this.config ? this.config.actions : this.config;
+
+    const sequence = this.config.actions;
 
     interface SequenceItemResult<O = any> {
       continue: boolean;
@@ -79,16 +88,20 @@ export class Automation<
             continue: true,
           };
         }
-        const predicateResult = await nextItem.runPredicate(
-          client,
-          events,
-          lastExecution.result,
-          this
-        );
-        return {
-          continue: predicateResult.result,
-          result: predicateResult.output,
-        };
+
+        if (nextItem instanceof Assertion) {
+          const predicateResult = await nextItem.runPredicate(
+            client,
+            events,
+            lastExecution.result,
+            this
+          );
+          return {
+            continue: predicateResult.result,
+            result: predicateResult.output,
+          };
+        }
+        throw new Error("Did not recognise block type");
       },
       Promise.resolve({ continue: true, result: input })
     );

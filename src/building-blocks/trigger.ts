@@ -1,6 +1,9 @@
 import { EventBus } from "@core";
 import { StateChanged } from "@types";
 
+/**
+ * @alpha
+ */
 export class Trigger {
   public constructor(
     public readonly name: string,

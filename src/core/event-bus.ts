@@ -3,6 +3,9 @@ import { HassLegoEvent } from "@types";
 
 const AUTOMATION_EVENT = "AUTOMATION_EVENT";
 
+/**
+ * @alpha
+ */
 export class EventBus {
   private bus = new EventEmitter();
 

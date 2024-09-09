@@ -4,6 +4,7 @@
   "_version": "21.0.0",
   "compilerOptions": {
     "lib": ["es2023"],
+    "types": ["vitest/globals"],
     "module": "node16",
     "allowImportingTsExtensions": true,
     "forceConsistentCasingInFileNames": true,

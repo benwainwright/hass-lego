@@ -1,13 +1,19 @@
 import { AutomationSequenceEvent } from "@types";
 import { LegoClient, EventBus } from "@core";
+import { Block } from "./block.ts";
 
-export class Action<I, O> {
+/**
+ * @alpha
+ */
+export class Action<I = void, O = void> extends Block<I, O> {
   public constructor(
     public readonly name: string,
     private callback:
       | ((client: LegoClient, input: I) => O)
       | ((client: LegoClient, input: I) => Promise<O>)
-  ) {}
+  ) {
+    super();
+  }
 
   public async execute(
     client: LegoClient,
