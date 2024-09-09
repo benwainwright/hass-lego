@@ -1,5 +1,6 @@
 import { Action } from "./action.ts";
 import { Automation } from "./automation.ts";
+import { Trigger } from "./trigger.ts";
 
 describe("the automation class", () => {
   it("should correctly type the sequence when there is only one item and that item has inputs and outputs", () => {
@@ -310,10 +311,67 @@ describe("the automation class", () => {
       },
     });
 
-    new Automation({
+    const foo = new Automation({
       name: "this automation",
       actions: [oneAction, twoAction, threeAction, fourAction],
     });
+
+    expectTypeOf(foo).toMatchTypeOf<
+      Automation<
+        readonly [
+          typeof oneAction,
+          typeof twoAction,
+          typeof threeAction,
+          typeof fourAction
+        ],
+        string,
+        number
+      >
+    >();
+  });
+
+  it("If the trigger has an output, set that to the automation input", () => {
+    const oneAction = new Action({
+      name: "This thing",
+      callback: (client, input: number) => {
+        console.log("something");
+        return "string";
+      },
+    });
+
+    const twoAction = new Action({
+      name: "This thing",
+      callback: (client, input: string) => {
+        console.log("something");
+        return 2;
+      },
+    });
+
+    const threeAction = new Action({
+      name: "This thing",
+      callback: (client, input: number) => {
+        console.log("something");
+      },
+    });
+
+    const trigger = new Trigger("test", "foo", () => ({
+      result: true,
+      output: 2,
+    }));
+
+    const foo = new Automation({
+      trigger,
+      name: "this automation",
+      actions: [oneAction, twoAction, threeAction] as const,
+    });
+
+    expectTypeOf(foo).toMatchTypeOf<
+      Automation<
+        readonly [typeof oneAction, typeof twoAction, typeof threeAction],
+        number,
+        void
+      >
+    >();
   });
 
   it("should produce an error when the types don't link up", () => {

@@ -1,17 +1,41 @@
-import { EventBus } from "@core";
+import { EventBus, LegoClient } from "@core";
 import { StateChanged } from "@types";
 
 /**
  * @alpha
  */
-export class Trigger {
+export class Trigger<O> {
   public constructor(
     public readonly name: string,
     public readonly id: string,
-    public readonly predicate?: (event: StateChanged) => boolean
+    private readonly predicate?: (
+      event: StateChanged,
+      client: LegoClient
+    ) =>
+      | boolean
+      | { result: boolean; output: O }
+      | Promise<{ result: boolean; output: O }>
   ) {}
 
-  public doTrigger(event: StateChanged, events: EventBus): boolean {
-    return this.predicate ? this.predicate(event) : true;
+  public async doTrigger(
+    event: StateChanged,
+    client: LegoClient,
+    events: EventBus
+  ): Promise<{ result: boolean; output: O }> {
+    const result = this.predicate?.(event, client);
+
+    if (typeof result === "boolean") {
+      return { result, output: undefined as O };
+    }
+
+    if (result instanceof Promise) {
+      return await result;
+    }
+
+    if (result) {
+      return result;
+    }
+
+    return { result: true, output: undefined as O };
   }
 }

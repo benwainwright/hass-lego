@@ -24,7 +24,7 @@ export class Automation<
     public config: {
       name: string;
       actions: A & ValidInputOutputSequence<I, O, A>;
-      trigger?: Trigger;
+      trigger?: Trigger<I>;
     }
   ) {
     super();
@@ -40,8 +40,15 @@ export class Automation<
           hassEvent: event,
           type: "hass-state-changed",
         };
-        if (!trigger.predicate || trigger.predicate(newEvent)) {
-          await this.execute(client, bus, undefined, this, trigger);
+
+        const { result, output } = await trigger.doTrigger(
+          newEvent,
+          client,
+          bus
+        );
+
+        if (result) {
+          await this.execute(client, bus, output, this, trigger);
         }
       });
     } else {
@@ -54,7 +61,7 @@ export class Automation<
     events: EventBus,
     input?: I,
     parent?: Block<unknown, unknown>,
-    triggeredBy?: Trigger
+    triggeredBy?: Trigger<I>
   ): Promise<{ output: O | undefined; success: boolean }> {
     events.emit({
       type: "automation",
