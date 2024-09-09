@@ -1,1 +1,4 @@
+/**
+ * @alpha
+ */
 export class LegoClient {}

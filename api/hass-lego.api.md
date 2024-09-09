@@ -4,7 +4,7 @@
 
 ```ts
 
-// @public (undocumented)
+// @alpha (undocumented)
 export class LegoClient {
 }
 
