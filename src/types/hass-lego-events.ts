@@ -68,7 +68,7 @@ export interface AutomationStarted<
   type: "automation";
   status: "started";
   automation: Automation<A, I, O>;
-  triggeredBy?: Trigger;
+  triggeredBy?: Trigger<unknown>;
   name: string;
   parent?: Block<unknown, unknown>;
 }

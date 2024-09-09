@@ -93,7 +93,7 @@ export interface AssertionConfig<I, O> {
     // (undocumented)
     readonly name: string;
     // (undocumented)
-    readonly predicate: (client: LegoClient) => boolean | {
+    readonly predicate: (client: LegoClient, input?: I) => boolean | {
         result: boolean;
         output: O;
     } | Promise<{
@@ -158,7 +158,7 @@ export class Automation<A extends readonly Block<unknown, unknown>[], I = GetSeq
     constructor(config: {
         name: string;
         actions: A & ValidInputOutputSequence<I, O, A>;
-        trigger?: Trigger;
+        trigger?: Trigger<I>;
     });
     // (undocumented)
     attachTrigger(client: LegoClient, bus: EventBus): void;
@@ -166,10 +166,10 @@ export class Automation<A extends readonly Block<unknown, unknown>[], I = GetSeq
     config: {
         name: string;
         actions: A & ValidInputOutputSequence<I, O, A>;
-        trigger?: Trigger;
+        trigger?: Trigger<I>;
     };
     // (undocumented)
-    execute(client: LegoClient, events: EventBus, input?: I, parent?: Block<unknown, unknown>, triggeredBy?: Trigger): Promise<{
+    execute(client: LegoClient, events: EventBus, input?: I, parent?: Block<unknown, unknown>, triggeredBy?: Trigger<I>): Promise<{
         output: O | undefined;
         success: boolean;
     }>;
@@ -234,7 +234,7 @@ export interface AutomationStarted<A extends ReadonlyArray<Block<any, any>>, I =
     // (undocumented)
     status: "started";
     // (undocumented)
-    triggeredBy?: Trigger;
+    triggeredBy?: Trigger<unknown>;
     // (undocumented)
     type: "automation";
 }
@@ -384,16 +384,23 @@ export interface StateChanged {
 }
 
 // @alpha (undocumented)
-export class Trigger {
-    constructor(name: string, id: string, predicate?: ((event: StateChanged) => boolean) | undefined);
+export class Trigger<O> {
+    constructor(name: string, id: string, predicate?: ((event: StateChanged, client: LegoClient) => boolean | {
+        result: boolean;
+        output: O;
+    } | Promise<{
+        result: boolean;
+        output: O;
+    }>) | undefined);
     // (undocumented)
-    doTrigger(event: StateChanged, events: EventBus): boolean;
+    doTrigger(event: StateChanged, client: LegoClient, events: EventBus): Promise<{
+        result: boolean;
+        output: O;
+    }>;
     // (undocumented)
     readonly id: string;
     // (undocumented)
     readonly name: string;
-    // (undocumented)
-    readonly predicate?: ((event: StateChanged) => boolean) | undefined;
 }
 
 // @alpha (undocumented)
