@@ -1,3 +1,6 @@
+/**
+ * @alpha
+ */
 export abstract class Block<I = void, O = void> {
   public abstract readonly name: string;
   /**

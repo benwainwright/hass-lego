@@ -16,6 +16,9 @@
 
   "dtsRollup": {
     "enabled": true,
+    "alphaTrimmedFilePath": "<projectFolder>/dist/hass-lego.alpha.d.ts",
+    "betaTrimmedFilePath": "<projectFolder>/dist/hass-lego.beta.d.ts",
+    "publicTrimmedFilePath": "<projectFolder>/dist/hass-lego.public.d.ts",
     "untrimmedFilePath": "<projectFolder>/dist/hass-lego.d.ts"
   },
 

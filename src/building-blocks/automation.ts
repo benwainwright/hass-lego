@@ -2,7 +2,6 @@ import { Action } from "./action.ts";
 import { LegoClient, EventBus } from "@core";
 import { Trigger } from "./trigger.ts";
 import {
-  AutomationSequenceEvent,
   StateChanged,
   ValidInputOutputSequence,
   GetSequenceInput,
@@ -10,7 +9,6 @@ import {
 } from "@types";
 
 import { Block } from "./block.ts";
-
 import { Assertion } from "./assertion.ts";
 
 /**
@@ -55,7 +53,7 @@ export class Automation<
     client: LegoClient,
     events: EventBus,
     input?: I,
-    parent?: AutomationSequenceEvent<unknown, unknown>,
+    parent?: Block<unknown, unknown>,
     triggeredBy?: Trigger
   ): Promise<{ output: O | undefined; success: boolean }> {
     events.emit({

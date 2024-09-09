@@ -10,7 +10,7 @@ const getIcon = (event: HassLegoEvent<any, any>) => {
     if (event.result.result) {
       return "👍";
     } else {
-      return "❌";
+      return "🚫";
     }
   }
   if ("status" in event) {

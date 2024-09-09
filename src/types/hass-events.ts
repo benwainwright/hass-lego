@@ -1,20 +1,32 @@
-export type Context = {
+/**
+ * @alpha
+ */
+export type HassContext = {
   id: string;
   user_id: string | null;
   parent_id: string | null;
 };
 
+/**
+ * @alpha
+ */
 export type HassEventBase = {
   origin: string;
   time_fired: string;
-  context: Context;
+  context: HassContext;
 };
 
+/**
+ * @alpha
+ */
 export type HassEvent = HassEventBase & {
   event_type: string;
   data: { [key: string]: any };
 };
 
+/**
+ * @alpha
+ */
 export type HassStateChangedEvent = HassEventBase & {
   event_type: "state_changed";
   data: {
@@ -24,15 +36,21 @@ export type HassStateChangedEvent = HassEventBase & {
   };
 };
 
+/**
+ * @alpha
+ */
 export type HassEntityBase = {
   entity_id: string;
   state: string;
   last_changed: string;
   last_updated: string;
   attributes: HassEntityAttributeBase;
-  context: Context;
+  context: HassContext;
 };
 
+/**
+ * @alpha
+ */
 export type HassEntityAttributeBase = {
   friendly_name?: string;
   unit_of_measurement?: string;
@@ -46,6 +64,9 @@ export type HassEntityAttributeBase = {
   restored?: boolean;
 };
 
+/**
+ * @alpha
+ */
 export type HassEntity = HassEntityBase & {
   attributes: { [key: string]: any };
 };

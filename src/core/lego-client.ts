@@ -1,11 +1,6 @@
 import { HassApi } from "homeassistant-ws";
-import { Automation } from "@building-blocks";
-import {
-  StateChanged,
-  HassEntity,
-  HassStateChangedEvent,
-  AutomationSequenceEvent,
-} from "@types";
+import { Automation, Block } from "@building-blocks";
+import { StateChanged, HassEntity, HassStateChangedEvent } from "@types";
 import { EventBus } from "./event-bus.ts";
 
 /**
@@ -49,7 +44,7 @@ export class LegoClient {
   }
 
   public addAutomationTrigger<
-    A extends ReadonlyArray<AutomationSequenceEvent<any, any>>,
+    A extends ReadonlyArray<Block<any, any>>,
     I = any,
     O = any
   >(id: string, automation: Automation<A, I, O>) {
@@ -65,7 +60,7 @@ export class LegoClient {
   }
 
   public registerAutomation<
-    A extends ReadonlyArray<AutomationSequenceEvent<any, any>>,
+    A extends ReadonlyArray<Block<any, any>>,
     I = any,
     O = any
   >(automation: Automation<A, I, O>) {

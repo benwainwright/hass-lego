@@ -6,15 +6,19 @@
 
 import { HassApi } from 'homeassistant-ws';
 
-// Warning: (ae-forgotten-export) The symbol "Block" needs to be exported by the entry point index.d.ts
-//
-// @alpha (undocumented)
+// @alpha
 export class Action<I = void, O = void> extends Block<I, O> {
-    constructor(name: string, callback: ((client: LegoClient, input: I) => O) | ((client: LegoClient, input: I) => Promise<O>));
-    // Warning: (ae-forgotten-export) The symbol "AutomationSequenceEvent" needs to be exported by the entry point index.d.ts
-    //
+    constructor(config: {
+        readonly name: string;
+        callback: ((client: LegoClient, input: I) => O) | ((client: LegoClient, input: I) => Promise<O>);
+    });
     // (undocumented)
-    execute(client: LegoClient, events: EventBus, input: I, parent?: AutomationSequenceEvent<unknown, unknown>): Promise<{
+    readonly config: {
+        readonly name: string;
+        callback: ((client: LegoClient, input: I) => O) | ((client: LegoClient, input: I) => Promise<O>);
+    };
+    // (undocumented)
+    execute(client: LegoClient, events: EventBus, input: I, parent?: Block<unknown, unknown>): Promise<{
         output: O | undefined;
         success: boolean;
     }>;
@@ -23,24 +27,132 @@ export class Action<I = void, O = void> extends Block<I, O> {
 }
 
 // @alpha (undocumented)
+export interface ActionFailed<I = unknown, O = unknown> {
+    // (undocumented)
+    action: Action<I, O>;
+    // (undocumented)
+    error: Error;
+    // (undocumented)
+    message: string;
+    // (undocumented)
+    name: string;
+    // (undocumented)
+    parent?: Block<unknown, unknown>;
+    // (undocumented)
+    status: "failed";
+    // (undocumented)
+    type: "action";
+}
+
+// @alpha (undocumented)
+export interface ActionFinished<I = unknown, O = unknown> {
+    // (undocumented)
+    action: Action<I, O>;
+    // (undocumented)
+    name: string;
+    // (undocumented)
+    parent?: Block<unknown, unknown>;
+    // (undocumented)
+    result: O;
+    // (undocumented)
+    status: "finished";
+    // (undocumented)
+    type: "action";
+}
+
+// @alpha (undocumented)
+export interface ActionStarted<I = unknown, O = unknown> {
+    // (undocumented)
+    action: Action<I, O>;
+    // (undocumented)
+    name: string;
+    // (undocumented)
+    parent?: Block<unknown, unknown>;
+    // (undocumented)
+    status: "started";
+    // (undocumented)
+    type: "action";
+}
+
+// @alpha
 export class Assertion<I = void, O = void> extends Block<I, O> {
     constructor(config: AssertionConfig<I, O>);
-    // Warning: (ae-forgotten-export) The symbol "AssertionConfig" needs to be exported by the entry point index.d.ts
-    //
     // (undocumented)
     config: AssertionConfig<I, O>;
     // (undocumented)
     readonly name: string;
     // (undocumented)
-    runPredicate(client: LegoClient, events: EventBus, input: I, parent?: AutomationSequenceEvent<unknown, unknown>): Promise<{
+    runPredicate(client: LegoClient, events: EventBus, input: I, parent?: Block<unknown, unknown>): Promise<{
         result: boolean;
         output: O;
     }>;
 }
 
-// Warning: (ae-forgotten-export) The symbol "GetSequenceInput" needs to be exported by the entry point index.d.ts
-// Warning: (ae-forgotten-export) The symbol "GetSequenceOutput" needs to be exported by the entry point index.d.ts
-//
+// @alpha
+export interface AssertionConfig<I, O> {
+    // (undocumented)
+    readonly name: string;
+    // (undocumented)
+    readonly predicate: (client: LegoClient) => boolean | {
+        result: boolean;
+        output: O;
+    } | Promise<{
+        result: boolean;
+        output: O;
+    }>;
+}
+
+// @alpha (undocumented)
+export interface AssertionFailed<I = unknown, O = unknown> {
+    // (undocumented)
+    assertion: Assertion<I, O>;
+    // (undocumented)
+    error: Error;
+    // (undocumented)
+    message: string;
+    // (undocumented)
+    name: string;
+    // (undocumented)
+    parent?: Block<unknown, unknown>;
+    // (undocumented)
+    status: "failed";
+    // (undocumented)
+    type: "assertion";
+}
+
+// @alpha (undocumented)
+export interface AssertionFinished<I = unknown, O = unknown> {
+    // (undocumented)
+    assertion: Assertion<I, O>;
+    // (undocumented)
+    name: string;
+    // (undocumented)
+    parent?: Block<unknown, unknown>;
+    // (undocumented)
+    result: {
+        result: boolean;
+        output: O;
+    };
+    // (undocumented)
+    status: "finished";
+    // (undocumented)
+    type: "assertion";
+}
+
+// @alpha (undocumented)
+export interface AssertionStarted<I = unknown, O = unknown> {
+    // (undocumented)
+    assertion: Assertion<I, O>;
+    // (undocumented)
+    name: string;
+    // (undocumented)
+    parent?: Block<unknown, unknown>;
+    // (undocumented)
+    status: "started";
+    // (undocumented)
+    type: "assertion";
+}
+
 // @alpha (undocumented)
 export class Automation<A extends readonly Block<unknown, unknown>[], I = GetSequenceInput<A>, O = GetSequenceOutput<A>> extends Block<I, O> {
     constructor(config: {
@@ -57,7 +169,7 @@ export class Automation<A extends readonly Block<unknown, unknown>[], I = GetSeq
         trigger?: Trigger;
     };
     // (undocumented)
-    execute(client: LegoClient, events: EventBus, input?: I, parent?: AutomationSequenceEvent<unknown, unknown>, triggeredBy?: Trigger): Promise<{
+    execute(client: LegoClient, events: EventBus, input?: I, parent?: Block<unknown, unknown>, triggeredBy?: Trigger): Promise<{
         output: O | undefined;
         success: boolean;
     }>;
@@ -66,9 +178,77 @@ export class Automation<A extends readonly Block<unknown, unknown>[], I = GetSeq
 }
 
 // @alpha (undocumented)
+export interface AutomationFailed<A extends ReadonlyArray<Block<any, any>>, I = unknown, O = unknown> {
+    // (undocumented)
+    automation: Automation<A, I, O>;
+    // (undocumented)
+    error: Error;
+    // (undocumented)
+    message: string;
+    // (undocumented)
+    name: string;
+    // (undocumented)
+    parent?: Block<unknown, unknown>;
+    // (undocumented)
+    status: "failed";
+    // (undocumented)
+    type: "automation";
+}
+
+// @alpha (undocumented)
+export interface AutomationFinished<A extends ReadonlyArray<Block<any, any>>, I = unknown, O = unknown> {
+    // (undocumented)
+    automation: Automation<A, I, O>;
+    // (undocumented)
+    name: string;
+    // (undocumented)
+    parent?: Block<unknown, unknown>;
+    // (undocumented)
+    result: O;
+    // (undocumented)
+    status: "finished";
+    // (undocumented)
+    type: "automation";
+}
+
+// @alpha (undocumented)
+export interface AutomationRegistered<A extends ReadonlyArray<Block<any, any>>, I = unknown, O = unknown> {
+    // (undocumented)
+    automation: Automation<A, I, O>;
+    // (undocumented)
+    name: string;
+    // (undocumented)
+    status: "registered";
+    // (undocumented)
+    type: "automation";
+}
+
+// @alpha (undocumented)
+export interface AutomationStarted<A extends ReadonlyArray<Block<any, any>>, I = unknown, O = unknown> {
+    // (undocumented)
+    automation: Automation<A, I, O>;
+    // (undocumented)
+    name: string;
+    // (undocumented)
+    parent?: Block<unknown, unknown>;
+    // (undocumented)
+    status: "started";
+    // (undocumented)
+    triggeredBy?: Trigger;
+    // (undocumented)
+    type: "automation";
+}
+
+// @alpha (undocumented)
+export abstract class Block<I = void, O = void> {
+    inputType: I | undefined;
+    // (undocumented)
+    abstract readonly name: string;
+    outputType: O | undefined;
+}
+
+// @alpha (undocumented)
 export class EventBus {
-    // Warning: (ae-forgotten-export) The symbol "HassLegoEvent" needs to be exported by the entry point index.d.ts
-    //
     // (undocumented)
     emit<I, O>(event: HassLegoEvent<I, O>): void;
     // (undocumented)
@@ -78,10 +258,97 @@ export class EventBus {
 }
 
 // @alpha (undocumented)
+export interface GeneralFailure {
+    // (undocumented)
+    error: Error;
+    // (undocumented)
+    message: string;
+    // (undocumented)
+    status: "error";
+    // (undocumented)
+    type: "generalFailure";
+}
+
+// @alpha
+export type GetSequenceInput<T extends ReadonlyArray<any>> = T extends readonly [infer First, ...any] ? First extends Block<any, any> ? InputType<First> : never : never;
+
+// @alpha
+export type GetSequenceOutput<T extends ReadonlyArray<any>> = T extends readonly [...any, infer Last] ? Last extends Block<any, any> ? OutputType<Last> : never : never;
+
+// @alpha (undocumented)
+export type HassContext = {
+    id: string;
+    user_id: string | null;
+    parent_id: string | null;
+};
+
+// @alpha (undocumented)
+export type HassEntity = HassEntityBase & {
+    attributes: {
+        [key: string]: any;
+    };
+};
+
+// @alpha (undocumented)
+export type HassEntityAttributeBase = {
+    friendly_name?: string;
+    unit_of_measurement?: string;
+    icon?: string;
+    entity_picture?: string;
+    supported_features?: number;
+    hidden?: boolean;
+    assumed_state?: boolean;
+    device_class?: string;
+    state_class?: string;
+    restored?: boolean;
+};
+
+// @alpha (undocumented)
+export type HassEntityBase = {
+    entity_id: string;
+    state: string;
+    last_changed: string;
+    last_updated: string;
+    attributes: HassEntityAttributeBase;
+    context: HassContext;
+};
+
+// @alpha (undocumented)
+export type HassEvent = HassEventBase & {
+    event_type: string;
+    data: {
+        [key: string]: any;
+    };
+};
+
+// @alpha (undocumented)
+export type HassEventBase = {
+    origin: string;
+    time_fired: string;
+    context: HassContext;
+};
+
+// @alpha (undocumented)
+export type HassLegoEvent<I, O> = ActionStarted<I, O> | ActionFailed<I, O> | ActionFinished<I, O> | AssertionStarted<I, O> | AssertionFinished<I, O> | AssertionFailed<I, O> | AutomationFailed<any, I, O> | AutomationFinished<any, I, O> | AutomationStarted<any, I, O> | AutomationRegistered<any, I, O> | GeneralFailure | StateChanged;
+
+// @alpha (undocumented)
+export type HassStateChangedEvent = HassEventBase & {
+    event_type: "state_changed";
+    data: {
+        entity_id: string;
+        new_state: HassEntity | null;
+        old_state: HassEntity | null;
+    };
+};
+
+// @alpha
+export type InputType<T extends Block<any, any>> = Exclude<T["inputType"], undefined>;
+
+// @alpha (undocumented)
 export class LegoClient {
     constructor(client: HassApi, bus: EventBus);
     // (undocumented)
-    addAutomationTrigger<A extends ReadonlyArray<AutomationSequenceEvent<any, any>>, I = any, O = any>(id: string, automation: Automation<A, I, O>): void;
+    addAutomationTrigger<A extends ReadonlyArray<Block<any, any>>, I = any, O = any>(id: string, automation: Automation<A, I, O>): void;
     // (undocumented)
     callService<T, A>(domain: string, service: string, extraArgs?: A, options?: {
         returnResponse?: boolean;
@@ -92,20 +359,29 @@ export class LegoClient {
     getState(id: string): string;
     // (undocumented)
     init(): Promise<void>;
-    // Warning: (ae-forgotten-export) The symbol "HassStateChangedEvent" needs to be exported by the entry point index.d.ts
-    //
     // (undocumented)
     onStateChanged(id: string, callback: (event: HassStateChangedEvent) => void): void;
     // (undocumented)
-    registerAutomation<A extends ReadonlyArray<AutomationSequenceEvent<any, any>>, I = any, O = any>(automation: Automation<A, I, O>): void;
-    // Warning: (ae-forgotten-export) The symbol "HassEntity" needs to be exported by the entry point index.d.ts
-    //
+    registerAutomation<A extends ReadonlyArray<Block<any, any>>, I = any, O = any>(automation: Automation<A, I, O>): void;
     // (undocumented)
     states: Map<string, HassEntity> | undefined;
 }
 
+// @alpha
+export type OutputType<T extends Block<any, any>> = Exclude<T["outputType"], undefined> extends Promise<infer T> ? T : Exclude<T["outputType"], undefined>;
+
 // @alpha (undocumented)
 export const renderSimpleLog: (bus: EventBus) => void;
+
+// @alpha (undocumented)
+export interface StateChanged {
+    // (undocumented)
+    entity: string;
+    // (undocumented)
+    hassEvent: HassStateChangedEvent;
+    // (undocumented)
+    type: "hass-state-changed";
+}
 
 // @alpha (undocumented)
 export class Trigger {
@@ -116,15 +392,15 @@ export class Trigger {
     readonly id: string;
     // (undocumented)
     readonly name: string;
-    // Warning: (ae-forgotten-export) The symbol "StateChanged" needs to be exported by the entry point index.d.ts
-    //
     // (undocumented)
     readonly predicate?: ((event: StateChanged) => boolean) | undefined;
 }
 
-// Warnings were encountered during analysis:
-//
-// src/building-blocks/automation.ts:28:7 - (ae-forgotten-export) The symbol "ValidInputOutputSequence" needs to be exported by the entry point index.d.ts
+// @alpha (undocumented)
+export type ValidInputOutputSequence<I, O, A extends readonly Block<unknown, unknown>[]> = A extends readonly [infer Only extends Block<any, any>] ? InputType<Only> extends I ? OutputType<Only> extends O ? readonly [Only] : never : never : A extends readonly [
+infer First extends Block<any, any>,
+...infer Rest extends readonly Block<unknown, unknown>[]
+] ? InputType<First> extends I ? readonly [First, ...ValidInputOutputSequence<OutputType<First>, O, Rest>] : never : never;
 
 // (No @packageDocumentation comment for this package)
 

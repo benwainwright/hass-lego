@@ -1,7 +1,15 @@
-import { Action, Assertion, Automation, Trigger } from "@building-blocks";
-import { AutomationSequenceEvent } from "./automation-sequence-event.ts";
+import {
+  Action,
+  Assertion,
+  Automation,
+  Block,
+  Trigger,
+} from "@building-blocks";
 import { HassStateChangedEvent } from "./hass-events.ts";
 
+/**
+ * @alpha
+ */
 export type HassLegoEvent<I, O> =
   | ActionStarted<I, O>
   | ActionFailed<I, O>
@@ -16,14 +24,20 @@ export type HassLegoEvent<I, O> =
   | GeneralFailure
   | StateChanged;
 
+/**
+ * @alpha
+ */
 export interface StateChanged {
   type: "hass-state-changed";
   entity: string;
   hassEvent: HassStateChangedEvent;
 }
 
+/**
+ * @alpha
+ */
 export interface AutomationRegistered<
-  A extends ReadonlyArray<AutomationSequenceEvent<any, any>>,
+  A extends ReadonlyArray<Block<any, any>>,
   I = unknown,
   O = unknown
 > {
@@ -33,6 +47,9 @@ export interface AutomationRegistered<
   automation: Automation<A, I, O>;
 }
 
+/**
+ * @alpha
+ */
 export interface GeneralFailure {
   type: "generalFailure";
   status: "error";
@@ -40,8 +57,11 @@ export interface GeneralFailure {
   error: Error;
 }
 
+/**
+ * @alpha
+ */
 export interface AutomationStarted<
-  A extends ReadonlyArray<AutomationSequenceEvent<any, any>>,
+  A extends ReadonlyArray<Block<any, any>>,
   I = unknown,
   O = unknown
 > {
@@ -50,11 +70,14 @@ export interface AutomationStarted<
   automation: Automation<A, I, O>;
   triggeredBy?: Trigger;
   name: string;
-  parent?: AutomationSequenceEvent<unknown, unknown>;
+  parent?: Block<unknown, unknown>;
 }
 
+/**
+ * @alpha
+ */
 export interface AutomationFinished<
-  A extends ReadonlyArray<AutomationSequenceEvent<any, any>>,
+  A extends ReadonlyArray<Block<any, any>>,
   I = unknown,
   O = unknown
 > {
@@ -63,11 +86,14 @@ export interface AutomationFinished<
   automation: Automation<A, I, O>;
   result: O;
   name: string;
-  parent?: AutomationSequenceEvent<unknown, unknown>;
+  parent?: Block<unknown, unknown>;
 }
 
+/**
+ * @alpha
+ */
 export interface AutomationFailed<
-  A extends ReadonlyArray<AutomationSequenceEvent<any, any>>,
+  A extends ReadonlyArray<Block<any, any>>,
   I = unknown,
   O = unknown
 > {
@@ -77,57 +103,75 @@ export interface AutomationFailed<
   message: string;
   name: string;
   error: Error;
-  parent?: AutomationSequenceEvent<unknown, unknown>;
+  parent?: Block<unknown, unknown>;
 }
 
+/**
+ * @alpha
+ */
 export interface ActionStarted<I = unknown, O = unknown> {
   type: "action";
   status: "started";
   name: string;
   action: Action<I, O>;
-  parent?: AutomationSequenceEvent<unknown, unknown>;
+  parent?: Block<unknown, unknown>;
 }
 
+/**
+ * @alpha
+ */
 export interface ActionFinished<I = unknown, O = unknown> {
   type: "action";
   status: "finished";
   action: Action<I, O>;
   result: O;
   name: string;
-  parent?: AutomationSequenceEvent<unknown, unknown>;
+  parent?: Block<unknown, unknown>;
 }
 
+/**
+ * @alpha
+ */
 export interface ActionFailed<I = unknown, O = unknown> {
   type: "action";
   status: "failed";
-  parent?: AutomationSequenceEvent<unknown, unknown>;
+  parent?: Block<unknown, unknown>;
   action: Action<I, O>;
   message: string;
   name: string;
   error: Error;
 }
 
+/**
+ * @alpha
+ */
 export interface AssertionStarted<I = unknown, O = unknown> {
   type: "assertion";
   status: "started";
-  parent?: AutomationSequenceEvent<unknown, unknown>;
+  parent?: Block<unknown, unknown>;
   name: string;
   assertion: Assertion<I, O>;
 }
 
+/**
+ * @alpha
+ */
 export interface AssertionFinished<I = unknown, O = unknown> {
   type: "assertion";
   status: "finished";
   assertion: Assertion<I, O>;
-  parent?: AutomationSequenceEvent<unknown, unknown>;
+  parent?: Block<unknown, unknown>;
   name: string;
   result: { result: boolean; output: O };
 }
 
+/**
+ * @alpha
+ */
 export interface AssertionFailed<I = unknown, O = unknown> {
   type: "assertion";
   status: "failed";
-  parent?: AutomationSequenceEvent<unknown, unknown>;
+  parent?: Block<unknown, unknown>;
   assertion: Assertion<I, O>;
   name: string;
   message: string;

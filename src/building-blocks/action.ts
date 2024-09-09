@@ -1,25 +1,30 @@
-import { AutomationSequenceEvent } from "@types";
 import { LegoClient, EventBus } from "@core";
 import { Block } from "./block.ts";
 
 /**
  * @alpha
+ *
+ * Represents an action that can take place as part of a sequence of actions
  */
 export class Action<I = void, O = void> extends Block<I, O> {
+  public readonly name: string;
   public constructor(
-    public readonly name: string,
-    private callback:
-      | ((client: LegoClient, input: I) => O)
-      | ((client: LegoClient, input: I) => Promise<O>)
+    public readonly config: {
+      readonly name: string;
+      callback:
+        | ((client: LegoClient, input: I) => O)
+        | ((client: LegoClient, input: I) => Promise<O>);
+    }
   ) {
     super();
+    this.name = this.config.name;
   }
 
   public async execute(
     client: LegoClient,
     events: EventBus,
     input: I,
-    parent?: AutomationSequenceEvent<unknown, unknown>
+    parent?: Block<unknown, unknown>
   ): Promise<{ output: O | undefined; success: boolean }> {
     try {
       events.emit({
@@ -30,7 +35,7 @@ export class Action<I = void, O = void> extends Block<I, O> {
         parent,
       });
 
-      const callbackResult = this.callback(client, input);
+      const callbackResult = this.config.callback(client, input);
       const result =
         callbackResult instanceof Promise
           ? await callbackResult

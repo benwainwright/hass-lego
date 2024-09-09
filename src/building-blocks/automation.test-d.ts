@@ -3,9 +3,12 @@ import { Automation } from "./automation.ts";
 
 describe("the automation class", () => {
   it("should correctly type the sequence when there is only one item and that item has inputs and outputs", () => {
-    const oneAction = new Action("This thing", (client, input: string) => {
-      const foo = 3;
-      return foo;
+    const oneAction = new Action({
+      name: "This thing",
+      callback: (client, input: string) => {
+        const foo = 3;
+        return foo;
+      },
     });
 
     const foo = new Automation({
@@ -19,8 +22,11 @@ describe("the automation class", () => {
   });
 
   it("should correctly type the sequence when there is only one item and that item has no inputs and outputs", () => {
-    const oneAction = new Action("This thing", (client) => {
-      console.log("something");
+    const oneAction = new Action({
+      name: "This thing",
+      callback: (client) => {
+        console.log("something");
+      },
     });
 
     const foo = new Automation({
@@ -34,8 +40,11 @@ describe("the automation class", () => {
   });
 
   it("should correctly type the sequence when there is only one item that has an input but no outputs", () => {
-    const oneAction = new Action("This thing", (client, input: string) => {
-      console.log("something");
+    const oneAction = new Action({
+      name: "This thing",
+      callback: (client, input: string) => {
+        console.log("something");
+      },
     });
 
     const foo = new Automation({
@@ -49,9 +58,12 @@ describe("the automation class", () => {
   });
 
   it("should correctly type the sequence when there is only one item that has an output but no inputs", () => {
-    const oneAction = new Action("This thing", (client) => {
-      console.log("something");
-      return 2;
+    const oneAction = new Action({
+      name: "This thing",
+      callback: (client) => {
+        console.log("something");
+        return 2;
+      },
     });
 
     const foo = new Automation({
@@ -65,12 +77,18 @@ describe("the automation class", () => {
   });
 
   it("should correctly type the sequence when there is two items that have no inputs and outputs", () => {
-    const oneAction = new Action("This thing", (client) => {
-      console.log("something");
+    const oneAction = new Action({
+      name: "This thing",
+      callback: (client) => {
+        console.log("something");
+      },
     });
 
-    const twoAction = new Action("This thing", (client) => {
-      console.log("something");
+    const twoAction = new Action({
+      name: "This thing",
+      callback: (client) => {
+        console.log("something");
+      },
     });
 
     const foo = new Automation({
@@ -84,12 +102,18 @@ describe("the automation class", () => {
   });
 
   it("should correctly type the start of the sequence when there is two items but the one at the start has an input", () => {
-    const oneAction = new Action("This thing", (client, input: string) => {
-      console.log("something");
+    const oneAction = new Action({
+      name: "This thing",
+      callback: (client, input: string) => {
+        console.log("something");
+      },
     });
 
-    const twoAction = new Action("This thing", (client) => {
-      console.log("something");
+    const twoAction = new Action({
+      name: "This thing",
+      callback: (client) => {
+        console.log("something");
+      },
     });
 
     const foo = new Automation({
@@ -103,13 +127,19 @@ describe("the automation class", () => {
   });
 
   it("should correctly type the start of the sequence when there is two items but the one at the end has an output", () => {
-    const oneAction = new Action("This thing", (client) => {
-      console.log("something");
+    const oneAction = new Action({
+      name: "This thing",
+      callback: (client) => {
+        console.log("something");
+      },
     });
 
-    const twoAction = new Action("This thing", (client) => {
-      console.log("something");
-      return 2;
+    const twoAction = new Action({
+      name: "This thing",
+      callback: (client) => {
+        console.log("something");
+        return 2;
+      },
     });
 
     const foo = new Automation({
@@ -123,13 +153,19 @@ describe("the automation class", () => {
   });
 
   it("should correctly type the start of the sequence when there is two items and the one at the start has an input and the one at the end has an output", () => {
-    const oneAction = new Action("This thing", (client, input: string) => {
-      console.log("something");
+    const oneAction = new Action({
+      name: "This thing",
+      callback: (client, input: string) => {
+        console.log("something");
+      },
     });
 
-    const twoAction = new Action("This thing", (client) => {
-      console.log("something");
-      return 2;
+    const twoAction = new Action({
+      name: "This thing",
+      callback: (client) => {
+        console.log("something");
+        return 2;
+      },
     });
 
     const foo = new Automation({
@@ -143,21 +179,33 @@ describe("the automation class", () => {
   });
 
   it("should correctly type the start and end of the sequence when there is four items ", () => {
-    const oneAction = new Action("This thing", (client, input: string) => {
-      console.log("something");
+    const oneAction = new Action({
+      name: "This thing",
+      callback: (client, input: string) => {
+        console.log("something");
+      },
     });
 
-    const twoAction = new Action("This thing", (client) => {
-      console.log("something");
+    const twoAction = new Action({
+      name: "This thing",
+      callback: (client) => {
+        console.log("something");
+      },
     });
 
-    const threeAction = new Action("This thing", (client) => {
-      console.log("something");
+    const threeAction = new Action({
+      name: "This thing",
+      callback: (client) => {
+        console.log("something");
+      },
     });
 
-    const fourAction = new Action("This thing", (client) => {
-      console.log("something");
-      return 2;
+    const fourAction = new Action({
+      name: "This thing",
+      callback: (client) => {
+        console.log("something");
+        return 2;
+      },
     });
 
     const foo = new Automation({
@@ -180,23 +228,35 @@ describe("the automation class", () => {
   });
 
   it("should correctly type the object when the types of the actions link together", () => {
-    const oneAction = new Action("This thing", (client, input: string) => {
-      console.log("something");
-      return "string";
+    const oneAction = new Action({
+      name: "This thing",
+      callback: (client, input: string) => {
+        console.log("something");
+        return "string";
+      },
     });
 
-    const twoAction = new Action("This thing", (client, input: string) => {
-      console.log("something");
-      return 2;
+    const twoAction = new Action({
+      name: "This thing",
+      callback: (client, input: string) => {
+        console.log("something");
+        return 2;
+      },
     });
 
-    const threeAction = new Action("This thing", (client, inpput: number) => {
-      console.log("something");
+    const threeAction = new Action({
+      name: "This thing",
+      callback: (client, inpput: number) => {
+        console.log("something");
+      },
     });
 
-    const fourAction = new Action("This thing", (client) => {
-      console.log("something");
-      return 2;
+    const fourAction = new Action({
+      name: "This thing",
+      callback: (client) => {
+        console.log("something");
+        return 2;
+      },
     });
 
     const foo = new Automation({
@@ -219,26 +279,35 @@ describe("the automation class", () => {
   });
 
   it("should still correctly link up type even if some of the return types are wrapped in promises", () => {
-    const oneAction = new Action("This thing", (client, input: string) => {
-      console.log("something");
-      return "string";
+    const oneAction = new Action({
+      name: "This thing",
+      callback: (client, input: string) => {
+        console.log("something");
+        return "string";
+      },
     });
 
-    const twoAction = new Action(
-      "This thing",
-      async (client, input: string) => {
+    const twoAction = new Action({
+      name: "This thing",
+      callback: async (client, input: string) => {
         console.log("something");
         return 2;
-      }
-    );
-
-    const threeAction = new Action("This thing", (client, input: number) => {
-      console.log("something");
+      },
     });
 
-    const fourAction = new Action("This thing", (client) => {
-      console.log("something");
-      return 2;
+    const threeAction = new Action({
+      name: "This thing",
+      callback: (client, input: number) => {
+        console.log("something");
+      },
+    });
+
+    const fourAction = new Action({
+      name: "This thing",
+      callback: (client) => {
+        console.log("something");
+        return 2;
+      },
     });
 
     new Automation({
@@ -248,23 +317,35 @@ describe("the automation class", () => {
   });
 
   it("should produce an error when the types don't link up", () => {
-    const oneAction = new Action("This thing", (client, input: string) => {
-      console.log("something");
-      return "string";
+    const oneAction = new Action({
+      name: "This thing",
+      callback: (client, input: string) => {
+        console.log("something");
+        return "string";
+      },
     });
 
-    const twoAction = new Action("This thing", (client, input: string) => {
-      console.log("something");
-      return 2;
+    const twoAction = new Action({
+      name: "This thing",
+      callback: (client, input: string) => {
+        console.log("something");
+        return 2;
+      },
     });
 
-    const threeAction = new Action("This thing", (client, input: string) => {
-      console.log("something");
+    const threeAction = new Action({
+      name: "This thing",
+      callback: (client, input: string) => {
+        console.log("something");
+      },
     });
 
-    const fourAction = new Action("This thing", (client) => {
-      console.log("something");
-      return 2;
+    const fourAction = new Action({
+      name: "This thing",
+      callback: (client) => {
+        console.log("something");
+        return 2;
+      },
     });
 
     new Automation({

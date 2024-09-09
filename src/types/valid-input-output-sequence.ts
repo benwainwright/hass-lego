@@ -1,5 +1,10 @@
 import { Block } from "@building-blocks";
 
+/**
+ * Given an array of blocks, get the input type from the first block
+ *
+ * @alpha
+ */
 export type GetSequenceInput<T extends ReadonlyArray<any>> =
   T extends readonly [infer First, ...any]
     ? First extends Block<any, any>
@@ -7,6 +12,11 @@ export type GetSequenceInput<T extends ReadonlyArray<any>> =
       : never
     : never;
 
+/**
+ * Given an array of blocks, get the output type from the last block
+ *
+ * @alpha
+ */
 export type GetSequenceOutput<T extends ReadonlyArray<any>> =
   T extends readonly [...any, infer Last]
     ? Last extends Block<any, any>
@@ -14,14 +24,31 @@ export type GetSequenceOutput<T extends ReadonlyArray<any>> =
       : never
     : never;
 
-type InputType<T extends Block<any, any>> = Exclude<T["inputType"], undefined>;
-type OutputType<T extends Block<any, any>> = Exclude<
+/**
+ * Given a block, extract the input type
+ *
+ * @alpha
+ */
+export type InputType<T extends Block<any, any>> = Exclude<
+  T["inputType"],
+  undefined
+>;
+
+/**
+ * Given a block, extract the output type
+ *
+ * @alpha
+ */
+export type OutputType<T extends Block<any, any>> = Exclude<
   T["outputType"],
   undefined
 > extends Promise<infer T>
   ? T
   : Exclude<T["outputType"], undefined>;
 
+/**
+ * @alpha
+ */
 export type ValidInputOutputSequence<
   I,
   O,
