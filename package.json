@@ -18,7 +18,26 @@
     "build:types": "tsc --project tsconfig.dist.json",
     "build:api-rollup": "npm run build:types && tsconfig-replace-paths --project tsconfig.dist.json && vite-node ./src/tools/generate-api-report.ts",
     "clear:dist": "rm -rf dist",
-    "build": "npm run clear:dist && npm run build:js && npm run build:api-rollup"
+    "build": "npm run clear:dist && npm run build:js && npm run build:api-rollup",
+    "watch": "npm-watch"
+  },
+  "watch": {
+    "build": {
+      "clearBuffer": true,
+      "patterns": "./**/*",
+      "extensions": [
+        "ts",
+        "json"
+      ],
+      "ignore": [
+        "api/**/*",
+        "dist/**/*",
+        ".swc/**/*",
+        "temp/**/*",
+        ".vscode/**/*",
+        ".github/**/*"
+      ]
+    }
   },
   "keywords": [],
   "author": "",
@@ -27,7 +46,9 @@
     "@microsoft/api-extractor": "^7.47.7",
     "@swc/plugin-transform-imports": "3.0.2",
     "@types/node": "22.5.4",
+    "dotenv": "^16.4.5",
     "homeassistant-ws": "^0.2.3",
+    "npm-watch": "^0.13.0",
     "tsconfig-replace-paths": "^0.0.14",
     "typescript": "5.5.4",
     "vite-node": "^2.0.5",

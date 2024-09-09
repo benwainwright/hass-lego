@@ -21,7 +21,8 @@
     "paths": {
       "@core": ["src/core/index.ts"],
       "@types": ["src/types/index.ts"],
-      "@utils": ["src/types/utils.ts"]
+      "@utils": ["src/utils/index.ts"],
+      "@building-blocks": ["src/building-blocks/index.ts"]
     }
   },
   "include": ["./src/**/*.ts"],
