@@ -1,0 +1,19 @@
+{
+  "name": "hass-lego",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "swc"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@swc/plugin-transform-imports": "^3.0.2",
+    "@types/node": "^22.5.4",
+    "swc": "^1.0.11",
+    "typescript": "^5.5.4",
+    "vitest": "^2.0.5"
+  }
+}
