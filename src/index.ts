@@ -1,6 +1,6 @@
 export { LegoClient, EventBus, renderSimpleLog } from "@core";
 
-export {
+export type {
   GetSequenceOutput,
   GetSequenceInput,
   HassLegoEvent,
