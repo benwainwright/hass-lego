@@ -56,5 +56,3 @@ export class Assertion<I = void, O = void> extends Block<I, O> {
     return finalResult;
   }
 }
-
-const ass = new Assertion({ name: "test", predicate: (client) => true });
