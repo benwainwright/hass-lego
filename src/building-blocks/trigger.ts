@@ -17,13 +17,12 @@ export class Trigger<O> {
       | Promise<{ result: boolean; output: O }>
   ) {}
 
-  public async doTrigger(
-    event: StateChanged,
-    client: LegoClient,
-    events: EventBus
-  ): Promise<{ result: boolean; output: O }> {
-    const result = this.predicate?.(event, client);
-
+  private async getResult(
+    result?:
+      | boolean
+      | Promise<{ result: boolean; output: O }>
+      | { result: boolean; output: O }
+  ) {
     if (typeof result === "boolean") {
       return { result, output: undefined as O };
     }
@@ -37,5 +36,44 @@ export class Trigger<O> {
     }
 
     return { result: true, output: undefined as O };
+  }
+
+  public async doTrigger(
+    event: StateChanged,
+    client: LegoClient,
+    events: EventBus
+  ): Promise<{ result: boolean; output: O }> {
+    try {
+      events.emit({
+        type: "trigger",
+        status: "started",
+        trigger: this,
+        name: this.name,
+      });
+      const result = this.predicate?.(event, client);
+      const finalResult = this.getResult(result);
+
+      events.emit({
+        type: "trigger",
+        status: "finished",
+        trigger: this,
+        name: this.name,
+        result: finalResult,
+      });
+
+      return await finalResult;
+    } catch (error) {
+      if (error instanceof Error) {
+        events.emit({
+          type: "trigger",
+          status: "failed",
+          trigger: this,
+          name: this.name,
+          message: error.message,
+          error,
+        });
+      }
+      throw error;
+    }
   }
 }

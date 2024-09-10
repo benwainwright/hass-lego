@@ -32,22 +32,26 @@ export class LegoClient {
     }
     return state;
   }
-  public async callService<T, A>(
+  public async callService<T>(
     domain: string,
     service: string,
-    extraArgs?: A,
+    extraArgs?: Record<string, unknown>,
     options?: {
       returnResponse?: boolean;
     }
   ): Promise<T> {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return await this.client.callService(domain, service, extraArgs, options);
   }
 
   public addAutomationTrigger<
-    A extends ReadonlyArray<Block<any, any>>,
+    A extends ReadonlyArray<Block<unknown, unknown>>,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     I = any,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     O = any
   >(id: string, automation: Automation<A, I, O>) {
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
     this.onStateChanged(id, async (event: HassStateChangedEvent) => {
       const change: StateChanged = {
         type: "hass-state-changed",
@@ -60,8 +64,11 @@ export class LegoClient {
   }
 
   public registerAutomation<
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     A extends ReadonlyArray<Block<any, any>>,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     I = any,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     O = any
   >(automation: Automation<A, I, O>) {
     automation.attachTrigger(this, this.bus);

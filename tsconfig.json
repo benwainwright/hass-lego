@@ -29,6 +29,6 @@
       "@building-blocks": ["src/building-blocks/index.ts"]
     }
   },
-  "include": ["./src/**/*.ts", "./src/**/*.tsx"],
+  "include": ["./src/**/*.ts", "./src/**/*.tsx", "./vitest.config.ts"],
   "exclude": ["dist"]
 }

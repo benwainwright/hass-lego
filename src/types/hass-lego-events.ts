@@ -17,12 +17,19 @@ export type HassLegoEvent<I = unknown, O = unknown> =
   | AssertionStarted<I, O>
   | AssertionFinished<I, O>
   | AssertionFailed<I, O>
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   | AutomationFailed<any, I, O>
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   | AutomationFinished<any, I, O>
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   | AutomationStarted<any, I, O>
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   | AutomationRegistered<any, I, O>
   | GeneralFailure
-  | StateChanged;
+  | StateChanged
+  | TriggerFailed
+  | TriggerFinished
+  | TriggerStarted;
 
 /**
  * @alpha
@@ -37,6 +44,7 @@ export interface StateChanged {
  * @alpha
  */
 export interface AutomationRegistered<
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   A extends ReadonlyArray<Block<any, any>>,
   I = unknown,
   O = unknown
@@ -61,6 +69,7 @@ export interface GeneralFailure {
  * @alpha
  */
 export interface AutomationStarted<
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   A extends ReadonlyArray<Block<any, any>>,
   I = unknown,
   O = unknown
@@ -77,6 +86,7 @@ export interface AutomationStarted<
  * @alpha
  */
 export interface AutomationFinished<
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   A extends ReadonlyArray<Block<any, any>>,
   I = unknown,
   O = unknown
@@ -93,6 +103,7 @@ export interface AutomationFinished<
  * @alpha
  */
 export interface AutomationFailed<
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   A extends ReadonlyArray<Block<any, any>>,
   I = unknown,
   O = unknown
@@ -174,6 +185,42 @@ export interface AssertionFailed<I = unknown, O = unknown> {
   parent?: Block<unknown, unknown>;
   assertion: Assertion<I, O>;
   name: string;
+  message: string;
+  error: Error;
+}
+
+/**
+ * @alpha
+ */
+export interface TriggerStarted<O = unknown> {
+  type: "trigger";
+  status: "started";
+  parent?: Block<unknown, unknown>;
+  name: string;
+  trigger: Trigger<O>;
+}
+
+/**
+ * @alpha
+ */
+export interface TriggerFinished<O = unknown> {
+  type: "trigger";
+  status: "finished";
+  parent?: Block<unknown, unknown>;
+  name: string;
+  result: O;
+  trigger: Trigger<O>;
+}
+
+/**
+ * @alpha
+ */
+export interface TriggerFailed<O = unknown> {
+  type: "trigger";
+  status: "failed";
+  parent?: Block<unknown, unknown>;
+  name: string;
+  trigger: Trigger<O>;
   message: string;
   error: Error;
 }

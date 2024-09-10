@@ -5,9 +5,9 @@ import { Block } from "@building-blocks";
  *
  * @alpha
  */
-export type GetSequenceInput<T extends ReadonlyArray<any>> =
-  T extends readonly [infer First, ...any]
-    ? First extends Block<any, any>
+export type GetSequenceInput<T extends ReadonlyArray<unknown>> =
+  T extends readonly [infer First, ...unknown[]]
+    ? First extends Block<unknown, unknown>
       ? InputType<First>
       : never
     : never;
@@ -17,9 +17,9 @@ export type GetSequenceInput<T extends ReadonlyArray<any>> =
  *
  * @alpha
  */
-export type GetSequenceOutput<T extends ReadonlyArray<any>> =
-  T extends readonly [...any, infer Last]
-    ? Last extends Block<any, any>
+export type GetSequenceOutput<T extends ReadonlyArray<unknown>> =
+  T extends readonly [...unknown[], infer Last]
+    ? Last extends Block<unknown, unknown>
       ? OutputType<Last>
       : never
     : never;
@@ -29,7 +29,7 @@ export type GetSequenceOutput<T extends ReadonlyArray<any>> =
  *
  * @alpha
  */
-export type InputType<T extends Block<any, any>> = Exclude<
+export type InputType<T extends Block<unknown, unknown>> = Exclude<
   T["inputType"],
   undefined
 >;
@@ -39,7 +39,7 @@ export type InputType<T extends Block<any, any>> = Exclude<
  *
  * @alpha
  */
-export type OutputType<T extends Block<any, any>> = Exclude<
+export type OutputType<T extends Block<unknown, unknown>> = Exclude<
   T["outputType"],
   undefined
 > extends Promise<infer T>
@@ -53,14 +53,14 @@ export type ValidInputOutputSequence<
   I,
   O,
   A extends readonly Block<unknown, unknown>[]
-> = A extends readonly [infer Only extends Block<any, any>]
+> = A extends readonly [infer Only extends Block<unknown, unknown>]
   ? InputType<Only> extends I
     ? OutputType<Only> extends O
       ? readonly [Only]
       : never
     : never
   : A extends readonly [
-      infer First extends Block<any, any>,
+      infer First extends Block<unknown, unknown>,
       ...infer Rest extends readonly Block<unknown, unknown>[]
     ]
   ? InputType<First> extends I

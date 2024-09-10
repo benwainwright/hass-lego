@@ -34,6 +34,7 @@ export class Automation<
   public attachTrigger(client: LegoClient, bus: EventBus) {
     if (this.config.trigger) {
       const { trigger } = this.config;
+      // eslint-disable-next-line @typescript-eslint/no-misused-promises
       client.onStateChanged(trigger.id, async (event) => {
         const newEvent: StateChanged = {
           entity: event.data.entity_id,
@@ -74,7 +75,7 @@ export class Automation<
 
     const sequence = this.config.actions;
 
-    interface SequenceItemResult<O = any> {
+    interface SequenceItemResult<O = unknown> {
       continue: boolean;
       result: O;
     }
@@ -115,6 +116,6 @@ export class Automation<
       Promise.resolve({ continue: true, result: input })
     );
 
-    return { success: true, output: result.result };
+    return { success: true, output: result.result as O };
   }
 }

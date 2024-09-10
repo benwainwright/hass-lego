@@ -1,6 +1,7 @@
 /**
  * @alpha
  */
+// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters
 export abstract class Block<I = void, O = void> {
   public abstract readonly name: string;
   /**

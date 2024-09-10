@@ -270,10 +270,10 @@ export interface GeneralFailure {
 }
 
 // @alpha
-export type GetSequenceInput<T extends ReadonlyArray<any>> = T extends readonly [infer First, ...any] ? First extends Block<any, any> ? InputType<First> : never : never;
+export type GetSequenceInput<T extends ReadonlyArray<unknown>> = T extends readonly [infer First, ...unknown[]] ? First extends Block<unknown, unknown> ? InputType<First> : never : never;
 
 // @alpha
-export type GetSequenceOutput<T extends ReadonlyArray<any>> = T extends readonly [...any, infer Last] ? Last extends Block<any, any> ? OutputType<Last> : never : never;
+export type GetSequenceOutput<T extends ReadonlyArray<unknown>> = T extends readonly [...unknown[], infer Last] ? Last extends Block<unknown, unknown> ? OutputType<Last> : never : never;
 
 // @alpha (undocumented)
 export type HassContext = {
@@ -328,8 +328,12 @@ export type HassEventBase = {
     context: HassContext;
 };
 
+// Warning: (ae-forgotten-export) The symbol "TriggerFailed" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "TriggerFinished" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "TriggerStarted" needs to be exported by the entry point index.d.ts
+//
 // @alpha (undocumented)
-export type HassLegoEvent<I = unknown, O = unknown> = ActionStarted<I, O> | ActionFailed<I, O> | ActionFinished<I, O> | AssertionStarted<I, O> | AssertionFinished<I, O> | AssertionFailed<I, O> | AutomationFailed<any, I, O> | AutomationFinished<any, I, O> | AutomationStarted<any, I, O> | AutomationRegistered<any, I, O> | GeneralFailure | StateChanged;
+export type HassLegoEvent<I = unknown, O = unknown> = ActionStarted<I, O> | ActionFailed<I, O> | ActionFinished<I, O> | AssertionStarted<I, O> | AssertionFinished<I, O> | AssertionFailed<I, O> | AutomationFailed<any, I, O> | AutomationFinished<any, I, O> | AutomationStarted<any, I, O> | AutomationRegistered<any, I, O> | GeneralFailure | StateChanged | TriggerFailed | TriggerFinished | TriggerStarted;
 
 // @alpha (undocumented)
 export type HassStateChangedEvent = HassEventBase & {
@@ -342,15 +346,15 @@ export type HassStateChangedEvent = HassEventBase & {
 };
 
 // @alpha
-export type InputType<T extends Block<any, any>> = Exclude<T["inputType"], undefined>;
+export type InputType<T extends Block<unknown, unknown>> = Exclude<T["inputType"], undefined>;
 
 // @alpha (undocumented)
 export class LegoClient {
     constructor(client: HassApi, bus: EventBus);
     // (undocumented)
-    addAutomationTrigger<A extends ReadonlyArray<Block<any, any>>, I = any, O = any>(id: string, automation: Automation<A, I, O>): void;
+    addAutomationTrigger<A extends ReadonlyArray<Block<unknown, unknown>>, I = any, O = any>(id: string, automation: Automation<A, I, O>): void;
     // (undocumented)
-    callService<T, A>(domain: string, service: string, extraArgs?: A, options?: {
+    callService<T>(domain: string, service: string, extraArgs?: Record<string, unknown>, options?: {
         returnResponse?: boolean;
     }): Promise<T>;
     // (undocumented)
@@ -368,7 +372,7 @@ export class LegoClient {
 }
 
 // @alpha
-export type OutputType<T extends Block<any, any>> = Exclude<T["outputType"], undefined> extends Promise<infer T> ? T : Exclude<T["outputType"], undefined>;
+export type OutputType<T extends Block<unknown, unknown>> = Exclude<T["outputType"], undefined> extends Promise<infer T> ? T : Exclude<T["outputType"], undefined>;
 
 // @alpha (undocumented)
 export const renderSimpleLog: (bus: EventBus, staticLog: boolean) => void;
@@ -404,8 +408,8 @@ export class Trigger<O> {
 }
 
 // @alpha (undocumented)
-export type ValidInputOutputSequence<I, O, A extends readonly Block<unknown, unknown>[]> = A extends readonly [infer Only extends Block<any, any>] ? InputType<Only> extends I ? OutputType<Only> extends O ? readonly [Only] : never : never : A extends readonly [
-infer First extends Block<any, any>,
+export type ValidInputOutputSequence<I, O, A extends readonly Block<unknown, unknown>[]> = A extends readonly [infer Only extends Block<unknown, unknown>] ? InputType<Only> extends I ? OutputType<Only> extends O ? readonly [Only] : never : never : A extends readonly [
+infer First extends Block<unknown, unknown>,
 ...infer Rest extends readonly Block<unknown, unknown>[]
 ] ? InputType<First> extends I ? readonly [First, ...ValidInputOutputSequence<OutputType<First>, O, Rest>] : never : never;
 

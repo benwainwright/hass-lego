@@ -21,6 +21,7 @@ export type HassEventBase = {
  */
 export type HassEvent = HassEventBase & {
   event_type: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   data: { [key: string]: any };
 };
 
@@ -68,5 +69,6 @@ export type HassEntityAttributeBase = {
  * @alpha
  */
 export type HassEntity = HassEntityBase & {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   attributes: { [key: string]: any };
 };
