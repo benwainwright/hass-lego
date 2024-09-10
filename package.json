@@ -14,6 +14,7 @@
     "default": "./dist/src/index.js"
   },
   "scripts": {
+    "test": "vitest",
     "lint": "eslint .",
     "build:js": "swc src --out-dir dist",
     "build:types": "tsc --project tsconfig.dist.json",
@@ -49,12 +50,11 @@
     "ink-spinner": "5.0.0",
     "ink-table": "3.1.0",
     "react": "18.3.1",
-    "uuid": "10.0.0"
+    "uuid": "10.0.0",
+    "vitest-mock-extended": "^2.0.2",
+    "vitest-when": "^0.4.1"
   },
   "devDependencies": {
-    "eslint-plugin-filenames": "1.3.2",
-    "eslint-plugin-import": "2.30.0",
-    "eslint-plugin-no-relative-import-paths": "1.5.5",
     "@microsoft/api-extractor": "7.47.7",
     "@swc/cli": "0.4.0",
     "@swc/core": "1.7.24",
@@ -63,9 +63,13 @@
     "@types/react": "18.3.5",
     "@types/uuid": "10.0.0",
     "@typescript-eslint/eslint-plugin": "8.5.0",
+    "@vitest/coverage-v8": "^2.0.5",
     "dotenv": "16.4.5",
     "eslint": "9.10.0",
+    "eslint-plugin-filenames": "1.3.2",
+    "eslint-plugin-import": "2.30.0",
     "eslint-plugin-jsdoc": "^50.2.2",
+    "eslint-plugin-no-relative-import-paths": "1.5.5",
     "globals": "15.9.0",
     "npm-watch": "0.13.0",
     "tsconfig-replace-paths": "0.0.14",

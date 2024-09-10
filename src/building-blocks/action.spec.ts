@@ -1,0 +1,66 @@
+import { EventBus, LegoClient } from "@core";
+import { Action } from "./action.ts";
+import { mock } from "vitest-mock-extended";
+import { when } from "vitest-when";
+
+describe("the action block", () => {
+  it("calls the callback when executed and passes the result out as output", async () => {
+    const callback = vi.fn();
+
+    const client = mock<LegoClient>();
+    const bus = mock<EventBus>();
+    const input = "input";
+    const output = "output";
+
+    when(callback).calledWith(client, input).thenResolve(output);
+
+    const action = new Action<string, string>({
+      name: "This is my name",
+      callback,
+    });
+
+    const result = await action.execute(client, bus, input);
+
+    expect(result).toEqual({ output, success: true });
+  });
+
+  it("returns a failure result when an error is thrown", async () => {
+    const callback = vi.fn();
+
+    const client = mock<LegoClient>();
+    const bus = mock<EventBus>();
+    const input = "input";
+
+    when(callback)
+      .calledWith(client, input)
+      .thenReject(new Error("Failed to run callback"));
+
+    const action = new Action<string, string>({
+      name: "This is my name",
+      callback,
+    });
+
+    const result = await action.execute(client, bus, input);
+
+    expect(result).toEqual({ output: undefined, success: false });
+  });
+
+  it("rethrows error when something other than an error is thrown", async () => {
+    const callback = vi.fn();
+
+    const client = mock<LegoClient>();
+    const bus = mock<EventBus>();
+    const input = "input";
+
+    when(callback).calledWith(client, input).thenReject("A string?");
+
+    const action = new Action<string, string>({
+      name: "This is my name",
+      callback,
+    });
+
+    await expect(action.execute(client, bus, input)).rejects.toThrow(
+      "A string?"
+    );
+  });
+});
