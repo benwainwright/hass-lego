@@ -1,35 +1,20 @@
-import {
-  Action,
-  Assertion,
-  Automation,
-  Block,
-  Trigger,
-} from "@building-blocks";
+import { Automation, Block, Trigger } from "@building-blocks";
 import { HassStateChangedEvent } from "./hass-events.ts";
 
 /**
  * @alpha
  */
 export type HassLegoEvent<I = unknown, O = unknown> =
-  | ActionStarted<I, O>
-  | ActionFailed<I, O>
-  | ActionFinished<I, O>
-  | AssertionStarted<I, O>
-  | AssertionFinished<I, O>
-  | AssertionFailed<I, O>
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  | AutomationFailed<any, I, O>
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  | AutomationFinished<any, I, O>
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  | AutomationStarted<any, I, O>
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   | AutomationRegistered<any, I, O>
   | GeneralFailure
   | StateChanged
   | TriggerFailed
   | TriggerFinished
-  | TriggerStarted;
+  | TriggerStarted
+  | BlockFailed<I, O>
+  | BlockFinished<I, O>
+  | BlockStarted<I, O>;
 
 /**
  * @alpha
@@ -68,33 +53,24 @@ export interface GeneralFailure {
 /**
  * @alpha
  */
-export interface AutomationStarted<
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  A extends ReadonlyArray<Block<any, any>>,
-  I = unknown,
-  O = unknown
-> {
-  type: "automation";
+export interface BlockStarted<I, O> {
+  type: string;
   status: "started";
-  automation: Automation<A, I, O>;
+  block: Block<I, O>;
+  name: string;
+  parent?: Block<unknown, unknown>;
   triggeredBy?: Trigger<unknown>;
-  name: string;
-  parent?: Block<unknown, unknown>;
 }
 
 /**
  * @alpha
  */
-export interface AutomationFinished<
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  A extends ReadonlyArray<Block<any, any>>,
-  I = unknown,
-  O = unknown
-> {
-  type: "automation";
+export interface BlockFinished<I, O> {
+  type: string;
   status: "finished";
-  automation: Automation<A, I, O>;
-  result: O;
+  block: Block<I, O>;
+  output?: O;
+  continue: boolean;
   name: string;
   parent?: Block<unknown, unknown>;
 }
@@ -102,91 +78,14 @@ export interface AutomationFinished<
 /**
  * @alpha
  */
-export interface AutomationFailed<
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  A extends ReadonlyArray<Block<any, any>>,
-  I = unknown,
-  O = unknown
-> {
-  type: "automation";
+export interface BlockFailed<I, O> {
+  type: string;
   status: "failed";
-  automation: Automation<A, I, O>;
+  block: Block<I, O>;
   message: string;
   name: string;
   error: Error;
   parent?: Block<unknown, unknown>;
-}
-
-/**
- * @alpha
- */
-export interface ActionStarted<I = unknown, O = unknown> {
-  type: "action";
-  status: "started";
-  name: string;
-  action: Action<I, O>;
-  parent?: Block<unknown, unknown>;
-}
-
-/**
- * @alpha
- */
-export interface ActionFinished<I = unknown, O = unknown> {
-  type: "action";
-  status: "finished";
-  action: Action<I, O>;
-  result: O;
-  name: string;
-  parent?: Block<unknown, unknown>;
-}
-
-/**
- * @alpha
- */
-export interface ActionFailed<I = unknown, O = unknown> {
-  type: "action";
-  status: "failed";
-  parent?: Block<unknown, unknown>;
-  action: Action<I, O>;
-  message: string;
-  name: string;
-  error: Error;
-}
-
-/**
- * @alpha
- */
-export interface AssertionStarted<I = unknown, O = unknown> {
-  type: "assertion";
-  status: "started";
-  parent?: Block<unknown, unknown>;
-  name: string;
-  assertion: Assertion<I, O>;
-}
-
-/**
- * @alpha
- */
-export interface AssertionFinished<I = unknown, O = unknown> {
-  type: "assertion";
-  status: "finished";
-  assertion: Assertion<I, O>;
-  parent?: Block<unknown, unknown>;
-  name: string;
-  result: { result: boolean; output: O };
-}
-
-/**
- * @alpha
- */
-export interface AssertionFailed<I = unknown, O = unknown> {
-  type: "assertion";
-  status: "failed";
-  parent?: Block<unknown, unknown>;
-  assertion: Assertion<I, O>;
-  name: string;
-  message: string;
-  error: Error;
 }
 
 /**

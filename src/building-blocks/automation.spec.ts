@@ -28,18 +28,18 @@ describe("Automation", () => {
 
     when(action1.execute)
       .calledWith(mockClient, bus, input, auto)
-      .thenResolve({ output: output1, success: true });
+      .thenResolve({ output: output1, continue: true, success: true });
 
     when(action2.execute)
       .calledWith(mockClient, bus, output1, auto)
-      .thenResolve({ output: output2, success: true });
+      .thenResolve({ output: output2, success: true, continue: true });
 
     when(action3.execute)
       .calledWith(mockClient, bus, output2, auto)
-      .thenResolve({ output: output3, success: true });
+      .thenResolve({ output: output3, success: true, continue: true });
 
     const result = await auto.execute(mockClient, bus, input);
 
-    expect(result).toEqual({ result: output3, success: true });
+    expect(result).toEqual({ output: output3, success: true, continue: true });
   });
 });

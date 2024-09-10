@@ -1,5 +1,6 @@
 import { LegoClient, EventBus } from "@core";
 import { Block } from "./block.ts";
+import { BlockOutput } from "@types";
 
 /**
  * @alpha
@@ -29,35 +30,21 @@ export class Assertion<I = void, O = void> extends Block<I, O> {
   }
   public readonly name: string;
 
-  public async runPredicate(
+  protected override typeString = "assertion";
+
+  public override async run(
     client: LegoClient,
     events: EventBus,
-    input: I,
-    parent?: Block<unknown, unknown>
-  ): Promise<{ result: boolean; output: O }> {
-    events.emit({
-      type: "assertion",
-      status: "started",
-      assertion: this,
-      name: this.config.name,
-      parent,
-    });
-
+    input: I
+  ): Promise<BlockOutput<O>> {
     const callbackResult = this.config.predicate(client, input);
     const result =
       callbackResult instanceof Promise ? await callbackResult : callbackResult;
 
     const finalResult =
-      typeof result === "object" ? result : { result, output: undefined as O };
-
-    events.emit({
-      type: "assertion",
-      status: "finished",
-      name: this.config.name,
-      assertion: this,
-      result: finalResult,
-      parent,
-    });
+      typeof result === "object"
+        ? { continue: result.result, output: result.output }
+        : { continue: result, output: undefined as O };
 
     return finalResult;
   }

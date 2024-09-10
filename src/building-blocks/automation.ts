@@ -1,4 +1,3 @@
-import { Action } from "./action.ts";
 import { LegoClient, EventBus } from "@core";
 import { Trigger } from "./trigger.ts";
 import {
@@ -6,10 +5,10 @@ import {
   ValidInputOutputSequence,
   GetSequenceInput,
   GetSequenceOutput,
+  BlockOutput,
 } from "@types";
 
 import { Block } from "./block.ts";
-import { Assertion } from "./assertion.ts";
 
 /**
  * @alpha
@@ -31,6 +30,8 @@ export class Automation<
     this.name = this.config.name;
   }
 
+  protected override typeString = "automation";
+
   public attachTrigger(client: LegoClient, bus: EventBus) {
     if (this.config.trigger) {
       const { trigger } = this.config;
@@ -49,7 +50,7 @@ export class Automation<
         );
 
         if (result) {
-          await this.execute(client, bus, output, this, trigger);
+          await this.execute(client, bus, output, this);
         }
       });
     } else {
@@ -57,65 +58,27 @@ export class Automation<
     }
   }
 
-  public async execute(
+  protected override async run(
     client: LegoClient,
     events: EventBus,
-    input?: I,
-    parent?: Block<unknown, unknown>,
-    triggeredBy?: Trigger<I>
-  ): Promise<{ output: O | undefined; success: boolean }> {
-    events.emit({
-      type: "automation",
-      status: "started",
-      name: this.config.name,
-      automation: this,
-      triggeredBy,
-      parent,
-    });
+    input?: I
+  ): Promise<BlockOutput<O>> {
+    const result = await [...this.config.actions].reduce<
+      Promise<BlockOutput<unknown>>
+    >(async (previousPromise, nextItem) => {
+      const lastExecution = await previousPromise;
+      if (!lastExecution.continue) {
+        return lastExecution;
+      }
+      const result = nextItem.execute(
+        client,
+        events,
+        lastExecution.output,
+        this
+      );
+      return result;
+    }, Promise.resolve({ continue: true, output: input }));
 
-    const sequence = this.config.actions;
-
-    interface SequenceItemResult<O = unknown> {
-      continue: boolean;
-      result: O;
-    }
-
-    const result = await [...sequence].reduce<Promise<SequenceItemResult>>(
-      async (previousPromise, nextItem) => {
-        const lastExecution = await previousPromise;
-        if (!lastExecution.continue) {
-          return lastExecution;
-        }
-
-        if (nextItem instanceof Action || nextItem instanceof Automation) {
-          return {
-            result: await nextItem.execute(
-              client,
-              events,
-              lastExecution.result,
-              this
-            ),
-            continue: true,
-          };
-        }
-
-        if (nextItem instanceof Assertion) {
-          const predicateResult = await nextItem.runPredicate(
-            client,
-            events,
-            lastExecution.result,
-            this
-          );
-          return {
-            continue: predicateResult.result,
-            result: predicateResult.output,
-          };
-        }
-        throw new Error("Did not recognise block type");
-      },
-      Promise.resolve({ continue: true, result: input })
-    );
-
-    return { success: true, output: result.result as O };
+    return result as BlockOutput<O>;
   }
 }

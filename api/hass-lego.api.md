@@ -18,60 +18,13 @@ export class Action<I = void, O = void> extends Block<I, O> {
         callback: ((client: LegoClient, input: I) => O) | ((client: LegoClient, input: I) => Promise<O>);
     };
     // (undocumented)
-    execute(client: LegoClient, events: EventBus, input: I, parent?: Block<unknown, unknown>): Promise<{
-        output: O | undefined;
-        success: boolean;
-    }>;
-    // (undocumented)
     readonly name: string;
-}
-
-// @alpha (undocumented)
-export interface ActionFailed<I = unknown, O = unknown> {
+    // Warning: (ae-forgotten-export) The symbol "BlockOutput" needs to be exported by the entry point index.d.ts
+    //
     // (undocumented)
-    action: Action<I, O>;
+    run(client: LegoClient, events: EventBus, input: I): Promise<BlockOutput<O>>;
     // (undocumented)
-    error: Error;
-    // (undocumented)
-    message: string;
-    // (undocumented)
-    name: string;
-    // (undocumented)
-    parent?: Block<unknown, unknown>;
-    // (undocumented)
-    status: "failed";
-    // (undocumented)
-    type: "action";
-}
-
-// @alpha (undocumented)
-export interface ActionFinished<I = unknown, O = unknown> {
-    // (undocumented)
-    action: Action<I, O>;
-    // (undocumented)
-    name: string;
-    // (undocumented)
-    parent?: Block<unknown, unknown>;
-    // (undocumented)
-    result: O;
-    // (undocumented)
-    status: "finished";
-    // (undocumented)
-    type: "action";
-}
-
-// @alpha (undocumented)
-export interface ActionStarted<I = unknown, O = unknown> {
-    // (undocumented)
-    action: Action<I, O>;
-    // (undocumented)
-    name: string;
-    // (undocumented)
-    parent?: Block<unknown, unknown>;
-    // (undocumented)
-    status: "started";
-    // (undocumented)
-    type: "action";
+    protected typeString: string;
 }
 
 // @alpha
@@ -82,10 +35,9 @@ export class Assertion<I = void, O = void> extends Block<I, O> {
     // (undocumented)
     readonly name: string;
     // (undocumented)
-    runPredicate(client: LegoClient, events: EventBus, input: I, parent?: Block<unknown, unknown>): Promise<{
-        result: boolean;
-        output: O;
-    }>;
+    run(client: LegoClient, events: EventBus, input: I): Promise<BlockOutput<O>>;
+    // (undocumented)
+    protected typeString: string;
 }
 
 // @alpha
@@ -100,57 +52,6 @@ export interface AssertionConfig<I, O> {
         result: boolean;
         output: O;
     }>;
-}
-
-// @alpha (undocumented)
-export interface AssertionFailed<I = unknown, O = unknown> {
-    // (undocumented)
-    assertion: Assertion<I, O>;
-    // (undocumented)
-    error: Error;
-    // (undocumented)
-    message: string;
-    // (undocumented)
-    name: string;
-    // (undocumented)
-    parent?: Block<unknown, unknown>;
-    // (undocumented)
-    status: "failed";
-    // (undocumented)
-    type: "assertion";
-}
-
-// @alpha (undocumented)
-export interface AssertionFinished<I = unknown, O = unknown> {
-    // (undocumented)
-    assertion: Assertion<I, O>;
-    // (undocumented)
-    name: string;
-    // (undocumented)
-    parent?: Block<unknown, unknown>;
-    // (undocumented)
-    result: {
-        result: boolean;
-        output: O;
-    };
-    // (undocumented)
-    status: "finished";
-    // (undocumented)
-    type: "assertion";
-}
-
-// @alpha (undocumented)
-export interface AssertionStarted<I = unknown, O = unknown> {
-    // (undocumented)
-    assertion: Assertion<I, O>;
-    // (undocumented)
-    name: string;
-    // (undocumented)
-    parent?: Block<unknown, unknown>;
-    // (undocumented)
-    status: "started";
-    // (undocumented)
-    type: "assertion";
 }
 
 // @alpha (undocumented)
@@ -169,46 +70,11 @@ export class Automation<A extends readonly Block<unknown, unknown>[], I = GetSeq
         trigger?: Trigger<I>;
     };
     // (undocumented)
-    execute(client: LegoClient, events: EventBus, input?: I, parent?: Block<unknown, unknown>, triggeredBy?: Trigger<I>): Promise<{
-        output: O | undefined;
-        success: boolean;
-    }>;
-    // (undocumented)
     readonly name: string;
-}
-
-// @alpha (undocumented)
-export interface AutomationFailed<A extends ReadonlyArray<Block<any, any>>, I = unknown, O = unknown> {
     // (undocumented)
-    automation: Automation<A, I, O>;
+    protected run(client: LegoClient, events: EventBus, input?: I): Promise<BlockOutput<O>>;
     // (undocumented)
-    error: Error;
-    // (undocumented)
-    message: string;
-    // (undocumented)
-    name: string;
-    // (undocumented)
-    parent?: Block<unknown, unknown>;
-    // (undocumented)
-    status: "failed";
-    // (undocumented)
-    type: "automation";
-}
-
-// @alpha (undocumented)
-export interface AutomationFinished<A extends ReadonlyArray<Block<any, any>>, I = unknown, O = unknown> {
-    // (undocumented)
-    automation: Automation<A, I, O>;
-    // (undocumented)
-    name: string;
-    // (undocumented)
-    parent?: Block<unknown, unknown>;
-    // (undocumented)
-    result: O;
-    // (undocumented)
-    status: "finished";
-    // (undocumented)
-    type: "automation";
+    protected typeString: string;
 }
 
 // @alpha (undocumented)
@@ -224,27 +90,19 @@ export interface AutomationRegistered<A extends ReadonlyArray<Block<any, any>>, 
 }
 
 // @alpha (undocumented)
-export interface AutomationStarted<A extends ReadonlyArray<Block<any, any>>, I = unknown, O = unknown> {
-    // (undocumented)
-    automation: Automation<A, I, O>;
-    // (undocumented)
-    name: string;
-    // (undocumented)
-    parent?: Block<unknown, unknown>;
-    // (undocumented)
-    status: "started";
-    // (undocumented)
-    triggeredBy?: Trigger<unknown>;
-    // (undocumented)
-    type: "automation";
-}
-
-// @alpha (undocumented)
 export abstract class Block<I = void, O = void> {
+    // (undocumented)
+    execute(client: LegoClient, events: EventBus, input: I, parent?: Block<unknown, unknown>, triggeredBy?: Trigger<unknown>): Promise<BlockOutput<O> & {
+        success: boolean;
+    }>;
     inputType: I | undefined;
     // (undocumented)
     abstract readonly name: string;
     outputType: O | undefined;
+    // (undocumented)
+    protected abstract run(client: LegoClient, events: EventBus, input: I): Promise<BlockOutput<O>> | BlockOutput<O>;
+    // (undocumented)
+    protected abstract readonly typeString: string;
 }
 
 // @alpha (undocumented)
@@ -331,9 +189,12 @@ export type HassEventBase = {
 // Warning: (ae-forgotten-export) The symbol "TriggerFailed" needs to be exported by the entry point index.d.ts
 // Warning: (ae-forgotten-export) The symbol "TriggerFinished" needs to be exported by the entry point index.d.ts
 // Warning: (ae-forgotten-export) The symbol "TriggerStarted" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "BlockFailed" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "BlockFinished" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "BlockStarted" needs to be exported by the entry point index.d.ts
 //
 // @alpha (undocumented)
-export type HassLegoEvent<I = unknown, O = unknown> = ActionStarted<I, O> | ActionFailed<I, O> | ActionFinished<I, O> | AssertionStarted<I, O> | AssertionFinished<I, O> | AssertionFailed<I, O> | AutomationFailed<any, I, O> | AutomationFinished<any, I, O> | AutomationStarted<any, I, O> | AutomationRegistered<any, I, O> | GeneralFailure | StateChanged | TriggerFailed | TriggerFinished | TriggerStarted;
+export type HassLegoEvent<I = unknown, O = unknown> = AutomationRegistered<any, I, O> | GeneralFailure | StateChanged | TriggerFailed | TriggerFinished | TriggerStarted | BlockFailed<I, O> | BlockFinished<I, O> | BlockStarted<I, O>;
 
 // @alpha (undocumented)
 export type HassStateChangedEvent = HassEventBase & {
@@ -351,8 +212,6 @@ export type InputType<T extends Block<unknown, unknown>> = Exclude<T["inputType"
 // @alpha (undocumented)
 export class LegoClient {
     constructor(client: HassApi, bus: EventBus);
-    // (undocumented)
-    addAutomationTrigger<A extends ReadonlyArray<Block<unknown, unknown>>, I = any, O = any>(id: string, automation: Automation<A, I, O>): void;
     // (undocumented)
     callService<T>(domain: string, service: string, extraArgs?: Record<string, unknown>, options?: {
         returnResponse?: boolean;

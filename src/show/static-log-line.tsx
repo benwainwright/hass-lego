@@ -2,17 +2,10 @@ import { HassLegoEvent, StateChanged } from "@types";
 import { Box, Text } from "ink";
 
 interface StaticLogLineProps {
-  event: Exclude<HassLegoEvent<unknown, unknown>, StateChanged>;
+  event: HassLegoEvent;
 }
 
 const getIcon = (event: HassLegoEvent<any, any>) => {
-  if (event.type === "assertion" && event.status === "finished") {
-    if (event.result.result) {
-      return "👍";
-    } else {
-      return "🚫";
-    }
-  }
   if ("status" in event) {
     switch (event.status) {
       case "started":
@@ -31,7 +24,7 @@ export const StaticLogLine = ({ event }: StaticLogLineProps) => {
         <Text>{getIcon(event)}</Text>
       </Box>
       <Box width={12}>
-        <Text>{event.status}</Text>
+        <Text>{"status" in event}</Text>
       </Box>
 
       <Box width={12}>

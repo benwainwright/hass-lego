@@ -3,7 +3,7 @@ import { StaticLogLine } from "./static-log-line.tsx";
 import { Box } from "ink";
 
 interface StaticLogView {
-  events: (Exclude<HassLegoEvent<unknown, unknown>, StateChanged> & {
+  events: (HassLegoEvent<unknown, unknown> & {
     id: string;
   })[];
 }

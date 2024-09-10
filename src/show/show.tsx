@@ -11,7 +11,7 @@ interface ShowProps {
 }
 export const Show = ({ staticLog, events }: ShowProps) => {
   const [logs, setLogs] = useState<
-    (Exclude<HassLegoEvent<unknown, unknown>, StateChanged> & { id: string })[]
+    (HassLegoEvent<unknown, unknown> & { id: string })[]
   >([]);
 
   useEffect(() => {

@@ -19,15 +19,8 @@ export type {
 export type {
   HassLegoEvent,
   StateChanged,
-  ActionFailed,
-  ActionFinished,
-  ActionStarted,
-  AssertionFailed,
-  AssertionFinished,
-  AssertionStarted,
-  AutomationFailed,
-  AutomationFinished,
   AutomationRegistered,
-  AutomationStarted,
   GeneralFailure,
 } from "./hass-lego-events.ts";
+
+export type { BlockOutput } from "./block-output.ts";

@@ -1,5 +1,6 @@
 import { LegoClient, EventBus } from "@core";
 import { Block } from "./block.ts";
+import { BlockOutput } from "@types";
 
 /**
  * @alpha
@@ -20,51 +21,17 @@ export class Action<I = void, O = void> extends Block<I, O> {
     this.name = this.config.name;
   }
 
-  public async execute(
+  protected override typeString = "action";
+
+  public override async run(
     client: LegoClient,
     events: EventBus,
     input: I,
-    parent?: Block<unknown, unknown>
-  ): Promise<{ output: O | undefined; success: boolean }> {
-    try {
-      events.emit({
-        type: "action",
-        status: "started",
-        name: this.name,
-        action: this,
-        parent,
-      });
+  ): Promise<BlockOutput<O>> {
+    const callbackResult = this.config.callback(client, input);
+    const result =
+      callbackResult instanceof Promise ? await callbackResult : callbackResult;
 
-      const callbackResult = this.config.callback(client, input);
-      const result =
-        callbackResult instanceof Promise
-          ? await callbackResult
-          : callbackResult;
-
-      events.emit({
-        type: "action",
-        name: this.name,
-        status: "finished",
-        action: this,
-        result,
-        parent,
-      });
-      return { output: result, success: true };
-    } catch (error) {
-      if (error instanceof Error) {
-        events.emit({
-          type: "action",
-          status: "failed",
-          action: this,
-          name: this.name,
-          error,
-          parent,
-          message: error.message,
-        });
-        return { output: undefined, success: false };
-      } else {
-        throw error;
-      }
-    }
+    return { output: result, continue: true };
   }
 }
