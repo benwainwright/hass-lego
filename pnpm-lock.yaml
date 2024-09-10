@@ -17,6 +17,9 @@ dependencies:
   ink-table:
     specifier: 3.1.0
     version: 3.1.0(ink@5.0.1)(react@18.3.1)
+  queue-typescript:
+    specifier: ^1.0.1
+    version: 1.0.1
   react:
     specifier: 18.3.1
     version: 18.3.1
@@ -2964,6 +2967,10 @@ packages:
       type-check: 0.4.0
     dev: true
 
+  /linked-list-typescript@1.0.15:
+    resolution: {integrity: sha512-RIyUu9lnJIyIaMe63O7/aFv/T2v3KsMFuXMBbUQCHX+cgtGro86ETDj5ed0a8gQL2+DFjzYYsgVG4I36/cUwgw==}
+    dev: false
+
   /locate-path@6.0.0:
     resolution: {integrity: sha512-iPZK6eYjbxRu3uB4/WZ3EsEIMJFMqAoopl3R+zuq0UjcAm/MO6KCweDgPfP3elTztoKP3KtnVHxTn2NHBSDVUw==}
     engines: {node: '>=10'}
@@ -3465,6 +3472,12 @@ packages:
   /queue-microtask@1.2.3:
     resolution: {integrity: sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A==}
     dev: true
+
+  /queue-typescript@1.0.1:
+    resolution: {integrity: sha512-tkK08uPfmpPl0cX1WRSU3EoNb/T5zSoZPGkkpfGX4E8QayWvEmLS2cI3pFngNPkNTCU5pCDQ1IwlzN0L5gdFPg==}
+    dependencies:
+      linked-list-typescript: 1.0.15
+    dev: false
 
   /quick-lru@5.1.1:
     resolution: {integrity: sha512-WuyALRjWPDGtt/wzJiadO5AXY+8hZ80hVpe6MyivgraREW751X3SbhRvG3eLKOYN+8VEvqLcf3wdnt44Z4S4SA==}

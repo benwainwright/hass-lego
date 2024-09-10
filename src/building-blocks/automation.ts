@@ -1,3 +1,4 @@
+import { Queue } from "queue-typescript";
 import { LegoClient, EventBus } from "@core";
 import { Trigger } from "./trigger.ts";
 import {
@@ -6,9 +7,11 @@ import {
   GetSequenceInput,
   GetSequenceOutput,
   BlockOutput,
+  ExecutionMode,
 } from "@types";
 
 import { Block } from "./block.ts";
+import { SequenceExecutor } from "./sequence-executer.ts";
 
 /**
  * @alpha
@@ -18,19 +21,33 @@ export class Automation<
   I = GetSequenceInput<A>,
   O = GetSequenceOutput<A>
 > extends Block<I, O> {
+  private executionQueue = new Queue<SequenceExecutor<I, O>>();
   public readonly name: string;
   public constructor(
     public config: {
       name: string;
       actions: A & ValidInputOutputSequence<I, O, A>;
       trigger?: Trigger<I>;
+      mode?: ExecutionMode;
     }
   ) {
     super();
     this.name = this.config.name;
+    void this.startLoop();
   }
 
   protected override typeString = "automation";
+
+  private async startLoop() {
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    while (true) {
+      while (this.executionQueue.length > 0) {
+        const executor = this.executionQueue.dequeue();
+        await executor.run();
+      }
+      await new Promise((accept) => setTimeout(accept, 100));
+    }
+  }
 
   public attachTrigger(client: LegoClient, bus: EventBus) {
     if (this.config.trigger) {
@@ -58,27 +75,40 @@ export class Automation<
     }
   }
 
+  private abortAll() {
+    while (this.executionQueue.length > 0) {
+      const executor = this.executionQueue.dequeue();
+      executor.abort();
+    }
+  }
+
   protected override async run(
     client: LegoClient,
     events: EventBus,
     input?: I
   ): Promise<BlockOutput<O>> {
-    const result = await [...this.config.actions].reduce<
-      Promise<BlockOutput<unknown>>
-    >(async (previousPromise, nextItem) => {
-      const lastExecution = await previousPromise;
-      if (!lastExecution.continue) {
-        return lastExecution;
-      }
-      const result = nextItem.execute(
-        client,
-        events,
-        lastExecution.output,
-        this
-      );
-      return result;
-    }, Promise.resolve({ continue: true, output: input }));
+    const executor = new SequenceExecutor<I, O>(
+      [...this.config.actions],
+      client,
+      events,
+      input,
+      this
+    );
+    const mode = this.config.mode ?? ExecutionMode.Restart;
+    switch (mode) {
+      case ExecutionMode.Restart:
+        this.abortAll();
+        this.executionQueue.enqueue(executor);
+        break;
 
-    return result as BlockOutput<O>;
+      case ExecutionMode.Queue:
+        this.executionQueue.enqueue(executor);
+        break;
+
+      case ExecutionMode.Parallel:
+        await executor.run();
+        break;
+    }
+    return await executor.finished();
   }
 }

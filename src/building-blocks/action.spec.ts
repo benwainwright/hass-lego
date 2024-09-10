@@ -21,7 +21,7 @@ describe("the action block", () => {
 
     const result = await action.execute(client, bus, input);
 
-    expect(result).toEqual({ output, success: true });
+    expect(result).toEqual({ output, success: true, continue: true });
   });
 
   it("returns a failure result when an error is thrown", async () => {
@@ -42,7 +42,7 @@ describe("the action block", () => {
 
     const result = await action.execute(client, bus, input);
 
-    expect(result).toEqual({ output: undefined, success: false });
+    expect(result).toEqual({ continue: false, success: false });
   });
 
   it("rethrows error when something other than an error is thrown", async () => {

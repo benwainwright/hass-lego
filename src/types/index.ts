@@ -24,3 +24,5 @@ export type {
 } from "./hass-lego-events.ts";
 
 export type { BlockOutput } from "./block-output.ts";
+
+export { ExecutionMode } from "./execution-mode.ts";

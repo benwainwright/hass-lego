@@ -60,6 +60,7 @@ export class Automation<A extends readonly Block<unknown, unknown>[], I = GetSeq
         name: string;
         actions: A & ValidInputOutputSequence<I, O, A>;
         trigger?: Trigger<I>;
+        mode?: ExecutionMode;
     });
     // (undocumented)
     attachTrigger(client: LegoClient, bus: EventBus): void;
@@ -68,6 +69,7 @@ export class Automation<A extends readonly Block<unknown, unknown>[], I = GetSeq
         name: string;
         actions: A & ValidInputOutputSequence<I, O, A>;
         trigger?: Trigger<I>;
+        mode?: ExecutionMode;
     };
     // (undocumented)
     readonly name: string;
@@ -271,6 +273,10 @@ export type ValidInputOutputSequence<I, O, A extends readonly Block<unknown, unk
 infer First extends Block<unknown, unknown>,
 ...infer Rest extends readonly Block<unknown, unknown>[]
 ] ? InputType<First> extends I ? readonly [First, ...ValidInputOutputSequence<OutputType<First>, O, Rest>] : never : never;
+
+// Warnings were encountered during analysis:
+//
+// src/building-blocks/automation.ts:31:7 - (ae-forgotten-export) The symbol "ExecutionMode" needs to be exported by the entry point index.d.ts
 
 // (No @packageDocumentation comment for this package)
 
