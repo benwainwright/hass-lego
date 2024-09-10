@@ -8,6 +8,12 @@ interface StaticLogLineProps {
 const getIcon = (event: HassLegoEvent<any, any>) => {
   if ("status" in event) {
     switch (event.status) {
+      case "error":
+        return "🚨";
+
+      case "aborted":
+        return "🛑";
+
       case "started":
         return "🚀";
 
@@ -24,22 +30,21 @@ export const StaticLogLine = ({ event }: StaticLogLineProps) => {
         <Text>{getIcon(event)}</Text>
       </Box>
       <Box width={12}>
-        <Text>{"status" in event}</Text>
+        <Text>{"status" in event && event.status}</Text>
       </Box>
 
       <Box width={12}>
         <Text>{event.type}</Text>
       </Box>
-      {"parent" in event ? (
-        <Box width={28}>
-          <Text>{event.parent?.name}</Text>
-        </Box>
-      ) : null}
-      {"name" in event ? (
-        <Box>
-          <Text>{event.name}</Text>
-        </Box>
-      ) : null}
+      <Box width={35}>
+        <Text>{"parent" in event && event.parent?.name}</Text>
+      </Box>
+      <Box width={40}>
+        <Text>{"name" in event && event.name}</Text>
+      </Box>
+      <Box>
+        <Text>{"triggerId" in event && event.triggerId}</Text>
+      </Box>
     </Box>
   );
 };

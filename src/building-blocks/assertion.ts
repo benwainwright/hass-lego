@@ -35,6 +35,7 @@ export class Assertion<I = void, O = void> extends Block<I, O> {
   public override async run(
     client: LegoClient,
     events: EventBus,
+    triggerId: string,
     input: I
   ): Promise<BlockOutput<O>> {
     const callbackResult = this.config.predicate(client, input);

@@ -3,8 +3,10 @@ import { Block } from "./block.ts";
 import { EventBus, LegoClient } from "@core";
 import { BlockOutput } from "@types";
 import EventEmitter from "events";
+import { SequenceAbortedError } from "./sequence-aborted-error.ts";
 
 const SEQUENCE_EXECUTOR_FINISHED = "sequence-executor-finished";
+const SEQUENCE_EXECUTOR_ABORTED = "sequence-executor-aborted";
 
 export class SequenceExecutor<I, O> {
   private executionQueue: Queue<Block<unknown, unknown>>;
@@ -15,8 +17,9 @@ export class SequenceExecutor<I, O> {
     sequence: Block<unknown, unknown>[],
     private client: LegoClient,
     private events: EventBus,
-    private input?: I,
-    private parent?: Block<unknown, unknown>
+    private parent: Block<unknown, unknown>,
+    public triggerId: string,
+    private input?: I
   ) {
     this.executionQueue = new Queue(...sequence);
   }
@@ -30,6 +33,7 @@ export class SequenceExecutor<I, O> {
           this.client,
           this.events,
           lastResult?.output ?? this.input,
+          this.triggerId,
           this.parent
         );
         lastResult = result;
@@ -42,22 +46,47 @@ export class SequenceExecutor<I, O> {
   }
 
   public async finished() {
-    return new Promise<BlockOutput<O> & { success: boolean }>((accept) => {
-      if (this.result) {
-        accept(this.result);
-      } else {
-        this.bus.on(SEQUENCE_EXECUTOR_FINISHED, () => {
-          if (this.result) {
-            accept(this.result);
-          }
-        });
+    return new Promise<BlockOutput<O> & { success: boolean }>(
+      (accept, reject) => {
+        if (this.result) {
+          accept(this.result);
+        } else {
+          const finishedCallback = () => {
+            this.bus.off(SEQUENCE_EXECUTOR_FINISHED, finishedCallback);
+            if (this.result) {
+              accept(this.result);
+            } else {
+              reject(
+                new Error(
+                  "Sequence finished without a result. This is probably a programming error"
+                )
+              );
+            }
+          };
+
+          const abortedCallback = () => {
+            this.bus.off(SEQUENCE_EXECUTOR_ABORTED, abortedCallback);
+            reject(new SequenceAbortedError());
+          };
+
+          this.bus.on(SEQUENCE_EXECUTOR_ABORTED, abortedCallback);
+          this.bus.on(SEQUENCE_EXECUTOR_FINISHED, finishedCallback);
+        }
       }
-    });
+    );
   }
 
   public abort() {
     while (this.executionQueue.length > 0) {
       this.executionQueue.dequeue();
     }
+    this.bus.emit(SEQUENCE_EXECUTOR_ABORTED);
+    this.events.emit({
+      triggerId: this.triggerId,
+      type: "automation",
+      status: "aborted",
+      block: this.parent,
+      name: this.parent.name,
+    });
   }
 }

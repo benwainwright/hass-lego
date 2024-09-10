@@ -2,7 +2,7 @@ import { EventBus } from "@core";
 import { useState, useEffect } from "react";
 import { StaticLogView } from "./static-log-view.tsx";
 import { Box, Text } from "ink";
-import { HassLegoEvent, StateChanged } from "@types";
+import { HassLegoEvent } from "@types";
 import { SummaryView } from "./summary-view.tsx";
 
 interface ShowProps {

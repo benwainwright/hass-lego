@@ -23,28 +23,49 @@ const getIcon = (events: HassLegoEvent[]) => {
 };
 
 export const SummaryViewRow = ({ name, events }: SummaryViewRowProps) => {
-  const childEvents = events.filter((event) => event.type !== "automation");
-  const lastEvent = childEvents.at(-1);
-  const lastEventName = lastEvent && "name" in lastEvent && lastEvent.name;
+  const parent = events.flatMap((item) => ("parent" in item ? [item] : []))[0];
+  const id = events.flatMap((item) => ("triggerId" in item ? [item] : []))[0]
+    .triggerId;
   return (
     <Box
-      borderStyle="single"
+      borderStyle="double"
       flexDirection="row"
-      gap={2}
       paddingLeft={3}
       paddingRight={3}
+      gap={2}
     >
-      <Box>
-        <Text>{getIcon(events)}</Text>
+      <Box flexDirection="column" borderStyle={"single"} paddingX={1}>
+        <Box flexDirection="row" gap={1}>
+          <Box>
+            <Text>Automation</Text>
+          </Box>
+          <Box>
+            <Text>{parent?.name}</Text>
+          </Box>
+        </Box>
+        <Box flexDirection="row" gap={1}>
+          <Box>
+            <Text>Trigger ID</Text>
+          </Box>
+          <Box>
+            <Text>{id}</Text>
+          </Box>
+        </Box>
       </Box>
-      <Box>
-        <Text>{name}</Text>
-      </Box>
-      <Box>
-        <Text>-</Text>
-      </Box>
-      <Box>
-        <Text>{lastEventName}</Text>
+      <Box flexDirection="column" borderStyle={"single"} paddingX={1}>
+        {events.map((event) => (
+          <Box key={`${"id" in event && event.id}-row`} flexDirection="row">
+            <Box width={11}>
+              <Text>{event.type}</Text>
+            </Box>
+            <Box width={11}>
+              <Text>{"status" in event && event.status}</Text>
+            </Box>
+            <Box width={40}>
+              <Text>{"name" in event && event.name}</Text>
+            </Box>
+          </Box>
+        ))}
       </Box>
     </Box>
   );

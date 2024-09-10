@@ -41,7 +41,8 @@ export class Trigger<O> {
   public async doTrigger(
     event: StateChanged,
     client: LegoClient,
-    events: EventBus
+    events: EventBus,
+    triggerId: string
   ): Promise<{ result: boolean; output: O }> {
     try {
       events.emit({
@@ -49,6 +50,7 @@ export class Trigger<O> {
         status: "started",
         trigger: this,
         name: this.name,
+        triggerId,
       });
       const result = this.predicate?.(event, client);
       const finalResult = this.getResult(result);
@@ -59,6 +61,7 @@ export class Trigger<O> {
         trigger: this,
         name: this.name,
         result: finalResult,
+        triggerId,
       });
 
       return await finalResult;
@@ -66,6 +69,7 @@ export class Trigger<O> {
       if (error instanceof Error) {
         events.emit({
           type: "trigger",
+          triggerId,
           status: "failed",
           trigger: this,
           name: this.name,

@@ -1,3 +1,6 @@
+/**
+ * @alpha
+ */
 export enum ExecutionMode {
   /**
    * If a previous execution is in progress when triggered, that execution will be cancelled

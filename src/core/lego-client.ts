@@ -57,7 +57,7 @@ export class LegoClient {
       type: "automation",
       status: "registered",
       name: automation.config.name,
-      automation,
+      block: automation,
     });
   }
 

@@ -19,6 +19,8 @@ export type {
   ValidInputOutputSequence,
 } from "@types";
 
+export { ExecutionMode } from "@types";
+
 export {
   Trigger,
   Automation,

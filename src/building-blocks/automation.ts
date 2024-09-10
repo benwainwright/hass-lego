@@ -12,6 +12,8 @@ import {
 
 import { Block } from "./block.ts";
 import { SequenceExecutor } from "./sequence-executer.ts";
+import { v4 } from "uuid";
+import { SequenceAbortedError } from "./sequence-aborted-error.ts";
 
 /**
  * @alpha
@@ -42,8 +44,16 @@ export class Automation<
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     while (true) {
       while (this.executionQueue.length > 0) {
-        const executor = this.executionQueue.dequeue();
-        await executor.run();
+        try {
+          const executor = this.executionQueue.front;
+          void executor.run();
+          await executor.finished();
+          this.executionQueue.dequeue();
+        } catch (error) {
+          if (!(error instanceof SequenceAbortedError)) {
+            throw error;
+          }
+        }
       }
       await new Promise((accept) => setTimeout(accept, 100));
     }
@@ -60,14 +70,16 @@ export class Automation<
           type: "hass-state-changed",
         };
 
+        const triggerId = v4();
         const { result, output } = await trigger.doTrigger(
           newEvent,
           client,
-          bus
+          bus,
+          triggerId
         );
 
         if (result) {
-          await this.execute(client, bus, output, this);
+          await this.execute(client, bus, output, triggerId, this);
         }
       });
     } else {
@@ -85,30 +97,39 @@ export class Automation<
   protected override async run(
     client: LegoClient,
     events: EventBus,
+    triggerId: string,
     input?: I
   ): Promise<BlockOutput<O>> {
-    const executor = new SequenceExecutor<I, O>(
-      [...this.config.actions],
-      client,
-      events,
-      input,
-      this
-    );
-    const mode = this.config.mode ?? ExecutionMode.Restart;
-    switch (mode) {
-      case ExecutionMode.Restart:
-        this.abortAll();
-        this.executionQueue.enqueue(executor);
-        break;
+    try {
+      const executor = new SequenceExecutor<I, O>(
+        [...this.config.actions],
+        client,
+        events,
+        this,
+        triggerId,
+        input
+      );
+      const mode = this.config.mode ?? ExecutionMode.Restart;
+      switch (mode) {
+        case ExecutionMode.Restart:
+          this.abortAll();
+          this.executionQueue.enqueue(executor);
+          break;
 
-      case ExecutionMode.Queue:
-        this.executionQueue.enqueue(executor);
-        break;
+        case ExecutionMode.Queue:
+          this.executionQueue.enqueue(executor);
+          break;
 
-      case ExecutionMode.Parallel:
-        await executor.run();
-        break;
+        case ExecutionMode.Parallel:
+          await executor.run();
+          break;
+      }
+      return await executor.finished();
+    } catch (error) {
+      if (error instanceof SequenceAbortedError) {
+        return { continue: false };
+      }
+      throw error;
     }
-    return await executor.finished();
   }
 }

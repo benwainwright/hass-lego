@@ -10,9 +10,9 @@ export const SummaryView = ({ events }: SummaryViewProps) => {
   const data = Object.entries(
     events.reduce<Record<string, HassLegoEvent<unknown, unknown>[]>>(
       (accum, event) => {
-        const parent = "parent" in event && event.parent;
-        if (parent && "name" in parent) {
-          accum[parent.name] = [...(accum[parent.name] ?? []), event];
+        const id = "triggerId" in event && event.triggerId;
+        if (id) {
+          accum[id] = [...(accum[id] ?? []), event];
         }
         return accum;
       },

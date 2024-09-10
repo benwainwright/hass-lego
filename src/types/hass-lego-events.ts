@@ -1,4 +1,4 @@
-import { Automation, Block, Trigger } from "@building-blocks";
+import { Block, Trigger } from "@building-blocks";
 import { HassStateChangedEvent } from "./hass-events.ts";
 
 /**
@@ -6,7 +6,7 @@ import { HassStateChangedEvent } from "./hass-events.ts";
  */
 export type HassLegoEvent<I = unknown, O = unknown> =
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  | AutomationRegistered<any, I, O>
+  | AutomationRegistered<I, O>
   | GeneralFailure
   | StateChanged
   | TriggerFailed
@@ -14,7 +14,8 @@ export type HassLegoEvent<I = unknown, O = unknown> =
   | TriggerStarted
   | BlockFailed<I, O>
   | BlockFinished<I, O>
-  | BlockStarted<I, O>;
+  | BlockStarted<I, O>
+  | SequenceAborted<I, O>;
 
 /**
  * @alpha
@@ -25,19 +26,24 @@ export interface StateChanged {
   hassEvent: HassStateChangedEvent;
 }
 
+interface BaseHassEvent<I = unknown, O = unknown> {
+  triggerId: string;
+  name: string;
+  block: Block<I, O>;
+}
+
 /**
  * @alpha
  */
 export interface AutomationRegistered<
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  A extends ReadonlyArray<Block<any, any>>,
   I = unknown,
   O = unknown
 > {
   type: "automation";
-  status: "registered";
   name: string;
-  automation: Automation<A, I, O>;
+  block: Block<I, O>;
+  status: "registered";
 }
 
 /**
@@ -53,11 +59,9 @@ export interface GeneralFailure {
 /**
  * @alpha
  */
-export interface BlockStarted<I, O> {
+export interface BlockStarted<I, O> extends BaseHassEvent<I, O> {
   type: string;
   status: "started";
-  block: Block<I, O>;
-  name: string;
   parent?: Block<unknown, unknown>;
   triggeredBy?: Trigger<unknown>;
 }
@@ -65,27 +69,30 @@ export interface BlockStarted<I, O> {
 /**
  * @alpha
  */
-export interface BlockFinished<I, O> {
+export interface BlockFinished<I, O> extends BaseHassEvent<I, O> {
   type: string;
   status: "finished";
-  block: Block<I, O>;
   output?: O;
   continue: boolean;
-  name: string;
   parent?: Block<unknown, unknown>;
 }
 
 /**
  * @alpha
  */
-export interface BlockFailed<I, O> {
+export interface BlockFailed<I, O> extends BaseHassEvent<I, O> {
   type: string;
   status: "failed";
-  block: Block<I, O>;
   message: string;
-  name: string;
   error: Error;
   parent?: Block<unknown, unknown>;
+}
+
+export interface SequenceAborted<I, O> extends BaseHassEvent<I, O> {
+  type: string;
+  status: "aborted";
+  block: Block<I, O>;
+  name: string;
 }
 
 /**
@@ -106,6 +113,7 @@ export interface TriggerFinished<O = unknown> {
   type: "trigger";
   status: "finished";
   parent?: Block<unknown, unknown>;
+  triggerId: string;
   name: string;
   result: O;
   trigger: Trigger<O>;
@@ -116,6 +124,7 @@ export interface TriggerFinished<O = unknown> {
  */
 export interface TriggerFailed<O = unknown> {
   type: "trigger";
+  triggerId: string;
   status: "failed";
   parent?: Block<unknown, unknown>;
   name: string;

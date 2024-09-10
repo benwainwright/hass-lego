@@ -26,7 +26,8 @@ export class Action<I = void, O = void> extends Block<I, O> {
   public override async run(
     client: LegoClient,
     events: EventBus,
-    input: I,
+    triggerId: string,
+    input: I
   ): Promise<BlockOutput<O>> {
     const callbackResult = this.config.callback(client, input);
     const result =

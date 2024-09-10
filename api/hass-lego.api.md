@@ -22,7 +22,7 @@ export class Action<I = void, O = void> extends Block<I, O> {
     // Warning: (ae-forgotten-export) The symbol "BlockOutput" needs to be exported by the entry point index.d.ts
     //
     // (undocumented)
-    run(client: LegoClient, events: EventBus, input: I): Promise<BlockOutput<O>>;
+    run(client: LegoClient, events: EventBus, triggerId: string, input: I): Promise<BlockOutput<O>>;
     // (undocumented)
     protected typeString: string;
 }
@@ -35,7 +35,7 @@ export class Assertion<I = void, O = void> extends Block<I, O> {
     // (undocumented)
     readonly name: string;
     // (undocumented)
-    run(client: LegoClient, events: EventBus, input: I): Promise<BlockOutput<O>>;
+    run(client: LegoClient, events: EventBus, triggerId: string, input: I): Promise<BlockOutput<O>>;
     // (undocumented)
     protected typeString: string;
 }
@@ -74,15 +74,15 @@ export class Automation<A extends readonly Block<unknown, unknown>[], I = GetSeq
     // (undocumented)
     readonly name: string;
     // (undocumented)
-    protected run(client: LegoClient, events: EventBus, input?: I): Promise<BlockOutput<O>>;
+    protected run(client: LegoClient, events: EventBus, triggerId: string, input?: I): Promise<BlockOutput<O>>;
     // (undocumented)
     protected typeString: string;
 }
 
 // @alpha (undocumented)
-export interface AutomationRegistered<A extends ReadonlyArray<Block<any, any>>, I = unknown, O = unknown> {
+export interface AutomationRegistered<I = unknown, O = unknown> {
     // (undocumented)
-    automation: Automation<A, I, O>;
+    block: Block<I, O>;
     // (undocumented)
     name: string;
     // (undocumented)
@@ -94,7 +94,7 @@ export interface AutomationRegistered<A extends ReadonlyArray<Block<any, any>>, 
 // @alpha (undocumented)
 export abstract class Block<I = void, O = void> {
     // (undocumented)
-    execute(client: LegoClient, events: EventBus, input: I, parent?: Block<unknown, unknown>, triggeredBy?: Trigger<unknown>): Promise<BlockOutput<O> & {
+    execute(client: LegoClient, events: EventBus, input: I, triggerId: string, parent?: Block<unknown, unknown>, triggeredBy?: Trigger<unknown>): Promise<BlockOutput<O> & {
         success: boolean;
     }>;
     inputType: I | undefined;
@@ -102,7 +102,7 @@ export abstract class Block<I = void, O = void> {
     abstract readonly name: string;
     outputType: O | undefined;
     // (undocumented)
-    protected abstract run(client: LegoClient, events: EventBus, input: I): Promise<BlockOutput<O>> | BlockOutput<O>;
+    protected abstract run(client: LegoClient, events: EventBus, triggerId: string, input: I): Promise<BlockOutput<O>> | BlockOutput<O>;
     // (undocumented)
     protected abstract readonly typeString: string;
 }
@@ -115,6 +115,13 @@ export class EventBus {
     subscribe<I, O>(callback: (event: HassLegoEvent<I, O> & {
         id: string;
     }) => void): void;
+}
+
+// @alpha (undocumented)
+export enum ExecutionMode {
+    Parallel = "Parallel",
+    Queue = "Queue",
+    Restart = "Restart"
 }
 
 // @alpha (undocumented)
@@ -194,9 +201,10 @@ export type HassEventBase = {
 // Warning: (ae-forgotten-export) The symbol "BlockFailed" needs to be exported by the entry point index.d.ts
 // Warning: (ae-forgotten-export) The symbol "BlockFinished" needs to be exported by the entry point index.d.ts
 // Warning: (ae-forgotten-export) The symbol "BlockStarted" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "SequenceAborted" needs to be exported by the entry point index.d.ts
 //
 // @alpha (undocumented)
-export type HassLegoEvent<I = unknown, O = unknown> = AutomationRegistered<any, I, O> | GeneralFailure | StateChanged | TriggerFailed | TriggerFinished | TriggerStarted | BlockFailed<I, O> | BlockFinished<I, O> | BlockStarted<I, O>;
+export type HassLegoEvent<I = unknown, O = unknown> = AutomationRegistered<I, O> | GeneralFailure | StateChanged | TriggerFailed | TriggerFinished | TriggerStarted | BlockFailed<I, O> | BlockFinished<I, O> | BlockStarted<I, O> | SequenceAborted<I, O>;
 
 // @alpha (undocumented)
 export type HassStateChangedEvent = HassEventBase & {
@@ -258,7 +266,7 @@ export class Trigger<O> {
         output: O;
     }>) | undefined);
     // (undocumented)
-    doTrigger(event: StateChanged, client: LegoClient, events: EventBus): Promise<{
+    doTrigger(event: StateChanged, client: LegoClient, events: EventBus, triggerId: string): Promise<{
         result: boolean;
         output: O;
     }>;
@@ -273,10 +281,6 @@ export type ValidInputOutputSequence<I, O, A extends readonly Block<unknown, unk
 infer First extends Block<unknown, unknown>,
 ...infer Rest extends readonly Block<unknown, unknown>[]
 ] ? InputType<First> extends I ? readonly [First, ...ValidInputOutputSequence<OutputType<First>, O, Rest>] : never : never;
-
-// Warnings were encountered during analysis:
-//
-// src/building-blocks/automation.ts:31:7 - (ae-forgotten-export) The symbol "ExecutionMode" needs to be exported by the entry point index.d.ts
 
 // (No @packageDocumentation comment for this package)
 

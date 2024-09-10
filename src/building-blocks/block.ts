@@ -24,6 +24,7 @@ export abstract class Block<I = void, O = void> {
   protected abstract run(
     client: LegoClient,
     events: EventBus,
+    triggerId: string,
     input: I
   ): Promise<BlockOutput<O>> | BlockOutput<O>;
 
@@ -31,11 +32,13 @@ export abstract class Block<I = void, O = void> {
     client: LegoClient,
     events: EventBus,
     input: I,
+    triggerId: string,
     parent?: Block<unknown, unknown>,
     triggeredBy?: Trigger<unknown>
   ): Promise<BlockOutput<O> & { success: boolean }> {
     try {
       events.emit({
+        triggerId,
         type: this.typeString,
         status: "started",
         name: this.name,
@@ -43,8 +46,9 @@ export abstract class Block<I = void, O = void> {
         triggeredBy,
         parent,
       });
-      const result = await this.run(client, events, input);
+      const result = await this.run(client, events, triggerId, input);
       events.emit({
+        triggerId,
         type: this.typeString,
         status: "finished",
         name: this.name,
@@ -56,6 +60,7 @@ export abstract class Block<I = void, O = void> {
     } catch (error) {
       if (error instanceof Error) {
         events.emit({
+          triggerId,
           type: this.typeString,
           status: "failed",
           block: this,
