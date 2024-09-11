@@ -48,7 +48,7 @@ export interface AssertionConfig<I, O> {
     // (undocumented)
     readonly name: string;
     // (undocumented)
-    readonly predicate: (client: LegoClient, input?: I) => boolean | {
+    readonly predicate: (client: LegoClient, input?: I) => Promise<boolean> | boolean | {
         result: boolean;
         output: O;
     } | Promise<{
@@ -58,30 +58,28 @@ export interface AssertionConfig<I, O> {
 }
 
 // @alpha (undocumented)
-export class Automation<A extends readonly Block<unknown, unknown>[], I = GetSequenceInput<A>, O = GetSequenceOutput<A>> extends Block<I, O> {
-    constructor(config: AutomationConfig<A, I, O>);
+export class Automation<const A extends readonly any[], I = GetSequenceInput<A>, O = GetSequenceOutput<A>> extends Block<I, O> {
+    constructor(config: {
+        name: string;
+        actions: BlockRetainType<A> & A & ValidInputOutputSequence<I, O, A>;
+        trigger?: Trigger<I>;
+        mode?: ExecutionMode;
+    });
     // (undocumented)
     attachTrigger(client: LegoClient, bus: EventBus): void;
     // (undocumented)
-    config: AutomationConfig<A, I, O>;
+    config: {
+        name: string;
+        actions: BlockRetainType<A> & A & ValidInputOutputSequence<I, O, A>;
+        trigger?: Trigger<I>;
+        mode?: ExecutionMode;
+    };
     // (undocumented)
     readonly name: string;
     // (undocumented)
     protected run(client: LegoClient, events: EventBus, triggerId: string, input?: I): Promise<BlockOutput<O>>;
     // (undocumented)
     protected typeString: string;
-}
-
-// @alpha (undocumented)
-export interface AutomationConfig<A extends readonly Block<unknown, unknown>[] = Block<unknown, unknown>[], I = GetSequenceInput<A>, O = GetSequenceOutput<A>> {
-    // (undocumented)
-    actions: A & ValidInputOutputSequence<I, O, A>;
-    // (undocumented)
-    mode?: ExecutionMode;
-    // (undocumented)
-    name: string;
-    // (undocumented)
-    trigger?: Trigger<I>;
 }
 
 // @alpha (undocumented)
@@ -112,11 +110,15 @@ export abstract class Block<I = void, O = void> {
     protected abstract readonly typeString: string;
 }
 
-// Warning: (ae-forgotten-export) The symbol "MergeStrategyCallback" needs to be exported by the entry point index.d.ts
 // Warning: (ae-forgotten-export) The symbol "ExecuteConcurrently" needs to be exported by the entry point index.d.ts
 //
 // @alpha (undocumented)
-export const concurrently: <I, O, A extends readonly Block<unknown, unknown>[]>(actions: A, mergeStrategy?: MergeStrategyCallback<A, O>) => ExecuteConcurrently<I, O, A>;
+export const concurrently: <A extends readonly Block<unknown, unknown>[], I = void, O = void>(actions: A) => ExecuteConcurrently<A, I, O>;
+
+// @alpha (undocumented)
+export class EntityDoesNotExistError extends HassLegoError {
+    constructor(id: string);
+}
 
 // @alpha (undocumented)
 export class EventBus {
@@ -206,6 +208,11 @@ export type HassEventBase = {
     context: HassContext;
 };
 
+// @alpha (undocumented)
+export class HassLegoError extends Error {
+    constructor(message: string);
+}
+
 // Warning: (ae-forgotten-export) The symbol "TriggerFailed" needs to be exported by the entry point index.d.ts
 // Warning: (ae-forgotten-export) The symbol "TriggerFinished" needs to be exported by the entry point index.d.ts
 // Warning: (ae-forgotten-export) The symbol "TriggerStarted" needs to be exported by the entry point index.d.ts
@@ -227,6 +234,11 @@ export type HassStateChangedEvent = HassEventBase & {
     };
 };
 
+// @alpha (undocumented)
+export class InitialStatesNotLoadedError extends HassLegoError {
+    constructor();
+}
+
 // @alpha
 export type InputType<T extends Block<unknown, unknown>> = Exclude<T["inputType"], undefined>;
 
@@ -243,8 +255,7 @@ export class LegoClient {
     getState(id: string): string;
     // (undocumented)
     getWebsocketServer(): Server<IncomingMessage, ServerResponse>;
-    // (undocumented)
-    init(): Promise<void>;
+    loadStates(): Promise<void>;
     // (undocumented)
     onStateChanged(id: string, callback: (event: HassStateChangedEvent) => void): void;
     // (undocumented)
@@ -260,6 +271,14 @@ export type OutputType<T extends Block<unknown, unknown>> = Exclude<T["outputTyp
 
 // @alpha (undocumented)
 export const renderSimpleLog: (bus: EventBus, staticLog: boolean) => void;
+
+// @alpha (undocumented)
+export const sequence: <const A extends readonly any[], I = GetSequenceInput<A>, O = GetSequenceOutput<A>>(actions: BlockRetainType<A> & A & ValidInputOutputSequence<I, O, A>, mode?: ExecutionMode) => Automation<A, I, O>;
+
+// @alpha (undocumented)
+export class SequenceAbortedError extends HassLegoError {
+    constructor(name: string);
+}
 
 // @alpha (undocumented)
 export interface StateChanged {
@@ -296,6 +315,10 @@ export type ValidInputOutputSequence<I, O, A extends readonly Block<unknown, unk
 infer First extends Block<unknown, unknown>,
 ...infer Rest extends readonly Block<unknown, unknown>[]
 ] ? InputType<First> extends I ? readonly [First, ...ValidInputOutputSequence<OutputType<First>, O, Rest>] : never : never;
+
+// Warnings were encountered during analysis:
+//
+// src/building-blocks/automation.ts:33:7 - (ae-forgotten-export) The symbol "BlockRetainType" needs to be exported by the entry point index.d.ts
 
 // (No @packageDocumentation comment for this package)
 

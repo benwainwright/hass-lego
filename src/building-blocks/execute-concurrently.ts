@@ -2,17 +2,13 @@ import { LegoClient, EventBus } from "@core";
 import { BlockOutput, GetOutputs } from "@types";
 import { Block } from "./block.ts";
 
-type MergeStrategyCallback<A extends readonly Block<unknown, unknown>[], O> = (
-  ...inputs: GetOutputs<A>
-) => O;
-
 /**
  * @alpha
  */
 export class ExecuteConcurrently<
-  I,
-  O,
-  A extends readonly Block<unknown, unknown>[]
+  A extends readonly Block<unknown, unknown>[],
+  I = void,
+  O = void
 > extends Block<I, O> {
   public override name: string;
 
@@ -22,7 +18,6 @@ export class ExecuteConcurrently<
     private config: {
       name: string;
       actions: A;
-      mergeStrategy?: MergeStrategyCallback<A, O>;
     }
   ) {
     super();
@@ -55,11 +50,7 @@ export class ExecuteConcurrently<
       (success) => success.output
     ) as unknown as GetOutputs<A>;
 
-    const finalOutputs = this.config.mergeStrategy
-      ? this.config.mergeStrategy(...outputs)
-      : undefined;
-
-    return { continue: true, output: finalOutputs as O };
+    return { continue: true, output: outputs as O };
   }
 }
 
@@ -68,16 +59,14 @@ export class ExecuteConcurrently<
  * @alpha
  */
 export const concurrently = <
-  I,
-  O,
-  A extends readonly Block<unknown, unknown>[]
+  A extends readonly Block<unknown, unknown>[],
+  I = void,
+  O = void
 >(
-  actions: A,
-  mergeStrategy?: MergeStrategyCallback<A, O>
+  actions: A
 ) => {
-  return new ExecuteConcurrently<I, O, A>({
+  return new ExecuteConcurrently<A, I, O>({
     name: "Execute Concurrently",
     actions,
-    mergeStrategy,
   });
 };

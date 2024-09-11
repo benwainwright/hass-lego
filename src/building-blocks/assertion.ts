@@ -13,6 +13,7 @@ export interface AssertionConfig<I, O> {
     client: LegoClient,
     input?: I
   ) =>
+    | Promise<boolean>
     | boolean
     | { result: boolean; output: O }
     | Promise<{ result: boolean; output: O }>;

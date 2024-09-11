@@ -14,8 +14,10 @@ export type {
   GetSequenceOutput,
   InputType,
   OutputType,
+  OutputTypeKeepPromise,
   GetOutputs,
   GetResults,
+  BlockRetainType,
 } from "./valid-input-output-sequence.ts";
 
 export type {
@@ -31,9 +33,4 @@ export { ExecutionMode } from "./execution-mode.ts";
 
 export type { Expand, ExpandRecursively } from "./expand.ts";
 
-export {
-  HassLegoError,
-  SequenceAbortedError,
-  InitialStatesNotLoadedError,
-  EntityDoesNotExistError,
-} from "@errors";
+export type { IsStrictlyAny } from "./is-strictly-any.ts";

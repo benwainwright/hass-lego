@@ -1,14 +1,10 @@
 import { HassApi } from "homeassistant-ws";
 import { Automation, Block } from "@building-blocks";
-import {
-  EntityDoesNotExistError,
-  HassEntity,
-  HassStateChangedEvent,
-  InitialStatesNotLoadedError,
-} from "@types";
+import { HassEntity, HassStateChangedEvent } from "@types";
 import { EventBus } from "./event-bus.ts";
 import { createServer } from "http";
 import { Server } from "socket.io";
+import { EntityDoesNotExistError, InitialStatesNotLoadedError } from "@errors";
 
 /**
  * @alpha
@@ -18,6 +14,10 @@ export class LegoClient {
 
   public constructor(private client: HassApi, private bus: EventBus) {}
 
+  /**
+   * Load all available states from home assistant. This will reset the state cache -
+   * call this if you need to remove non existant entities from cache
+   */
   public async loadStates() {
     const states = (await this.client.getStates()) as HassEntity[];
     const statesMap = new Map<string, HassEntity>();

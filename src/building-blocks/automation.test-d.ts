@@ -15,7 +15,7 @@ describe("the automation class", () => {
 
     const foo = new Automation({
       name: "this automation",
-      actions: [oneAction],
+      actions: [oneAction] as const,
     });
 
     expectTypeOf(foo).toMatchTypeOf<
@@ -216,7 +216,7 @@ describe("the automation class", () => {
 
     const foo = new Automation({
       name: "this automation",
-      actions: [oneAction, twoAction, threeAction, fourAction],
+      actions: [oneAction, twoAction, threeAction, fourAction] as const,
     });
 
     expectTypeOf(foo).toMatchTypeOf<

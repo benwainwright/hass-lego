@@ -24,12 +24,18 @@ export { ExecutionMode } from "@types";
 export {
   Trigger,
   concurrently,
+  sequence,
   Automation,
   Action,
   Assertion,
   Block,
 } from "@building-blocks";
 
-export type { AssertionConfig, AutomationConfig } from "@building-blocks";
+export type { AssertionConfig } from "@building-blocks";
 
-export { HassLegoError, SequenceAbortedError } from "@errors"
+export {
+  HassLegoError,
+  SequenceAbortedError,
+  InitialStatesNotLoadedError,
+  EntityDoesNotExistError,
+} from "@errors";
