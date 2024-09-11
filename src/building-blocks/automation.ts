@@ -31,7 +31,7 @@ export class Automation<
     public config: {
       name: string;
       actions: BlockRetainType<A> & A & ValidInputOutputSequence<I, O, A>;
-      trigger?: Trigger<I>;
+      trigger?: Trigger<I> | Trigger<I>[];
       mode?: ExecutionMode;
     }
   ) {
@@ -60,29 +60,38 @@ export class Automation<
       await new Promise((accept) => setTimeout(accept, 100));
     }
   }
+  
+  private getTriggers
 
   public attachTrigger(client: LegoClient, bus: EventBus) {
-    if (this.config.trigger) {
-      const { trigger } = this.config;
-      // eslint-disable-next-line @typescript-eslint/no-misused-promises
-      client.onStateChanged(trigger.id, async (event) => {
-        const newEvent: StateChanged = {
-          entity: event.data.entity_id,
-          hassEvent: event,
-          type: "hass-state-changed",
-        };
+    const triggers = !this.config.trigger
+      ? undefined
+      : Array.isArray(this.config.trigger)
+      ? this.config.trigger
+      : [this.config.trigger];
 
-        const triggerId = v4();
-        const { result, output } = await trigger.doTrigger(
-          newEvent,
-          client,
-          bus,
-          triggerId
-        );
+    if (triggers && triggers.length > 0) {
+      triggers.forEach((thisTrigger) => {
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises
+        client.onStateChanged(thisTrigger.id, async (event) => {
+          const newEvent: StateChanged = {
+            entity: event.data.entity_id,
+            hassEvent: event,
+            type: "hass-state-changed",
+          };
 
-        if (result) {
-          await this.execute(client, bus, output, triggerId, this);
-        }
+          const triggerId = v4();
+          const { result, output } = await thisTrigger.doTrigger(
+            newEvent,
+            client,
+            bus,
+            triggerId
+          );
+
+          if (result) {
+            await this.execute(client, bus, output, triggerId, this);
+          }
+        });
       });
     } else {
       throw new Error("Automation has no trigger so cannot be attached");
