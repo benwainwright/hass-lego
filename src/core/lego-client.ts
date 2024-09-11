@@ -2,6 +2,8 @@ import { HassApi } from "homeassistant-ws";
 import { Automation, Block } from "@building-blocks";
 import { HassEntity, HassStateChangedEvent } from "@types";
 import { EventBus } from "./event-bus.ts";
+import { createServer } from "http";
+import { Server } from "socket.io";
 
 /**
  * @alpha
@@ -20,6 +22,30 @@ export class LegoClient {
 
   public getState(id: string) {
     return this.getEntity(id).state;
+  }
+
+  public getWebsocketServer() {
+    const server = createServer((request, response) => {
+      response.writeHead(200, { "content-type": "text/plain" });
+      response.end("Websocket server is running!");
+    });
+
+    const io = new Server(server, {
+      cors: {
+        origin: "http://localhost:3000",
+        methods: ["GET", "POST"],
+      },
+    });
+
+    io.on("connection", (socket) => {
+      this.bus.subscribe((event) => {
+        if (event.type !== "hass-state-changed") {
+          socket.emit("hass-lego-event", event);
+        }
+      });
+    });
+
+    return server;
   }
 
   public getEntity(id: string) {
@@ -60,6 +86,8 @@ export class LegoClient {
       block: automation,
     });
   }
+
+  public startWebsocket() {}
 
   public onStateChanged(
     id: string,

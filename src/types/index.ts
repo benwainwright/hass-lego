@@ -14,6 +14,8 @@ export type {
   GetSequenceOutput,
   InputType,
   OutputType,
+  GetOutputs,
+  GetResults,
 } from "./valid-input-output-sequence.ts";
 
 export type {
@@ -26,3 +28,5 @@ export type {
 export type { BlockOutput } from "./block-output.ts";
 
 export { ExecutionMode } from "./execution-mode.ts";
+
+export type { Expand, ExpandRecursively } from "./expand.ts";

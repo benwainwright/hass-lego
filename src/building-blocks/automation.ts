@@ -16,6 +16,20 @@ import { v4 } from "uuid";
 import { SequenceAbortedError } from "./sequence-aborted-error.ts";
 
 /**
+ *  @alpha
+ */
+export interface AutomationConfig<
+  A extends readonly Block<unknown, unknown>[] = Block<unknown, unknown>[],
+  I = GetSequenceInput<A>,
+  O = GetSequenceOutput<A>
+> {
+  name: string;
+  actions: A & ValidInputOutputSequence<I, O, A>;
+  trigger?: Trigger<I>;
+  mode?: ExecutionMode;
+}
+
+/**
  * @alpha
  */
 export class Automation<
@@ -25,14 +39,7 @@ export class Automation<
 > extends Block<I, O> {
   private executionQueue = new Queue<SequenceExecutor<I, O>>();
   public readonly name: string;
-  public constructor(
-    public config: {
-      name: string;
-      actions: A & ValidInputOutputSequence<I, O, A>;
-      trigger?: Trigger<I>;
-      mode?: ExecutionMode;
-    }
-  ) {
+  public constructor(public config: AutomationConfig<A, I, O>) {
     super();
     this.name = this.config.name;
     void this.startLoop();

@@ -45,15 +45,18 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@types/ws": "^8.5.12",
     "homeassistant-ws": "0.2.3",
     "ink": "5.0.1",
     "ink-spinner": "5.0.0",
     "ink-table": "3.1.0",
     "queue-typescript": "^1.0.1",
     "react": "18.3.1",
+    "socket.io": "^4.7.5",
     "uuid": "10.0.0",
     "vitest-mock-extended": "^2.0.2",
-    "vitest-when": "^0.4.1"
+    "vitest-when": "^0.4.1",
+    "ws": "^8.18.0"
   },
   "devDependencies": {
     "@microsoft/api-extractor": "7.47.7",

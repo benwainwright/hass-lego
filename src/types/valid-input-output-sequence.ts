@@ -67,3 +67,22 @@ export type ValidInputOutputSequence<
     ? readonly [First, ...ValidInputOutputSequence<OutputType<First>, O, Rest>]
     : never
   : never;
+
+export type GetOutputs<T extends readonly Block<unknown, unknown>[]> =
+  T extends readonly [
+    infer First extends Block<unknown, unknown>,
+    ...infer Rest extends Block<unknown, unknown>[]
+  ]
+    ? readonly [OutputType<First>, ...GetOutputs<Rest>]
+    : readonly [];
+
+export type GetResults<T extends readonly Block<unknown, unknown>[]> =
+  T extends readonly [
+    infer First extends Block<unknown, unknown>,
+    ...infer Rest extends Block<unknown, unknown>[]
+  ]
+    ? readonly [
+        { continue: boolean; output: OutputType<First> },
+        ...GetOutputs<Rest>
+      ]
+    : readonly [];

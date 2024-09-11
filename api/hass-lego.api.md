@@ -5,6 +5,9 @@
 ```ts
 
 import { HassApi } from 'homeassistant-ws';
+import { IncomingMessage } from 'http';
+import { Server } from 'http';
+import { ServerResponse } from 'http';
 
 // @alpha
 export class Action<I = void, O = void> extends Block<I, O> {
@@ -56,27 +59,29 @@ export interface AssertionConfig<I, O> {
 
 // @alpha (undocumented)
 export class Automation<A extends readonly Block<unknown, unknown>[], I = GetSequenceInput<A>, O = GetSequenceOutput<A>> extends Block<I, O> {
-    constructor(config: {
-        name: string;
-        actions: A & ValidInputOutputSequence<I, O, A>;
-        trigger?: Trigger<I>;
-        mode?: ExecutionMode;
-    });
+    constructor(config: AutomationConfig<A, I, O>);
     // (undocumented)
     attachTrigger(client: LegoClient, bus: EventBus): void;
     // (undocumented)
-    config: {
-        name: string;
-        actions: A & ValidInputOutputSequence<I, O, A>;
-        trigger?: Trigger<I>;
-        mode?: ExecutionMode;
-    };
+    config: AutomationConfig<A, I, O>;
     // (undocumented)
     readonly name: string;
     // (undocumented)
     protected run(client: LegoClient, events: EventBus, triggerId: string, input?: I): Promise<BlockOutput<O>>;
     // (undocumented)
     protected typeString: string;
+}
+
+// @alpha (undocumented)
+export interface AutomationConfig<A extends readonly Block<unknown, unknown>[] = Block<unknown, unknown>[], I = GetSequenceInput<A>, O = GetSequenceOutput<A>> {
+    // (undocumented)
+    actions: A & ValidInputOutputSequence<I, O, A>;
+    // (undocumented)
+    mode?: ExecutionMode;
+    // (undocumented)
+    name: string;
+    // (undocumented)
+    trigger?: Trigger<I>;
 }
 
 // @alpha (undocumented)
@@ -106,6 +111,12 @@ export abstract class Block<I = void, O = void> {
     // (undocumented)
     protected abstract readonly typeString: string;
 }
+
+// Warning: (ae-forgotten-export) The symbol "MergeStrategyCallback" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "ExecuteConcurrently" needs to be exported by the entry point index.d.ts
+//
+// @alpha (undocumented)
+export const concurrently: <I, O, A extends readonly Block<unknown, unknown>[]>(actions: A, mergeStrategy?: MergeStrategyCallback<A, O>) => ExecuteConcurrently<I, O, A>;
 
 // @alpha (undocumented)
 export class EventBus {
@@ -231,11 +242,15 @@ export class LegoClient {
     // (undocumented)
     getState(id: string): string;
     // (undocumented)
+    getWebsocketServer(): Server<IncomingMessage, ServerResponse>;
+    // (undocumented)
     init(): Promise<void>;
     // (undocumented)
     onStateChanged(id: string, callback: (event: HassStateChangedEvent) => void): void;
     // (undocumented)
     registerAutomation<A extends ReadonlyArray<Block<any, any>>, I = any, O = any>(automation: Automation<A, I, O>): void;
+    // (undocumented)
+    startWebsocket(): void;
     // (undocumented)
     states: Map<string, HassEntity> | undefined;
 }
