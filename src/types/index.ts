@@ -27,7 +27,7 @@ export type {
   GeneralFailure,
 } from "./hass-lego-events.ts";
 
-export type { BlockOutput } from "./block-output.ts";
+export type { BlockOutput, ContinueOutput, StopOutput } from "./block-output.ts";
 
 export { ExecutionMode } from "./execution-mode.ts";
 

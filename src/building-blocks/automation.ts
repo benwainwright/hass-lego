@@ -14,7 +14,7 @@ import {
 import { Block } from "./block.ts";
 import { SequenceExecutor } from "./sequence-executer.ts";
 import { v4 } from "uuid";
-import { SequenceAbortedError } from "./sequence-aborted-error.ts";
+import { SequenceAbortedError } from "@errors";
 
 /**
  * @alpha

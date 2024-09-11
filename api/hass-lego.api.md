@@ -110,10 +110,16 @@ export abstract class Block<I = void, O = void> {
     protected abstract readonly typeString: string;
 }
 
-// Warning: (ae-forgotten-export) The symbol "ExecuteConcurrently" needs to be exported by the entry point index.d.ts
-//
 // @alpha (undocumented)
-export const concurrently: <A extends readonly Block<unknown, unknown>[], I = void, O = void>(actions: A) => ExecuteConcurrently<A, I, O>;
+export const concurrently: <A extends readonly Block<unknown, unknown>[], I = void, O = void>(actions: A) => Block<I, O>;
+
+// @alpha (undocumented)
+export interface ContinueOutput<O> {
+    // (undocumented)
+    continue: true;
+    // (undocumented)
+    output: O;
+}
 
 // @alpha (undocumented)
 export class EntityDoesNotExistError extends HassLegoError {
@@ -288,6 +294,12 @@ export interface StateChanged {
     hassEvent: HassStateChangedEvent;
     // (undocumented)
     type: "hass-state-changed";
+}
+
+// @alpha (undocumented)
+export interface StopOutput {
+    // (undocumented)
+    continue: false;
 }
 
 // @alpha (undocumented)

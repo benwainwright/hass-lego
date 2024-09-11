@@ -17,6 +17,8 @@ export type {
   HassEvent,
   HassEventBase,
   ValidInputOutputSequence,
+  ContinueOutput,
+  StopOutput,
 } from "@types";
 
 export { ExecutionMode } from "@types";

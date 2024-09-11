@@ -15,7 +15,7 @@ export class ExecuteConcurrently<
   protected override typeString = "execute-concurrently";
 
   public constructor(
-    private config: {
+    public config: {
       name: string;
       actions: A;
     }
@@ -59,12 +59,13 @@ export class ExecuteConcurrently<
  * @alpha
  */
 export const concurrently = <
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters
   A extends readonly Block<unknown, unknown>[],
   I = void,
   O = void
 >(
   actions: A
-) => {
+): Block<I, O> => {
   return new ExecuteConcurrently<A, I, O>({
     name: "Execute Concurrently",
     actions,
