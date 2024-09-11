@@ -42,10 +42,27 @@ export class LegoClient {
       },
     });
 
+    const stringifyCircularJSON = (obj: unknown) => {
+      const seen = new WeakSet();
+      return JSON.stringify(obj, (k, v) => {
+        if (v !== null && typeof v === "object") {
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+          if (seen.has(v)) return;
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+          seen.add(v);
+        }
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+        return v;
+      });
+    };
+
     io.on("connection", (socket) => {
       this.bus.subscribe((event) => {
         if (event.type !== "hass-state-changed") {
-          socket.emit("hass-lego-event", event);
+          socket.emit(
+            "hass-lego-event",
+            JSON.parse(stringifyCircularJSON(event))
+          );
         }
       });
     });

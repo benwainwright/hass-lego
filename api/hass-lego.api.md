@@ -25,7 +25,7 @@ export class Action<I = void, O = void> extends Block<I, O> {
     // Warning: (ae-forgotten-export) The symbol "BlockOutput" needs to be exported by the entry point index.d.ts
     //
     // (undocumented)
-    run(client: LegoClient, events: EventBus, triggerId: string, input: I): Promise<BlockOutput<O>>;
+    run(client: LegoClient, events: EventBus, triggerId: string, executeId: string, input: I): Promise<BlockOutput<O>>;
     // (undocumented)
     protected typeString: string;
 }
@@ -38,7 +38,7 @@ export class Assertion<I = void, O = void> extends Block<I, O> {
     // (undocumented)
     readonly name: string;
     // (undocumented)
-    run(client: LegoClient, events: EventBus, triggerId: string, input: I): Promise<BlockOutput<O>>;
+    run(client: LegoClient, events: EventBus, triggerId: string, executeId: string, input: I): Promise<BlockOutput<O>>;
     // (undocumented)
     protected typeString: string;
 }
@@ -62,7 +62,7 @@ export class Automation<const A extends readonly any[], I = GetSequenceInput<A>,
     constructor(config: {
         name: string;
         actions: BlockRetainType<A> & A & ValidInputOutputSequence<I, O, A>;
-        trigger?: Trigger<I>;
+        trigger?: Trigger<I> | Trigger<I>[];
         mode?: ExecutionMode;
     });
     // (undocumented)
@@ -71,13 +71,13 @@ export class Automation<const A extends readonly any[], I = GetSequenceInput<A>,
     config: {
         name: string;
         actions: BlockRetainType<A> & A & ValidInputOutputSequence<I, O, A>;
-        trigger?: Trigger<I>;
+        trigger?: Trigger<I> | Trigger<I>[];
         mode?: ExecutionMode;
     };
     // (undocumented)
     readonly name: string;
     // (undocumented)
-    protected run(client: LegoClient, events: EventBus, triggerId: string, input?: I): Promise<BlockOutput<O>>;
+    protected run(client: LegoClient, events: EventBus, triggerId: string, executeId: string, input?: I): Promise<BlockOutput<O>>;
     // (undocumented)
     protected typeString: string;
 }
@@ -105,7 +105,7 @@ export abstract class Block<I = void, O = void> {
     abstract readonly name: string;
     outputType: O | undefined;
     // (undocumented)
-    protected abstract run(client: LegoClient, events: EventBus, triggerId: string, input: I): Promise<BlockOutput<O>> | BlockOutput<O>;
+    protected abstract run(client: LegoClient, events: EventBus, triggerId: string, executeId: string, input: I): Promise<BlockOutput<O>> | BlockOutput<O>;
     // (undocumented)
     protected abstract readonly typeString: string;
 }
@@ -133,6 +133,7 @@ export class EventBus {
     // (undocumented)
     subscribe<I, O>(callback: (event: HassLegoEvent<I, O> & {
         id: string;
+        timestamp: string;
     }) => void): void;
 }
 
@@ -312,7 +313,7 @@ export class Trigger<O> {
         output: O;
     }>) | undefined);
     // (undocumented)
-    doTrigger(event: StateChanged, client: LegoClient, events: EventBus, triggerId: string): Promise<{
+    doTrigger(event: StateChanged, client: LegoClient, events: EventBus, triggerId: string, parent: Block<unknown, unknown>): Promise<{
         result: boolean;
         output: O;
     }>;

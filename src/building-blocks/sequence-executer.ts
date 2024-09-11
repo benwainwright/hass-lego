@@ -19,6 +19,7 @@ export class SequenceExecutor<I, O> {
     private events: EventBus,
     private parent: Block<unknown, unknown>,
     public triggerId: string,
+    public executeId: string,
     private input?: I
   ) {
     this.executionQueue = new Queue(...sequence);
@@ -83,6 +84,7 @@ export class SequenceExecutor<I, O> {
     this.bus.emit(SEQUENCE_EXECUTOR_ABORTED);
     this.events.emit({
       triggerId: this.triggerId,
+      executeId: this.executeId,
       type: "automation",
       status: "aborted",
       block: this.parent,

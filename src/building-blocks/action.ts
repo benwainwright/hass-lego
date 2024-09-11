@@ -27,6 +27,7 @@ export class Action<I = void, O = void> extends Block<I, O> {
     client: LegoClient,
     events: EventBus,
     triggerId: string,
+    executeId: string,
     input: I
   ): Promise<BlockOutput<O>> {
     const callbackResult = this.config.callback(client, input);

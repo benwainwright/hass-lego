@@ -1,5 +1,6 @@
 import { EventBus, LegoClient } from "@core";
 import { StateChanged } from "@types";
+import { Block } from "./block.ts";
 
 /**
  * @alpha
@@ -42,13 +43,15 @@ export class Trigger<O> {
     event: StateChanged,
     client: LegoClient,
     events: EventBus,
-    triggerId: string
+    triggerId: string,
+    parent: Block<unknown, unknown>
   ): Promise<{ result: boolean; output: O }> {
     try {
       events.emit({
         type: "trigger",
         status: "started",
         trigger: this,
+        parent,
         name: this.name,
         triggerId,
       });
@@ -59,6 +62,7 @@ export class Trigger<O> {
         type: "trigger",
         status: "finished",
         trigger: this,
+        parent,
         name: this.name,
         result: finalResult,
         triggerId,
@@ -70,6 +74,7 @@ export class Trigger<O> {
         events.emit({
           type: "trigger",
           triggerId,
+          parent,
           status: "failed",
           trigger: this,
           name: this.name,

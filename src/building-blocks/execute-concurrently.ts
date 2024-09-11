@@ -28,6 +28,7 @@ export class ExecuteConcurrently<
     client: LegoClient,
     events: EventBus,
     triggerId: string,
+    executeId: string,
     input: I
   ): Promise<BlockOutput<O>> {
     const results = await Promise.all(

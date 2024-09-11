@@ -60,15 +60,21 @@ export class Automation<
       await new Promise((accept) => setTimeout(accept, 100));
     }
   }
-  
-  private getTriggers
+
+  private getTriggers(triggers?: Trigger<I> | Trigger<I>[]) {
+    if (!triggers) {
+      return undefined;
+    }
+
+    if (Array.isArray(triggers)) {
+      return triggers;
+    }
+
+    return [triggers];
+  }
 
   public attachTrigger(client: LegoClient, bus: EventBus) {
-    const triggers = !this.config.trigger
-      ? undefined
-      : Array.isArray(this.config.trigger)
-      ? this.config.trigger
-      : [this.config.trigger];
+    const triggers = this.getTriggers(this.config.trigger);
 
     if (triggers && triggers.length > 0) {
       triggers.forEach((thisTrigger) => {
@@ -85,7 +91,8 @@ export class Automation<
             newEvent,
             client,
             bus,
-            triggerId
+            triggerId,
+            this
           );
 
           if (result) {
@@ -109,6 +116,7 @@ export class Automation<
     client: LegoClient,
     events: EventBus,
     triggerId: string,
+    executeId: string,
     input?: I
   ): Promise<BlockOutput<O>> {
     try {
@@ -118,6 +126,7 @@ export class Automation<
         events,
         this,
         triggerId,
+        executeId,
         input
       );
       const mode = this.config.mode ?? ExecutionMode.Restart;

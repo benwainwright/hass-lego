@@ -28,6 +28,7 @@ export interface StateChanged {
 
 interface BaseHassEvent<I = unknown, O = unknown> {
   triggerId: string;
+  executeId: string;
   name: string;
   block: Block<I, O>;
 }

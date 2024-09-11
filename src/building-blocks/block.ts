@@ -1,6 +1,7 @@
 import { EventBus, LegoClient } from "@core";
 import { BlockOutput } from "@types";
 import { Trigger } from "./trigger.ts";
+import { v4 } from "uuid";
 
 /**
  * @alpha
@@ -25,6 +26,7 @@ export abstract class Block<I = void, O = void> {
     client: LegoClient,
     events: EventBus,
     triggerId: string,
+    executeId: string,
     input: I
   ): Promise<BlockOutput<O>> | BlockOutput<O>;
 
@@ -36,8 +38,10 @@ export abstract class Block<I = void, O = void> {
     parent?: Block<unknown, unknown>,
     triggeredBy?: Trigger<unknown>
   ): Promise<BlockOutput<O> & { success: boolean }> {
+    const executeId = v4();
     try {
       events.emit({
+        executeId,
         triggerId,
         type: this.typeString,
         status: "started",
@@ -46,8 +50,15 @@ export abstract class Block<I = void, O = void> {
         triggeredBy,
         parent,
       });
-      const result = await this.run(client, events, triggerId, input);
+      const result = await this.run(
+        client,
+        events,
+        triggerId,
+        executeId,
+        input
+      );
       events.emit({
+        executeId,
         triggerId,
         type: this.typeString,
         status: "finished",
@@ -60,6 +71,7 @@ export abstract class Block<I = void, O = void> {
     } catch (error) {
       if (error instanceof Error) {
         events.emit({
+          executeId,
           triggerId,
           type: this.typeString,
           status: "failed",
