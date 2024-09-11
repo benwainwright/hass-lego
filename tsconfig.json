@@ -25,6 +25,7 @@
     "paths": {
       "@show": ["src/show/index.ts"],
       "@core": ["src/core/index.ts"],
+      "@errors": ["src/errors/index.ts"],
       "@types": ["src/types/index.ts"],
       "@utils": ["src/utils/index.ts"],
       "@building-blocks": ["src/building-blocks/index.ts"]

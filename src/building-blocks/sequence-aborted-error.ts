@@ -1,5 +1,5 @@
 export class SequenceAbortedError extends Error {
-  public constructor() {
-    super("Sequence was aborted");
+  public constructor(name: string) {
+    super(`Sequence '${name}' was aborted`);
   }
 }

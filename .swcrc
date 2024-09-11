@@ -38,6 +38,7 @@
     },
 
     "paths": {
+      "@errors": ["./src/errors/index.ts"],
       "@show": ["./src/show/index.ts"],
       "@core": ["./src/core/index.ts"],
       "@types": ["./src/types/index.ts"],

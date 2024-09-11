@@ -3,7 +3,7 @@ import { Block } from "./block.ts";
 import { EventBus, LegoClient } from "@core";
 import { BlockOutput } from "@types";
 import EventEmitter from "events";
-import { SequenceAbortedError } from "./sequence-aborted-error.ts";
+import { SequenceAbortedError } from "@errors";
 
 const SEQUENCE_EXECUTOR_FINISHED = "sequence-executor-finished";
 const SEQUENCE_EXECUTOR_ABORTED = "sequence-executor-aborted";
@@ -66,7 +66,7 @@ export class SequenceExecutor<I, O> {
 
           const abortedCallback = () => {
             this.bus.off(SEQUENCE_EXECUTOR_ABORTED, abortedCallback);
-            reject(new SequenceAbortedError());
+            reject(new SequenceAbortedError(this.parent.name));
           };
 
           this.bus.on(SEQUENCE_EXECUTOR_ABORTED, abortedCallback);

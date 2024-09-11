@@ -30,3 +30,10 @@ export type { BlockOutput } from "./block-output.ts";
 export { ExecutionMode } from "./execution-mode.ts";
 
 export type { Expand, ExpandRecursively } from "./expand.ts";
+
+export {
+  HassLegoError,
+  SequenceAbortedError,
+  InitialStatesNotLoadedError,
+  EntityDoesNotExistError,
+} from "@errors";

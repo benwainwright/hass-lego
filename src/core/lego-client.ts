@@ -1,6 +1,11 @@
 import { HassApi } from "homeassistant-ws";
 import { Automation, Block } from "@building-blocks";
-import { HassEntity, HassStateChangedEvent } from "@types";
+import {
+  EntityDoesNotExistError,
+  HassEntity,
+  HassStateChangedEvent,
+  InitialStatesNotLoadedError,
+} from "@types";
 import { EventBus } from "./event-bus.ts";
 import { createServer } from "http";
 import { Server } from "socket.io";
@@ -50,11 +55,11 @@ export class LegoClient {
 
   public getEntity(id: string) {
     if (!this.states) {
-      throw new Error("Initial states not loaded");
+      throw new InitialStatesNotLoadedError();
     }
     const state = this.states.get(id);
     if (!state) {
-      throw new Error(`Entity ${id} doesn't exist!`);
+      throw new EntityDoesNotExistError(id);
     }
     return state;
   }

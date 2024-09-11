@@ -31,3 +31,5 @@ export {
 } from "@building-blocks";
 
 export type { AssertionConfig, AutomationConfig } from "@building-blocks";
+
+export { HassLegoError, SequenceAbortedError } from "@errors"
