@@ -33,6 +33,17 @@ jobs:
       - name: Run Eslint
         run: pnpm run build
 
+
+  test:
+    name: Run test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup job
+        uses: ./.github/actions/install-dependencies
+      - name: Run Eslint
+        run: pnpm run build
+
   release:
     name: Release
     runs-on: ubuntu-latest
