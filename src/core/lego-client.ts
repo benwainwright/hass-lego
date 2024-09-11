@@ -18,7 +18,7 @@ export class LegoClient {
 
   public constructor(private client: HassApi, private bus: EventBus) {}
 
-  public async init() {
+  public async loadStates() {
     const states = (await this.client.getStates()) as HassEntity[];
     const statesMap = new Map<string, HassEntity>();
     states.forEach((state) => statesMap.set(state.entity_id, state));
