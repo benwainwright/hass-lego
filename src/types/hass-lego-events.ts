@@ -1,5 +1,5 @@
 import { Block, Trigger } from "@building-blocks";
-import { HassStateChangedEvent } from "./hass-events.ts";
+import { Event } from "homeassistant-typescript";
 
 /**
  * @alpha
@@ -23,7 +23,7 @@ export type HassLegoEvent<I = unknown, O = unknown> =
 export interface StateChanged {
   type: "hass-state-changed";
   entity: string;
-  hassEvent: HassStateChangedEvent;
+  hassEvent: Event;
 }
 
 interface BaseHassEvent<I = unknown, O = unknown> {

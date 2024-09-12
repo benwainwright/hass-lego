@@ -73,33 +73,35 @@ export class Automation<
     return [triggers];
   }
 
-  public attachTrigger(client: LegoClient, bus: EventBus) {
+  public async attachTrigger(client: LegoClient, bus: EventBus) {
     const triggers = this.getTriggers(this.config.trigger);
 
     if (triggers && triggers.length > 0) {
-      triggers.forEach((thisTrigger) => {
-        // eslint-disable-next-line @typescript-eslint/no-misused-promises
-        client.onStateChanged(thisTrigger.id, async (event) => {
-          const newEvent: StateChanged = {
-            entity: event.data.entity_id,
-            hassEvent: event,
-            type: "hass-state-changed",
-          };
+      await Promise.all(
+        triggers.map(async (thisTrigger) => {
+          // eslint-disable-next-line @typescript-eslint/no-misused-promises
+          await client.onStateChanged(thisTrigger.id, async (event) => {
+            const newEvent: StateChanged = {
+              entity: event.data.entity_id,
+              hassEvent: event,
+              type: "hass-state-changed",
+            };
 
-          const triggerId = v4();
-          const { result, output } = await thisTrigger.doTrigger(
-            newEvent,
-            client,
-            bus,
-            triggerId,
-            this
-          );
+            const triggerId = v4();
+            const { result, output } = await thisTrigger.doTrigger(
+              newEvent,
+              client,
+              bus,
+              triggerId,
+              this
+            );
 
-          if (result) {
-            await this.execute(client, bus, output, triggerId, this);
-          }
-        });
-      });
+            if (result) {
+              await this.execute(client, bus, output, triggerId, this);
+            }
+          });
+        })
+      );
     } else {
       throw new Error("Automation has no trigger so cannot be attached");
     }

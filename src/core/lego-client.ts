@@ -1,6 +1,6 @@
-import { HassApi } from "homeassistant-ws";
+import { IClient, Event } from "homeassistant-typescript";
 import { Automation, Block } from "@building-blocks";
-import { HassEntity, HassStateChangedEvent } from "@types";
+import { HassEntity } from "@types";
 import { EventBus } from "./event-bus.ts";
 import { createServer } from "http";
 import { Server } from "socket.io";
@@ -12,7 +12,7 @@ import { EntityDoesNotExistError, InitialStatesNotLoadedError } from "@errors";
 export class LegoClient {
   public states: Map<string, HassEntity> | undefined;
 
-  public constructor(private client: HassApi, private bus: EventBus) {}
+  public constructor(private client: IClient, private bus: EventBus) {}
 
   /**
    * Load all available states from home assistant. This will reset the state cache -
@@ -80,19 +80,21 @@ export class LegoClient {
     }
     return state;
   }
-  public async callService<T>(
-    domain: string,
-    service: string,
-    extraArgs?: Record<string, unknown>,
-    options?: {
-      returnResponse?: boolean;
-    }
-  ): Promise<T> {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    return await this.client.callService(domain, service, extraArgs, options);
+  public async callService(params: {
+    domain: string;
+    service: string;
+    target?: {
+      entity_id?: string;
+      area_id?: string;
+      device_id?: string;
+    };
+    data?: Record<string, unknown>;
+  }) {
+    console.log(params);
+    return await this.client.callService(params);
   }
 
-  public registerAutomation<
+  public async registerAutomation<
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     A extends ReadonlyArray<Block<any, any>>,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -100,7 +102,7 @@ export class LegoClient {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     O = any
   >(automation: Automation<A, I, O>) {
-    automation.attachTrigger(this, this.bus);
+    await automation.attachTrigger(this, this.bus);
     this.bus.emit({
       type: "automation",
       status: "registered",
@@ -109,12 +111,7 @@ export class LegoClient {
     });
   }
 
-  public startWebsocket() {}
-
-  public onStateChanged(
-    id: string,
-    callback: (event: HassStateChangedEvent) => void
-  ) {
+  public async onStateChanged(id: string, callback: (event: Event) => void) {
     try {
       if (!this.states) {
         throw new Error("Initial states not loaded");
@@ -126,8 +123,8 @@ export class LegoClient {
         );
       }
 
-      this.client.on("state_changed", (event: HassStateChangedEvent) => {
-        if (event.data.new_state && this.states) {
+      await this.client.subscribeToEvents((event: Event) => {
+        if (this.states) {
           this.states.set(event.data.entity_id, event.data.new_state);
         }
         if (event.data.entity_id === id) {

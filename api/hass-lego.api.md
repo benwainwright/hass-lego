@@ -4,7 +4,9 @@
 
 ```ts
 
-import { HassApi } from 'homeassistant-ws';
+import { CallServiceResponse } from 'homeassistant-typescript';
+import { Event as Event_2 } from 'homeassistant-typescript';
+import { IClient } from 'homeassistant-typescript';
 import { IncomingMessage } from 'http';
 import { Server } from 'http';
 import { ServerResponse } from 'http';
@@ -66,7 +68,7 @@ export class Automation<const A extends readonly any[], I = GetSequenceInput<A>,
         mode?: ExecutionMode;
     });
     // (undocumented)
-    attachTrigger(client: LegoClient, bus: EventBus): void;
+    attachTrigger(client: LegoClient, bus: EventBus): Promise<void>;
     // (undocumented)
     config: {
         name: string;
@@ -251,11 +253,18 @@ export type InputType<T extends Block<unknown, unknown>> = Exclude<T["inputType"
 
 // @alpha (undocumented)
 export class LegoClient {
-    constructor(client: HassApi, bus: EventBus);
+    constructor(client: IClient, bus: EventBus);
     // (undocumented)
-    callService<T>(domain: string, service: string, extraArgs?: Record<string, unknown>, options?: {
-        returnResponse?: boolean;
-    }): Promise<T>;
+    callService(params: {
+        domain: string;
+        service: string;
+        target?: {
+            entity_id?: string;
+            area_id?: string;
+            device_id?: string;
+        };
+        data?: Record<string, unknown>;
+    }): Promise<CallServiceResponse>;
     // (undocumented)
     getEntity(id: string): HassEntity;
     // (undocumented)
@@ -264,11 +273,9 @@ export class LegoClient {
     getWebsocketServer(): Server<IncomingMessage, ServerResponse>;
     loadStates(): Promise<void>;
     // (undocumented)
-    onStateChanged(id: string, callback: (event: HassStateChangedEvent) => void): void;
+    onStateChanged(id: string, callback: (event: Event_2) => void): Promise<void>;
     // (undocumented)
-    registerAutomation<A extends ReadonlyArray<Block<any, any>>, I = any, O = any>(automation: Automation<A, I, O>): void;
-    // (undocumented)
-    startWebsocket(): void;
+    registerAutomation<A extends ReadonlyArray<Block<any, any>>, I = any, O = any>(automation: Automation<A, I, O>): Promise<void>;
     // (undocumented)
     states: Map<string, HassEntity> | undefined;
 }
@@ -292,7 +299,7 @@ export interface StateChanged {
     // (undocumented)
     entity: string;
     // (undocumented)
-    hassEvent: HassStateChangedEvent;
+    hassEvent: Event_2;
     // (undocumented)
     type: "hass-state-changed";
 }
