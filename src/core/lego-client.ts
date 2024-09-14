@@ -80,17 +80,17 @@ export class LegoClient {
     }
     return state;
   }
+
   public async callService(params: {
     domain: string;
     service: string;
     target?: {
-      entity_id?: string;
-      area_id?: string;
-      device_id?: string;
+      entity_id?: string | string[];
+      area_id?: string | string[];
+      device_id?: string | string[];
     };
     data?: Record<string, unknown>;
   }) {
-    console.log(params);
     return await this.client.callService(params);
   }
 

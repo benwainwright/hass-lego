@@ -34,6 +34,6 @@ export class Action<I = void, O = void> extends Block<I, O> {
     const result =
       callbackResult instanceof Promise ? await callbackResult : callbackResult;
 
-    return { output: result, continue: true };
+    return { output: result, continue: true, type: "block" };
   }
 }

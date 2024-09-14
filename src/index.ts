@@ -25,15 +25,20 @@ export { ExecutionMode } from "@types";
 
 export {
   Trigger,
-  concurrently,
+  when,
+  IfThenElseCondition,
   sequence,
+  concurrently,
   Automation,
   Action,
   Assertion,
   Block,
 } from "@building-blocks";
 
-export type { AssertionConfig } from "@building-blocks";
+export type {
+  AssertionConfig,
+  IfThenElseConditionConfig,
+} from "@building-blocks";
 
 export {
   HassLegoError,

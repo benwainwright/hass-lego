@@ -42,6 +42,14 @@ export class Automation<
 
   protected override typeString = "automation";
 
+  public override async validate(client: LegoClient) {
+    await Promise.all(
+      this.config.actions.map(async (action) => {
+        await action.validate(client);
+      })
+    );
+  }
+
   private async startLoop() {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     while (true) {
@@ -75,6 +83,8 @@ export class Automation<
 
   public async attachTrigger(client: LegoClient, bus: EventBus) {
     const triggers = this.getTriggers(this.config.trigger);
+
+    await this.validate(client);
 
     if (triggers && triggers.length > 0) {
       await Promise.all(

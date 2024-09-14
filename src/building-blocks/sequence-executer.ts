@@ -29,7 +29,13 @@ export class SequenceExecutor<I, O> {
     let lastResult: (BlockOutput<unknown> & { success: boolean }) | undefined;
     while (this.executionQueue.length > 0) {
       const nextBlock = this.executionQueue.dequeue();
-      if (!lastResult || lastResult.continue) {
+      if (
+        !lastResult ||
+        (lastResult.continue &&
+          lastResult.type === "conditional" &&
+          lastResult.conditionResult) ||
+        (lastResult.continue && lastResult.type !== "conditional")
+      ) {
         const result = await nextBlock.execute(
           this.client,
           this.events,

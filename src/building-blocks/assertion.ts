@@ -41,14 +41,22 @@ export class Assertion<I = void, O = void> extends Block<I, O> {
     input: I
   ): Promise<BlockOutput<O>> {
     const callbackResult = this.config.predicate(client, input);
+
     const result =
       callbackResult instanceof Promise ? await callbackResult : callbackResult;
 
-    const finalResult =
-      typeof result === "object"
-        ? { continue: result.result, output: result.output }
-        : { continue: result, output: undefined as O };
-
-    return finalResult;
+    return typeof result === "object"
+      ? {
+          type: "conditional",
+          continue: true,
+          conditionResult: result.result,
+          output: result.output,
+        }
+      : {
+          type: "conditional",
+          continue: true,
+          conditionResult: result,
+          output: undefined as O,
+        };
   }
 }

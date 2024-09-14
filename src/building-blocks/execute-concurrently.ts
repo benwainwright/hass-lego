@@ -24,6 +24,14 @@ export class ExecuteConcurrently<
     this.name = this.config.name;
   }
 
+  public override async validate(client: LegoClient) {
+    await Promise.all(
+      this.config.actions.map(async (action) => {
+        await action.validate(client);
+      })
+    );
+  }
+
   protected override async run(
     client: LegoClient,
     events: EventBus,
@@ -51,7 +59,7 @@ export class ExecuteConcurrently<
       (success) => success.output
     ) as unknown as GetOutputs<A>;
 
-    return { continue: true, output: outputs as O };
+    return { continue: true, output: outputs as O, type: "block" };
   }
 }
 

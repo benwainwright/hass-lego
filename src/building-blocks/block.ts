@@ -20,6 +20,15 @@ export abstract class Block<I = void, O = void> {
    */
   public outputType: O | undefined;
 
+  /**
+   * If defined, this method will be called when the parent automation is registered.
+   * If any configuration is invalid, an error should be thrown
+   */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  public async validate(client: LegoClient): Promise<void> {
+    // Noop here
+  }
+
   protected abstract readonly typeString: string;
 
   protected abstract run(
@@ -57,6 +66,7 @@ export abstract class Block<I = void, O = void> {
         executeId,
         input
       );
+
       events.emit({
         executeId,
         triggerId,

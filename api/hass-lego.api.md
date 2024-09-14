@@ -82,6 +82,8 @@ export class Automation<const A extends readonly any[], I = GetSequenceInput<A>,
     protected run(client: LegoClient, events: EventBus, triggerId: string, executeId: string, input?: I): Promise<BlockOutput<O>>;
     // (undocumented)
     protected typeString: string;
+    // (undocumented)
+    validate(client: LegoClient): Promise<void>;
 }
 
 // @alpha (undocumented)
@@ -110,6 +112,7 @@ export abstract class Block<I = void, O = void> {
     protected abstract run(client: LegoClient, events: EventBus, triggerId: string, executeId: string, input: I): Promise<BlockOutput<O>> | BlockOutput<O>;
     // (undocumented)
     protected abstract readonly typeString: string;
+    validate(client: LegoClient): Promise<void>;
 }
 
 // @alpha (undocumented)
@@ -121,6 +124,8 @@ export interface ContinueOutput<O> {
     continue: true;
     // (undocumented)
     output: O;
+    // (undocumented)
+    type: "block";
 }
 
 // @alpha (undocumented)
@@ -243,6 +248,35 @@ export type HassStateChangedEvent = HassEventBase & {
     };
 };
 
+// Warning: (ae-incompatible-release-tags) The symbol "IfThenElseCondition" is marked as @public, but its signature references "Block" which is marked as @alpha
+//
+// @public
+export class IfThenElseCondition<TO = void, EO = void, PO = void, I = void> extends Block<I, TO | EO> {
+    constructor(config: IfThenElseConditionConfig<TO, EO, PO, I>);
+    // (undocumented)
+    readonly config: IfThenElseConditionConfig<TO, EO, PO, I>;
+    // (undocumented)
+    name: string;
+    // Warning: (ae-incompatible-release-tags) The symbol "run" is marked as @public, but its signature references "LegoClient" which is marked as @alpha
+    // Warning: (ae-incompatible-release-tags) The symbol "run" is marked as @public, but its signature references "EventBus" which is marked as @alpha
+    //
+    // (undocumented)
+    protected run(client: LegoClient, events: EventBus, triggerId: string, executeId: string, input: I): Promise<BlockOutput<TO | EO>>;
+    // (undocumented)
+    protected typeString: string;
+}
+
+// @public (undocumented)
+export interface IfThenElseConditionConfig<TO = void, EO = void, PO = void, I = void> {
+    // Warning: (ae-incompatible-release-tags) The symbol "assertion" is marked as @public, but its signature references "Assertion" which is marked as @alpha
+    readonly assertion: Assertion<I, PO>;
+    // Warning: (ae-incompatible-release-tags) The symbol "else" is marked as @public, but its signature references "Block" which is marked as @alpha
+    readonly else: Block<PO, EO>;
+    readonly name: string;
+    // Warning: (ae-incompatible-release-tags) The symbol "then" is marked as @public, but its signature references "Block" which is marked as @alpha
+    readonly then: Block<PO, TO>;
+}
+
 // @alpha (undocumented)
 export class InitialStatesNotLoadedError extends HassLegoError {
     constructor();
@@ -259,9 +293,9 @@ export class LegoClient {
         domain: string;
         service: string;
         target?: {
-            entity_id?: string;
-            area_id?: string;
-            device_id?: string;
+            entity_id?: string | string[];
+            area_id?: string | string[];
+            device_id?: string | string[];
         };
         data?: Record<string, unknown>;
     }): Promise<CallServiceResponse>;
@@ -336,9 +370,19 @@ infer First extends Block<unknown, unknown>,
 ...infer Rest extends readonly Block<unknown, unknown>[]
 ] ? InputType<First> extends I ? readonly [First, ...ValidInputOutputSequence<OutputType<First>, O, Rest>] : never : never;
 
+// @public
+export const when: <TO = void, EO = void, PO = void, I = void>(config: {
+    assertion: Assertion<I, PO>;
+    then: Block<PO, TO>;
+    else: Block<PO, EO>;
+}) => IfThenElseCondition<TO, EO, PO, I>;
+
 // Warnings were encountered during analysis:
 //
 // src/building-blocks/automation.ts:33:7 - (ae-forgotten-export) The symbol "BlockRetainType" needs to be exported by the entry point index.d.ts
+// src/building-blocks/condition.ts:117:3 - (ae-incompatible-release-tags) The symbol "assertion" is marked as @public, but its signature references "Assertion" which is marked as @alpha
+// src/building-blocks/condition.ts:118:3 - (ae-incompatible-release-tags) The symbol "then" is marked as @public, but its signature references "Block" which is marked as @alpha
+// src/building-blocks/condition.ts:119:3 - (ae-incompatible-release-tags) The symbol "else" is marked as @public, but its signature references "Block" which is marked as @alpha
 
 // (No @packageDocumentation comment for this package)
 
