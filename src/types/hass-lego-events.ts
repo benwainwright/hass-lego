@@ -5,7 +5,6 @@ import { Event } from "homeassistant-typescript";
  * @alpha
  */
 export type HassLegoEvent<I = unknown, O = unknown> =
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   | AutomationRegistered<I, O>
   | GeneralFailure
   | StateChanged
@@ -36,11 +35,7 @@ interface BaseHassEvent<I = unknown, O = unknown> {
 /**
  * @alpha
  */
-export interface AutomationRegistered<
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  I = unknown,
-  O = unknown
-> {
+export interface AutomationRegistered<I = unknown, O = unknown> {
   type: "automation";
   name: string;
   block: Block<I, O>;

@@ -18,6 +18,5 @@ export class ServiceCall extends Action {
     this.target = config.params.target;
   }
 
-  // eslint-disable-next-line @typescript-eslint/require-await
   override async validate() {}
 }
