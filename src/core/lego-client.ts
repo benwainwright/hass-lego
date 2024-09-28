@@ -19,6 +19,7 @@ export interface CorsOptions {
  */
 export class LegoClient {
   public states: Map<string, HassEntity> | undefined;
+  private automations: Block<unknown, unknown>[] = [];
 
   public constructor(private client: IClient, private bus: EventBus) {}
 
@@ -65,6 +66,13 @@ export class LegoClient {
     };
 
     io.on("connection", (socket) => {
+      socket.on("request-automations", () => {
+        const automations = this.automations.map(
+          (automation) => automation.name
+        );
+        socket.emit("automations", automations);
+      });
+
       this.bus.subscribe((event) => {
         if (event.type !== "hass-state-changed") {
           socket.emit(
@@ -104,12 +112,13 @@ export class LegoClient {
 
   public async registerAutomation<
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    A extends ReadonlyArray<Block<any, any>>,
+    A extends ReadonlyArray<any>,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     I = any,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     O = any
   >(automation: Automation<A, I, O>) {
+    this.automations.push(automation);
     await automation.attachTrigger(this, this.bus);
     this.bus.emit({
       type: "automation",
