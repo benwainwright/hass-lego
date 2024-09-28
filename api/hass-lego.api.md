@@ -129,6 +129,14 @@ export interface ContinueOutput<O> {
 }
 
 // @alpha (undocumented)
+export interface CorsOptions {
+    // (undocumented)
+    methods: string[];
+    // (undocumented)
+    origin: string;
+}
+
+// @alpha (undocumented)
 export class EntityDoesNotExistError extends HassLegoError {
     constructor(id: string);
 }
@@ -304,7 +312,9 @@ export class LegoClient {
     // (undocumented)
     getState(id: string): string;
     // (undocumented)
-    getWebsocketServer(): Server<IncomingMessage, ServerResponse>;
+    getWebsocketServer({ cors }: {
+        cors: CorsOptions;
+    }): Server<IncomingMessage, ServerResponse>;
     loadStates(): Promise<void>;
     // (undocumented)
     onStateChanged(id: string, callback: (event: Event_2) => void): Promise<void>;
