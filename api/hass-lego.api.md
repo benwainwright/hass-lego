@@ -319,7 +319,7 @@ export class LegoClient {
     // (undocumented)
     onStateChanged(id: string, callback: (event: Event_2) => void): Promise<void>;
     // (undocumented)
-    registerAutomation<A extends ReadonlyArray<Block<any, any>>, I = any, O = any>(automation: Automation<A, I, O>): Promise<void>;
+    registerAutomation<A extends ReadonlyArray<any>, I = any, O = any>(automation: Automation<A, I, O>): Promise<void>;
     // (undocumented)
     states: Map<string, HassEntity> | undefined;
 }
