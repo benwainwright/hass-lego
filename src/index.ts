@@ -1,4 +1,5 @@
 export { LegoClient, EventBus, renderSimpleLog } from "@core";
+export type { CorsOptions } from "@core";
 
 export type {
   GetSequenceOutput,

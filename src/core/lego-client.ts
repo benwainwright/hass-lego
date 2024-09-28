@@ -9,6 +9,14 @@ import { EntityDoesNotExistError, InitialStatesNotLoadedError } from "@errors";
 /**
  * @alpha
  */
+export interface CorsOptions {
+  origin: string;
+  methods: string[];
+}
+
+/**
+ * @alpha
+ */
 export class LegoClient {
   public states: Map<string, HassEntity> | undefined;
 
@@ -29,7 +37,7 @@ export class LegoClient {
     return this.getEntity(id).state;
   }
 
-  public getWebsocketServer() {
+  public getWebsocketServer({ cors }: { cors: CorsOptions }) {
     const server = createServer((request, response) => {
       response.writeHead(200, { "content-type": "text/plain" });
       response.end("Websocket server is running!");
@@ -37,8 +45,8 @@ export class LegoClient {
 
     const io = new Server(server, {
       cors: {
-        origin: "http://localhost:3000",
-        methods: ["GET", "POST"],
+        origin: cors.origin,
+        methods: cors.methods,
       },
     });
 

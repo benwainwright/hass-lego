@@ -19,9 +19,14 @@ describe("the action block", () => {
       callback,
     });
 
-    const result = await action.execute(client, bus, input);
+    const result = await action.execute(client, bus, input, "trigger");
 
-    expect(result).toEqual({ output, success: true, continue: true });
+    expect(result).toEqual({
+      output,
+      success: true,
+      continue: true,
+      type: "block",
+    });
   });
 
   it("returns a failure result when an error is thrown", async () => {
@@ -40,7 +45,7 @@ describe("the action block", () => {
       callback,
     });
 
-    const result = await action.execute(client, bus, input);
+    const result = await action.execute(client, bus, input, "trigger");
 
     expect(result).toEqual({ continue: false, success: false });
   });
@@ -59,7 +64,7 @@ describe("the action block", () => {
       callback,
     });
 
-    await expect(action.execute(client, bus, input)).rejects.toThrow(
+    await expect(action.execute(client, bus, input, "trigger")).rejects.toThrow(
       "A string?"
     );
   });
