@@ -100,10 +100,12 @@ export interface AutomationRegistered<I = unknown, O = unknown> {
 
 // @alpha (undocumented)
 export abstract class Block<I = void, O = void> {
+    constructor();
     // (undocumented)
     execute(client: LegoClient, events: EventBus, input: I, triggerId: string, parent?: Block<unknown, unknown>, triggeredBy?: Trigger<unknown>): Promise<BlockOutput<O> & {
         success: boolean;
     }>;
+    readonly id: string;
     inputType: I | undefined;
     // (undocumented)
     abstract readonly name: string;

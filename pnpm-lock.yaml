@@ -8,6 +8,9 @@ dependencies:
   '@types/ws':
     specifier: ^8.5.12
     version: 8.5.12
+  hass-lego:
+    specifier: ^1.10.0
+    version: 1.10.0(@types/node@22.5.4)(@types/react@18.3.5)(eslint@9.10.0)(typescript@5.5.4)(vitest@2.0.5)
   homeassistant-typescript:
     specifier: ^1.3.1
     version: 1.3.1(@types/node@22.5.4)(eslint@9.10.0)(typescript@5.5.4)(vitest@2.0.5)
@@ -3256,6 +3259,43 @@ packages:
     dependencies:
       function-bind: 1.1.2
     dev: true
+
+  /hass-lego@1.10.0(@types/node@22.5.4)(@types/react@18.3.5)(eslint@9.10.0)(typescript@5.5.4)(vitest@2.0.5):
+    resolution: {integrity: sha512-dFf2o6n8kyigUNRhyc1ne+fmVQUfVbMF8s1UfE/tr9KrMBdNB6yJl+fgGK1q44sIaUTWkQlja9+QN939rQOf3g==}
+    dependencies:
+      '@types/ws': 8.5.12
+      homeassistant-typescript: 1.3.1(@types/node@22.5.4)(eslint@9.10.0)(typescript@5.5.4)(vitest@2.0.5)
+      homeassistant-ws: 0.2.3
+      ink: 5.0.1(@types/react@18.3.5)(react@18.3.1)
+      ink-spinner: 5.0.0(ink@5.0.1)(react@18.3.1)
+      ink-table: 3.1.0(ink@5.0.1)(react@18.3.1)
+      queue-typescript: 1.0.1
+      react: 18.3.1
+      socket.io: 4.7.5
+      uuid: 10.0.0
+      vitest-mock-extended: 2.0.2(typescript@5.5.4)(vitest@2.0.5)
+      vitest-when: 0.4.1(vitest@2.0.5)
+      ws: 8.18.0
+    transitivePeerDependencies:
+      - '@types/node'
+      - '@types/react'
+      - '@vitest/browser'
+      - '@vitest/expect'
+      - bufferutil
+      - eslint
+      - less
+      - lightningcss
+      - react-devtools-core
+      - sass
+      - sass-embedded
+      - stylus
+      - sugarss
+      - supports-color
+      - terser
+      - typescript
+      - utf-8-validate
+      - vitest
+    dev: false
 
   /hass-ts@1.3.3(eslint@9.10.0)(semantic-release@24.1.2):
     resolution: {integrity: sha512-iEOm2+t+6sLQDYYxvWm8H7ai84ZgrSfiaigezusJ/nQDQl1VFkCjIaZ4yFEmU7z8VV6V8o4qgqHz56PIAYkDxA==}

@@ -7,6 +7,15 @@ import { v4 } from "uuid";
  * @alpha
  */
 export abstract class Block<I = void, O = void> {
+  public constructor(){
+    this.id = v4()
+  }
+
+  /**
+    * String to identify this particular instance of a block. Must be unique
+    */
+  public readonly id: string;
+
   public abstract readonly name: string;
   /**
    * There is no reason to actually use this property. It exists as a typescript hack
