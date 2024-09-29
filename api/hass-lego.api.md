@@ -113,6 +113,11 @@ export abstract class Block<I = void, O = void> {
     // (undocumented)
     protected abstract run(client: LegoClient, events: EventBus, triggerId: string, executeId: string, input: I): Promise<BlockOutput<O>> | BlockOutput<O>;
     // (undocumented)
+    toJson(): {
+        id: string;
+        name: string;
+    };
+    // (undocumented)
     protected abstract readonly typeString: string;
     validate(client: LegoClient): Promise<void>;
 }

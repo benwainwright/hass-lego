@@ -11,6 +11,13 @@ export abstract class Block<I = void, O = void> {
     this.id = v4()
   }
 
+  public toJson() {
+    return {
+      id: this.id,
+      name: this.name,
+    }
+  }
+
   /**
     * String to identify this particular instance of a block. Must be unique
     */

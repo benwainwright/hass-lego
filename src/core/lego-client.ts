@@ -68,7 +68,7 @@ export class LegoClient {
     io.on("connection", (socket) => {
       socket.on("request-automations", () => {
         const automations = this.automations.map(
-          (automation) => automation.name
+          (automation) => automation.toJson()
         );
         socket.emit("automations", automations);
       });
