@@ -15,11 +15,13 @@ import { ServerResponse } from 'http';
 export class Action<I = void, O = void> extends Block<I, O> {
     constructor(config: {
         readonly name: string;
+        readonly id?: string;
         callback: ((client: LegoClient, input: I) => O) | ((client: LegoClient, input: I) => Promise<O>);
     });
     // (undocumented)
     readonly config: {
         readonly name: string;
+        readonly id?: string;
         callback: ((client: LegoClient, input: I) => O) | ((client: LegoClient, input: I) => Promise<O>);
     };
     // (undocumented)
@@ -48,6 +50,8 @@ export class Assertion<I = void, O = void> extends Block<I, O> {
 // @alpha
 export interface AssertionConfig<I, O> {
     // (undocumented)
+    id?: string;
+    // (undocumented)
     readonly name: string;
     // (undocumented)
     readonly predicate: (client: LegoClient, input?: I) => Promise<boolean> | boolean | {
@@ -63,6 +67,7 @@ export interface AssertionConfig<I, O> {
 export class Automation<const A extends readonly any[], I = GetSequenceInput<A>, O = GetSequenceOutput<A>> extends Block<I, O> {
     constructor(config: {
         name: string;
+        id?: string;
         actions: BlockRetainType<A> & A & ValidInputOutputSequence<I, O, A>;
         trigger?: Trigger<I> | Trigger<I>[];
         mode?: ExecutionMode;
@@ -72,6 +77,7 @@ export class Automation<const A extends readonly any[], I = GetSequenceInput<A>,
     // (undocumented)
     config: {
         name: string;
+        id?: string;
         actions: BlockRetainType<A> & A & ValidInputOutputSequence<I, O, A>;
         trigger?: Trigger<I> | Trigger<I>[];
         mode?: ExecutionMode;
@@ -100,12 +106,12 @@ export interface AutomationRegistered<I = unknown, O = unknown> {
 
 // @alpha (undocumented)
 export abstract class Block<I = void, O = void> {
-    constructor();
+    constructor(_id: string);
     // (undocumented)
     execute(client: LegoClient, events: EventBus, input: I, triggerId: string, parent?: Block<unknown, unknown>, triggeredBy?: Trigger<unknown>): Promise<BlockOutput<O> & {
         success: boolean;
     }>;
-    readonly id: string;
+    get id(): string;
     inputType: I | undefined;
     // (undocumented)
     abstract readonly name: string;
@@ -287,6 +293,7 @@ export interface IfThenElseConditionConfig<TO = void, EO = void, PO = void, I = 
     readonly assertion: Assertion<I, PO>;
     // Warning: (ae-incompatible-release-tags) The symbol "else" is marked as @public, but its signature references "Block" which is marked as @alpha
     readonly else: Block<PO, EO>;
+    readonly id?: string;
     readonly name: string;
     // Warning: (ae-incompatible-release-tags) The symbol "then" is marked as @public, but its signature references "Block" which is marked as @alpha
     readonly then: Block<PO, TO>;
@@ -396,10 +403,10 @@ export const when: <TO = void, EO = void, PO = void, I = void>(config: {
 
 // Warnings were encountered during analysis:
 //
-// src/building-blocks/automation.ts:33:7 - (ae-forgotten-export) The symbol "BlockRetainType" needs to be exported by the entry point index.d.ts
-// src/building-blocks/condition.ts:117:3 - (ae-incompatible-release-tags) The symbol "assertion" is marked as @public, but its signature references "Assertion" which is marked as @alpha
-// src/building-blocks/condition.ts:118:3 - (ae-incompatible-release-tags) The symbol "then" is marked as @public, but its signature references "Block" which is marked as @alpha
-// src/building-blocks/condition.ts:119:3 - (ae-incompatible-release-tags) The symbol "else" is marked as @public, but its signature references "Block" which is marked as @alpha
+// src/building-blocks/automation.ts:35:7 - (ae-forgotten-export) The symbol "BlockRetainType" needs to be exported by the entry point index.d.ts
+// src/building-blocks/condition.ts:123:3 - (ae-incompatible-release-tags) The symbol "assertion" is marked as @public, but its signature references "Assertion" which is marked as @alpha
+// src/building-blocks/condition.ts:124:3 - (ae-incompatible-release-tags) The symbol "then" is marked as @public, but its signature references "Block" which is marked as @alpha
+// src/building-blocks/condition.ts:125:3 - (ae-incompatible-release-tags) The symbol "else" is marked as @public, but its signature references "Block" which is marked as @alpha
 
 // (No @packageDocumentation comment for this package)
 
