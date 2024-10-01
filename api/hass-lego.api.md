@@ -93,9 +93,11 @@ export class Automation<const A extends readonly any[], I = GetSequenceInput<A>,
 }
 
 // @alpha (undocumented)
-export interface AutomationRegistered<I = unknown, O = unknown> {
+export interface AutomationRegistered {
+    // Warning: (ae-forgotten-export) The symbol "SerialisedBlock" needs to be exported by the entry point index.d.ts
+    //
     // (undocumented)
-    block: Block<I, O>;
+    block: SerialisedBlock;
     // (undocumented)
     name: string;
     // (undocumented)
@@ -120,6 +122,7 @@ export abstract class Block<I = void, O = void> {
     protected abstract run(client: LegoClient, events: EventBus, triggerId: string, executeId: string, input: I): Promise<BlockOutput<O>> | BlockOutput<O>;
     // (undocumented)
     toJson(): {
+        type: string;
         id: string;
         name: string;
     };
@@ -157,9 +160,9 @@ export class EntityDoesNotExistError extends HassLegoError {
 // @alpha (undocumented)
 export class EventBus {
     // (undocumented)
-    emit<I, O>(event: HassLegoEvent<I, O>): void;
+    emit(event: HassLegoEvent): void;
     // (undocumented)
-    subscribe<I, O>(callback: (event: HassLegoEvent<I, O> & {
+    subscribe(callback: (event: HassLegoEvent & {
         id: string;
         timestamp: string;
     }) => void): void;
@@ -257,7 +260,7 @@ export class HassLegoError extends Error {
 // Warning: (ae-forgotten-export) The symbol "SequenceAborted" needs to be exported by the entry point index.d.ts
 //
 // @alpha (undocumented)
-export type HassLegoEvent<I = unknown, O = unknown> = AutomationRegistered<I, O> | GeneralFailure | StateChanged | TriggerFailed | TriggerFinished | TriggerStarted | BlockFailed<I, O> | BlockFinished<I, O> | BlockStarted<I, O> | SequenceAborted<I, O>;
+export type HassLegoEvent = AutomationRegistered | GeneralFailure | StateChanged | TriggerFailed | TriggerFinished | TriggerStarted | BlockFailed | BlockFinished | BlockStarted | SequenceAborted;
 
 // @alpha (undocumented)
 export type HassStateChangedEvent = HassEventBase & {

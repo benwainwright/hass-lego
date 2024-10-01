@@ -124,7 +124,7 @@ export interface TriggerFinished<O = unknown> {
 /**
  * @alpha
  */
-export interface TriggerFailed<O = unknown> {
+export interface TriggerFailed {
   type: "trigger";
   triggerId: string;
   status: "failed";
