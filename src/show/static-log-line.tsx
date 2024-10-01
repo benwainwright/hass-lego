@@ -5,7 +5,7 @@ interface StaticLogLineProps {
   event: HassLegoEvent;
 }
 
-const getIcon = (event: HassLegoEvent<any, any>) => {
+const getIcon = (event: HassLegoEvent) => {
   if ("status" in event) {
     switch (event.status) {
       case "error":

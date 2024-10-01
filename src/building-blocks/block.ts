@@ -10,6 +10,7 @@ export abstract class Block<I = void, O = void> {
   public constructor(private _id: string) {}
   public toJson() {
     return {
+      type: this.typeString,
       id: this.id,
       name: this.name,
     };
@@ -63,6 +64,7 @@ export abstract class Block<I = void, O = void> {
     triggeredBy?: Trigger<unknown>
   ): Promise<BlockOutput<O> & { success: boolean }> {
     const executeId = v4();
+    const block = this.toJson();
     try {
       events.emit({
         executeId,
@@ -70,9 +72,9 @@ export abstract class Block<I = void, O = void> {
         type: this.typeString,
         status: "started",
         name: this.name,
-        block: this,
+        block,
         triggeredBy,
-        parent,
+        parent: parent?.toJson(),
       });
       const result = await this.run(
         client,
@@ -88,8 +90,8 @@ export abstract class Block<I = void, O = void> {
         type: this.typeString,
         status: "finished",
         name: this.name,
-        block: this,
-        parent,
+        block,
+        parent: parent?.toJson(),
         ...result,
       });
       return { ...result, success: true };
@@ -100,10 +102,10 @@ export abstract class Block<I = void, O = void> {
           triggerId,
           type: this.typeString,
           status: "failed",
-          block: this,
+          block,
           name: this.name,
           error,
-          parent,
+          parent: parent?.toJson(),
           message: error.message,
         });
         return { continue: false, success: false };

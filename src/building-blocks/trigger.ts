@@ -46,12 +46,17 @@ export class Trigger<O> {
     triggerId: string,
     parent: Block<unknown, unknown>
   ): Promise<{ result: boolean; output: O }> {
+    const trigger = {
+      id: this.id,
+      name: this.name,
+      type: "trigger",
+    };
     try {
       events.emit({
         type: "trigger",
         status: "started",
-        trigger: this,
-        parent,
+        trigger,
+        parent: parent.toJson(),
         name: this.name,
         triggerId,
       });
@@ -61,8 +66,8 @@ export class Trigger<O> {
       events.emit({
         type: "trigger",
         status: "finished",
-        trigger: this,
-        parent,
+        trigger,
+        parent: parent.toJson(),
         name: this.name,
         result: finalResult,
         triggerId,
@@ -74,9 +79,9 @@ export class Trigger<O> {
         events.emit({
           type: "trigger",
           triggerId,
-          parent,
+          parent: parent.toJson(),
           status: "failed",
-          trigger: this,
+          trigger,
           name: this.name,
           message: error.message,
           error,

@@ -3,21 +3,18 @@ import { Box } from "ink";
 import { SummaryViewRow } from "./summary-view-row.tsx";
 
 interface SummaryViewProps {
-  events: HassLegoEvent<unknown, unknown>[];
+  events: HassLegoEvent[];
 }
 
 export const SummaryView = ({ events }: SummaryViewProps) => {
   const data = Object.entries(
-    events.reduce<Record<string, HassLegoEvent<unknown, unknown>[]>>(
-      (accum, event) => {
-        const id = "triggerId" in event && event.triggerId;
-        if (id) {
-          accum[id] = [...(accum[id] ?? []), event];
-        }
-        return accum;
-      },
-      {}
-    )
+    events.reduce<Record<string, HassLegoEvent[]>>((accum, event) => {
+      const id = "triggerId" in event && event.triggerId;
+      if (id) {
+        accum[id] = [...(accum[id] ?? []), event];
+      }
+      return accum;
+    }, {})
   ).map(([name, events]) => ({
     name,
     events,

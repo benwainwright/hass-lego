@@ -10,9 +10,7 @@ interface ShowProps {
   events: EventBus;
 }
 export const Show = ({ staticLog, events }: ShowProps) => {
-  const [logs, setLogs] = useState<
-    (HassLegoEvent<unknown, unknown> & { id: string })[]
-  >([]);
+  const [logs, setLogs] = useState<(HassLegoEvent & { id: string })[]>([]);
 
   useEffect(() => {
     events.subscribe((event) => {

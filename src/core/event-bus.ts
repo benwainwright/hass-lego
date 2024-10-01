@@ -10,7 +10,7 @@ const AUTOMATION_EVENT = "AUTOMATION_EVENT";
 export class EventBus {
   private bus = new EventEmitter();
 
-  public emit<I, O>(event: HassLegoEvent<I, O>) {
+  public emit(event: HassLegoEvent) {
     this.bus.emit(AUTOMATION_EVENT, {
       ...event,
       id: v4(),
@@ -18,10 +18,8 @@ export class EventBus {
     });
   }
 
-  public subscribe<I, O>(
-    callback: (
-      event: HassLegoEvent<I, O> & { id: string; timestamp: string }
-    ) => void
+  public subscribe(
+    callback: (event: HassLegoEvent & { id: string; timestamp: string }) => void
   ) {
     this.bus.on(AUTOMATION_EVENT, callback);
   }

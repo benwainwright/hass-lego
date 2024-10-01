@@ -93,7 +93,7 @@ export class SequenceExecutor<I, O> {
       executeId: this.executeId,
       type: "automation",
       status: "aborted",
-      block: this.parent,
+      block: this.parent.toJson(),
       name: this.parent.name,
     });
   }
