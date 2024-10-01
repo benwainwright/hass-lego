@@ -2,6 +2,7 @@ import { EventBus, LegoClient } from "@core";
 import { Block } from "./block.ts";
 import { BlockOutput } from "@types";
 import { Assertion } from "./assertion.ts";
+import { md5 } from "@utils";
 
 /**
  * @public
@@ -28,6 +29,11 @@ export interface IfThenElseConditionConfig<
    * Block name
    */
   readonly name: string;
+
+  /**
+   * Unique identifier for this block. Will use a hash of the name if not provided
+   */
+  readonly id?: string;
 
   /**
    * The result of this assertion decides which branch to take
@@ -64,7 +70,7 @@ export class IfThenElseCondition<
   public constructor(
     public readonly config: IfThenElseConditionConfig<TO, EO, PO, I>
   ) {
-    super();
+    super(config.id ?? md5(config.name));
     this.name = this.config.name;
   }
   protected override async run(

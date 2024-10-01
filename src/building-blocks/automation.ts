@@ -15,6 +15,7 @@ import { Block } from "./block.ts";
 import { SequenceExecutor } from "./sequence-executer.ts";
 import { v4 } from "uuid";
 import { SequenceAbortedError } from "@errors";
+import { md5 } from "@utils";
 
 /**
  * @alpha
@@ -30,12 +31,13 @@ export class Automation<
   public constructor(
     public config: {
       name: string;
+      id?: string;
       actions: BlockRetainType<A> & A & ValidInputOutputSequence<I, O, A>;
       trigger?: Trigger<I> | Trigger<I>[];
       mode?: ExecutionMode;
     }
   ) {
-    super();
+    super(config.id ?? md5(config.name));
     this.name = this.config.name;
     void this.startLoop();
   }

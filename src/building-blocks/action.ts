@@ -1,6 +1,7 @@
 import { LegoClient, EventBus } from "@core";
 import { Block } from "./block.ts";
 import { BlockOutput } from "@types";
+import { md5 } from "@utils";
 
 /**
  * @alpha
@@ -12,12 +13,13 @@ export class Action<I = void, O = void> extends Block<I, O> {
   public constructor(
     public readonly config: {
       readonly name: string;
+      readonly id?: string;
       callback:
         | ((client: LegoClient, input: I) => O)
         | ((client: LegoClient, input: I) => Promise<O>);
     }
   ) {
-    super();
+    super(config.id ?? md5(config.name));
     this.name = this.config.name;
   }
 

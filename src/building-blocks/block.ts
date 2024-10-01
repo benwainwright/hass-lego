@@ -7,21 +7,20 @@ import { v4 } from "uuid";
  * @alpha
  */
 export abstract class Block<I = void, O = void> {
-  public constructor(){
-    this.id = v4()
-  }
-
+  public constructor(private _id: string) {}
   public toJson() {
     return {
       id: this.id,
       name: this.name,
-    }
+    };
   }
 
   /**
-    * String to identify this particular instance of a block. Must be unique
-    */
-  public readonly id: string;
+   * String to identify this particular instance of a block. Must be unique
+   */
+  public get id(): string {
+    return this._id;
+  }
 
   public abstract readonly name: string;
   /**

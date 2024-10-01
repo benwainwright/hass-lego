@@ -1,6 +1,7 @@
 import { LegoClient, EventBus } from "@core";
 import { BlockOutput, GetOutputs } from "@types";
 import { Block } from "./block.ts";
+import { md5 } from "@utils";
 
 /**
  * @alpha
@@ -17,10 +18,11 @@ export class ExecuteConcurrently<
   public constructor(
     public config: {
       name: string;
+      id?: string;
       actions: A;
     }
   ) {
-    super();
+    super(config.id ?? md5(config.name));
     this.name = this.config.name;
   }
 

@@ -1,6 +1,7 @@
 import { LegoClient, EventBus } from "@core";
 import { Block } from "./block.ts";
 import { BlockOutput } from "@types";
+import { md5 } from "@utils";
 
 /**
  * @alpha
@@ -9,6 +10,7 @@ import { BlockOutput } from "@types";
  */
 export interface AssertionConfig<I, O> {
   readonly name: string;
+  id?: string;
   readonly predicate: (
     client: LegoClient,
     input?: I
@@ -26,7 +28,7 @@ export interface AssertionConfig<I, O> {
  */
 export class Assertion<I = void, O = void> extends Block<I, O> {
   public constructor(public config: AssertionConfig<I, O>) {
-    super();
+    super(config.id ?? md5(config.name));
     this.name = this.config.name;
   }
   public readonly name: string;
