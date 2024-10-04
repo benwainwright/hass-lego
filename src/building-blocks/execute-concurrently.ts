@@ -61,7 +61,7 @@ export class ExecuteConcurrently<
       (success) => success.output
     ) as unknown as GetOutputs<A>;
 
-    return { continue: true, output: outputs as O, type: "block" };
+    return { continue: true, output: outputs as O, outputType: "block" };
   }
 }
 

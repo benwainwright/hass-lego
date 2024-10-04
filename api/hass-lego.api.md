@@ -141,7 +141,7 @@ export interface ContinueOutput<O> {
     // (undocumented)
     output: O;
     // (undocumented)
-    type: "block";
+    outputType: "block";
 }
 
 // @alpha (undocumented)

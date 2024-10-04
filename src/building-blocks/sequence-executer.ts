@@ -32,9 +32,9 @@ export class SequenceExecutor<I, O> {
       if (
         !lastResult ||
         (lastResult.continue &&
-          lastResult.type === "conditional" &&
+          lastResult.outputType === "conditional" &&
           lastResult.conditionResult) ||
-        (lastResult.continue && lastResult.type !== "conditional")
+        (lastResult.continue && lastResult.outputType !== "conditional")
       ) {
         const result = await nextBlock.execute(
           this.client,

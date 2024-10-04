@@ -8,13 +8,13 @@ export type BlockOutput<O> =
  */
 export interface ContinueOutput<O> {
   continue: true;
-  type: "block";
+  outputType: "block";
   output: O;
 }
 
 export interface ConditionResult<O> {
   continue: true;
-  type: "conditional";
+  outputType: "conditional";
   conditionResult: boolean;
   output: O;
 }

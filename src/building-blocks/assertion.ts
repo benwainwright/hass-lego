@@ -49,13 +49,13 @@ export class Assertion<I = void, O = void> extends Block<I, O> {
 
     return typeof result === "object"
       ? {
-          type: "conditional",
+          outputType: "conditional",
           continue: true,
           conditionResult: result.result,
           output: result.output,
         }
       : {
-          type: "conditional",
+          outputType: "conditional",
           continue: true,
           conditionResult: result,
           output: undefined as O,

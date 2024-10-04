@@ -93,7 +93,7 @@ export class IfThenElseCondition<
     }
 
     const branchExecutedResult =
-      assertionResult.type === "conditional" && assertionResult.conditionResult
+      assertionResult.outputType === "conditional" && assertionResult.conditionResult
         ? await this.config.then.execute(
             client,
             events,
