@@ -1,6 +1,7 @@
 import { EventBus, LegoClient } from "@core";
 import { StateChanged } from "@types";
 import { Block } from "./block.ts";
+import { BlockOutput } from "src/types/block-output.ts";
 
 /**
  * @alpha
@@ -55,25 +56,35 @@ export class Trigger<O> {
       events.emit({
         type: "trigger",
         status: "started",
-        trigger,
+        block: trigger,
         parent: parent.toJson(),
         name: this.name,
+        executeId: triggerId,
         triggerId,
       });
-      const result = this.predicate?.(event, client);
-      const finalResult = this.getResult(result);
+      const result = await this.predicate?.(event, client);
+      const finalResult = await this.getResult(result);
+
+      const output: BlockOutput<O> =  finalResult.result ? {
+        outputType: "conditional",
+        continue: finalResult.result,
+        conditionResult: finalResult.result,
+        output: finalResult.output
+      } : { continue: false }
+
 
       events.emit({
         type: "trigger",
         status: "finished",
-        trigger,
+        block: trigger,
+        executeId: triggerId,
         parent: parent.toJson(),
         name: this.name,
-        result: finalResult,
+        output,
         triggerId,
       });
 
-      return await finalResult;
+      return finalResult;
     } catch (error) {
       if (error instanceof Error) {
         events.emit({
@@ -81,10 +92,11 @@ export class Trigger<O> {
           triggerId,
           parent: parent.toJson(),
           status: "failed",
-          trigger,
+          block: trigger,
           name: this.name,
           message: error.message,
           error,
+          executeId: triggerId
         });
       }
       throw error;

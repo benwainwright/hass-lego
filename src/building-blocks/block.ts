@@ -85,14 +85,15 @@ export abstract class Block<I = void, O = void> {
       );
 
       events.emit({
+        ...result,
         executeId,
         triggerId,
         type: this.typeString,
         status: "finished",
         name: this.name,
+        output: result,
         block,
         parent: parent?.toJson(),
-        ...result,
       });
       return { ...result, success: true };
     } catch (error) {

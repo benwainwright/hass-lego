@@ -251,16 +251,13 @@ export class HassLegoError extends Error {
     constructor(message: string);
 }
 
-// Warning: (ae-forgotten-export) The symbol "TriggerFailed" needs to be exported by the entry point index.d.ts
-// Warning: (ae-forgotten-export) The symbol "TriggerFinished" needs to be exported by the entry point index.d.ts
-// Warning: (ae-forgotten-export) The symbol "TriggerStarted" needs to be exported by the entry point index.d.ts
 // Warning: (ae-forgotten-export) The symbol "BlockFailed" needs to be exported by the entry point index.d.ts
 // Warning: (ae-forgotten-export) The symbol "BlockFinished" needs to be exported by the entry point index.d.ts
 // Warning: (ae-forgotten-export) The symbol "BlockStarted" needs to be exported by the entry point index.d.ts
 // Warning: (ae-forgotten-export) The symbol "SequenceAborted" needs to be exported by the entry point index.d.ts
 //
 // @alpha (undocumented)
-export type HassLegoEvent = AutomationRegistered | GeneralFailure | StateChanged | TriggerFailed | TriggerFinished | TriggerStarted | BlockFailed | BlockFinished | BlockStarted | SequenceAborted;
+export type HassLegoEvent = AutomationRegistered | GeneralFailure | StateChanged | BlockFailed | BlockFinished | BlockStarted | SequenceAborted;
 
 // @alpha (undocumented)
 export type HassStateChangedEvent = HassEventBase & {

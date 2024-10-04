@@ -1,5 +1,6 @@
 import { Trigger } from "@building-blocks";
 import { Event } from "homeassistant-typescript";
+import { BlockOutput } from "./block-output.ts";
 
 interface SerialisedBlock {
   id: string;
@@ -14,9 +15,6 @@ export type HassLegoEvent =
   | AutomationRegistered
   | GeneralFailure
   | StateChanged
-  | TriggerFailed
-  | TriggerFinished
-  | TriggerStarted
   | BlockFailed
   | BlockFinished
   | BlockStarted
@@ -74,8 +72,7 @@ export interface BlockStarted extends BaseHassEvent {
 export interface BlockFinished<O = unknown> extends BaseHassEvent {
   type: string;
   status: "finished";
-  output?: O;
-  continue: boolean;
+  output: BlockOutput<O>;
   parent?: SerialisedBlock;
 }
 
@@ -95,42 +92,4 @@ export interface SequenceAborted extends BaseHassEvent {
   status: "aborted";
   block: SerialisedBlock;
   name: string;
-}
-
-/**
- * @alpha
- */
-export interface TriggerStarted {
-  type: "trigger";
-  status: "started";
-  parent?: SerialisedBlock;
-  name: string;
-  trigger: SerialisedBlock;
-}
-
-/**
- * @alpha
- */
-export interface TriggerFinished<O = unknown> {
-  type: "trigger";
-  status: "finished";
-  parent?: SerialisedBlock;
-  triggerId: string;
-  name: string;
-  result: O;
-  trigger: SerialisedBlock;
-}
-
-/**
- * @alpha
- */
-export interface TriggerFailed {
-  type: "trigger";
-  triggerId: string;
-  status: "failed";
-  parent?: SerialisedBlock;
-  name: string;
-  trigger: SerialisedBlock;
-  message: string;
-  error: Error;
 }
