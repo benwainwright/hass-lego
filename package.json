@@ -78,6 +78,7 @@
     "eslint-plugin-no-relative-import-paths": "1.5.5",
     "globals": "15.9.0",
     "npm-watch": "0.13.0",
+    "prettier": "^3.3.3",
     "tsconfig-replace-paths": "0.0.14",
     "typescript": "5.5.4",
     "vite-node": "2.0.5",

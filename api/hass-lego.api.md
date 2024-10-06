@@ -29,9 +29,9 @@ export class Action<I = void, O = void> extends Block<I, O> {
     // Warning: (ae-forgotten-export) The symbol "BlockOutput" needs to be exported by the entry point index.d.ts
     //
     // (undocumented)
-    run(client: LegoClient, events: EventBus, triggerId: string, executeId: string, input: I): Promise<BlockOutput<O>>;
+    run(client: LegoClient, input: I): Promise<BlockOutput<O>>;
     // (undocumented)
-    protected typeString: string;
+    readonly typeString = "action";
 }
 
 // @alpha
@@ -42,9 +42,9 @@ export class Assertion<I = void, O = void> extends Block<I, O> {
     // (undocumented)
     readonly name: string;
     // (undocumented)
-    run(client: LegoClient, events: EventBus, triggerId: string, executeId: string, input: I): Promise<BlockOutput<O>>;
+    run(client: LegoClient, input: I): Promise<BlockOutput<O>>;
     // (undocumented)
-    protected typeString: string;
+    typeString: string;
 }
 
 // @alpha
@@ -85,9 +85,9 @@ export class Automation<const A extends readonly any[], I = GetSequenceInput<A>,
     // (undocumented)
     readonly name: string;
     // (undocumented)
-    protected run(client: LegoClient, events: EventBus, triggerId: string, executeId: string, input?: I): Promise<BlockOutput<O>>;
+    run(client: LegoClient, input?: I, events?: EventBus, triggerId?: string): Promise<BlockOutput<O>>;
     // (undocumented)
-    protected typeString: string;
+    typeString: string;
     // (undocumented)
     validate(client: LegoClient): Promise<void>;
 }
@@ -109,17 +109,13 @@ export interface AutomationRegistered {
 // @alpha (undocumented)
 export abstract class Block<I = void, O = void> {
     constructor(_id: string);
-    // (undocumented)
-    execute(client: LegoClient, events: EventBus, input: I, triggerId: string, parent?: Block<unknown, unknown>, triggeredBy?: Trigger<unknown>): Promise<BlockOutput<O> & {
-        success: boolean;
-    }>;
     get id(): string;
     inputType: I | undefined;
     // (undocumented)
     abstract readonly name: string;
     outputType: O | undefined;
     // (undocumented)
-    protected abstract run(client: LegoClient, events: EventBus, triggerId: string, executeId: string, input: I): Promise<BlockOutput<O>> | BlockOutput<O>;
+    abstract run(client: LegoClient, input: I, events?: EventBus, triggerId?: string): Promise<BlockOutput<O>> | BlockOutput<O>;
     // (undocumented)
     toJson(): {
         type: string;
@@ -127,7 +123,7 @@ export abstract class Block<I = void, O = void> {
         name: string;
     };
     // (undocumented)
-    protected abstract readonly typeString: string;
+    abstract readonly typeString: string;
     validate(client: LegoClient): Promise<void>;
 }
 
@@ -282,9 +278,9 @@ export class IfThenElseCondition<TO = void, EO = void, PO = void, I = void> exte
     // Warning: (ae-incompatible-release-tags) The symbol "run" is marked as @public, but its signature references "EventBus" which is marked as @alpha
     //
     // (undocumented)
-    protected run(client: LegoClient, events: EventBus, triggerId: string, executeId: string, input: I): Promise<BlockOutput<TO | EO>>;
+    run(client: LegoClient, input: I, events?: EventBus, triggerId?: string): Promise<BlockOutput<TO | EO>>;
     // (undocumented)
-    protected typeString: string;
+    typeString: string;
 }
 
 // @public (undocumented)
@@ -403,10 +399,10 @@ export const when: <TO = void, EO = void, PO = void, I = void>(config: {
 
 // Warnings were encountered during analysis:
 //
-// src/building-blocks/automation.ts:35:7 - (ae-forgotten-export) The symbol "BlockRetainType" needs to be exported by the entry point index.d.ts
-// src/building-blocks/condition.ts:123:3 - (ae-incompatible-release-tags) The symbol "assertion" is marked as @public, but its signature references "Assertion" which is marked as @alpha
-// src/building-blocks/condition.ts:124:3 - (ae-incompatible-release-tags) The symbol "then" is marked as @public, but its signature references "Block" which is marked as @alpha
-// src/building-blocks/condition.ts:125:3 - (ae-incompatible-release-tags) The symbol "else" is marked as @public, but its signature references "Block" which is marked as @alpha
+// src/building-blocks/automation.ts:38:7 - (ae-forgotten-export) The symbol "BlockRetainType" needs to be exported by the entry point index.d.ts
+// src/building-blocks/condition.ts:116:3 - (ae-incompatible-release-tags) The symbol "assertion" is marked as @public, but its signature references "Assertion" which is marked as @alpha
+// src/building-blocks/condition.ts:117:3 - (ae-incompatible-release-tags) The symbol "then" is marked as @public, but its signature references "Block" which is marked as @alpha
+// src/building-blocks/condition.ts:118:3 - (ae-incompatible-release-tags) The symbol "else" is marked as @public, but its signature references "Block" which is marked as @alpha
 
 // (No @packageDocumentation comment for this package)
 

@@ -9,7 +9,7 @@ import { md5 } from "@utils";
  */
 export type ConditionPredicate<PO = void, I = void> = (
   client: LegoClient,
-  input?: I
+  input?: I,
 ) =>
   | Promise<boolean>
   | boolean
@@ -23,7 +23,7 @@ export interface IfThenElseConditionConfig<
   TO = void,
   EO = void,
   PO = void,
-  I = void
+  I = void,
 > {
   /**
    * Block name
@@ -61,52 +61,45 @@ export class IfThenElseCondition<
   TO = void,
   EO = void,
   PO = void,
-  I = void
+  I = void,
 > extends Block<I, TO | EO> {
   public override name: string;
 
-  protected override typeString = "if-then-else";
+  public override typeString = "if-then-else";
 
   public constructor(
-    public readonly config: IfThenElseConditionConfig<TO, EO, PO, I>
+    public readonly config: IfThenElseConditionConfig<TO, EO, PO, I>,
   ) {
     super(config.id ?? md5(config.name));
     this.name = this.config.name;
   }
-  protected override async run(
+
+  public override async run(
     client: LegoClient,
-    events: EventBus,
-    triggerId: string,
-    executeId: string,
-    input: I
+    input: I,
+    events?: EventBus,
+    triggerId?: string,
   ): Promise<BlockOutput<TO | EO>> {
-    const assertionResult = await this.config.assertion.execute(
-      client,
-      events,
-      input,
-      triggerId,
-      this
-    );
+    const assertionResult = await this.config.assertion.run(client, input);
 
     if (!assertionResult.continue) {
       return { continue: false };
     }
 
     const branchExecutedResult =
-      assertionResult.outputType === "conditional" && assertionResult.conditionResult
-        ? await this.config.then.execute(
+      assertionResult.outputType === "conditional" &&
+      assertionResult.conditionResult
+        ? await this.config.then.run(
             client,
-            events,
             assertionResult.output,
+            events,
             triggerId,
-            this
           )
-        : await this.config.else.execute(
+        : await this.config.else.run(
             client,
-            events,
             assertionResult.output,
+            events,
             triggerId,
-            this
           );
 
     return branchExecutedResult;

@@ -1,4 +1,4 @@
-import { LegoClient, EventBus } from "@core";
+import { LegoClient } from "@core";
 import { Block } from "./block.ts";
 import { BlockOutput } from "@types";
 import { md5 } from "@utils";
@@ -13,7 +13,7 @@ export interface AssertionConfig<I, O> {
   id?: string;
   readonly predicate: (
     client: LegoClient,
-    input?: I
+    input?: I,
   ) =>
     | Promise<boolean>
     | boolean
@@ -33,14 +33,11 @@ export class Assertion<I = void, O = void> extends Block<I, O> {
   }
   public readonly name: string;
 
-  protected override typeString = "assertion";
+  public override typeString = "assertion";
 
   public override async run(
     client: LegoClient,
-    events: EventBus,
-    triggerId: string,
-    executeId: string,
-    input: I
+    input: I,
   ): Promise<BlockOutput<O>> {
     const callbackResult = this.config.predicate(client, input);
 

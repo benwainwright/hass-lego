@@ -12,7 +12,10 @@ import {
 } from "@types";
 
 import { Block } from "./block.ts";
-import { SequenceExecutor } from "./sequence-executer.ts";
+import {
+  SequenceExecutionMode,
+  SequenceExecutor,
+} from "./sequence-executer.ts";
 import { v4 } from "uuid";
 import { SequenceAbortedError } from "@errors";
 import { md5 } from "@utils";
@@ -24,7 +27,7 @@ export class Automation<
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const A extends readonly any[],
   I = GetSequenceInput<A>,
-  O = GetSequenceOutput<A>
+  O = GetSequenceOutput<A>,
 > extends Block<I, O> {
   private executionQueue = new Queue<SequenceExecutor<I, O>>();
   public readonly name: string;
@@ -35,20 +38,20 @@ export class Automation<
       actions: BlockRetainType<A> & A & ValidInputOutputSequence<I, O, A>;
       trigger?: Trigger<I> | Trigger<I>[];
       mode?: ExecutionMode;
-    }
+    },
   ) {
     super(config.id ?? md5(config.name));
     this.name = this.config.name;
     void this.startLoop();
   }
 
-  protected override typeString = "automation";
+  public override typeString = "automation";
 
   public override async validate(client: LegoClient) {
     await Promise.all(
       this.config.actions.map(async (action) => {
         await action.validate(client);
-      })
+      }),
     );
   }
 
@@ -105,14 +108,14 @@ export class Automation<
               client,
               bus,
               triggerId,
-              this
+              this,
             );
 
             if (result) {
-              await this.execute(client, bus, output, triggerId, this);
+              await this.run(client, output);
             }
           });
-        })
+        }),
       );
     } else {
       throw new Error("Automation has no trigger so cannot be attached");
@@ -126,13 +129,19 @@ export class Automation<
     }
   }
 
-  protected override async run(
+  public override async run(
     client: LegoClient,
-    events: EventBus,
-    triggerId: string,
-    executeId: string,
-    input?: I
+    input?: I,
+    events?: EventBus,
+    triggerId?: string,
   ): Promise<BlockOutput<O>> {
+    if (!events) {
+      throw new Error("You must supply an event bus");
+    }
+
+    if (!triggerId) {
+      throw new Error("You must supply a trigger id");
+    }
     try {
       const executor = new SequenceExecutor<I, O>(
         [...this.config.actions],
@@ -140,8 +149,8 @@ export class Automation<
         events,
         this,
         triggerId,
-        executeId,
-        input
+        input,
+        SequenceExecutionMode.Sequence,
       );
       const mode = this.config.mode ?? ExecutionMode.Restart;
       switch (mode) {
@@ -158,7 +167,14 @@ export class Automation<
           await executor.run();
           break;
       }
-      return await executor.finished();
+      const [result] = await executor.finished();
+
+      if (!result) {
+        throw new Error(
+          "Sequence exector resolved but didn't return anything. This is probably a programming error",
+        );
+      }
+      return result;
     } catch (error) {
       if (error instanceof SequenceAbortedError) {
         return { continue: false };

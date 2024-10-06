@@ -1,7 +1,5 @@
 import { EventBus, LegoClient } from "@core";
 import { BlockOutput } from "@types";
-import { Trigger } from "./trigger.ts";
-import { v4 } from "uuid";
 
 /**
  * @alpha
@@ -45,73 +43,12 @@ export abstract class Block<I = void, O = void> {
     // Noop here
   }
 
-  protected abstract readonly typeString: string;
+  public abstract readonly typeString: string;
 
-  protected abstract run(
+  public abstract run(
     client: LegoClient,
-    events: EventBus,
-    triggerId: string,
-    executeId: string,
-    input: I
-  ): Promise<BlockOutput<O>> | BlockOutput<O>;
-
-  public async execute(
-    client: LegoClient,
-    events: EventBus,
     input: I,
-    triggerId: string,
-    parent?: Block<unknown, unknown>,
-    triggeredBy?: Trigger<unknown>
-  ): Promise<BlockOutput<O> & { success: boolean }> {
-    const executeId = v4();
-    const block = this.toJson();
-    try {
-      events.emit({
-        executeId,
-        triggerId,
-        type: this.typeString,
-        status: "started",
-        name: this.name,
-        block,
-        triggeredBy,
-        parent: parent?.toJson(),
-      });
-      const result = await this.run(
-        client,
-        events,
-        triggerId,
-        executeId,
-        input
-      );
-
-      events.emit({
-        ...result,
-        executeId,
-        triggerId,
-        type: this.typeString,
-        status: "finished",
-        name: this.name,
-        output: result,
-        block,
-        parent: parent?.toJson(),
-      });
-      return { ...result, success: true };
-    } catch (error) {
-      if (error instanceof Error) {
-        events.emit({
-          executeId,
-          triggerId,
-          type: this.typeString,
-          status: "failed",
-          block,
-          name: this.name,
-          error,
-          parent: parent?.toJson(),
-          message: error.message,
-        });
-        return { continue: false, success: false };
-      }
-      throw error;
-    }
-  }
+    events?: EventBus,
+    triggerId?: string,
+  ): Promise<BlockOutput<O>> | BlockOutput<O>;
 }
