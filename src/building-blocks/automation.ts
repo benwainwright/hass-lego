@@ -110,7 +110,6 @@ export class Automation<
               triggerId,
               this,
             );
-            await this.run(client, output, bus, triggerId);
 
             const executor = new SequenceExecutor(
               [this],
