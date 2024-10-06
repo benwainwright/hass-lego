@@ -4,6 +4,7 @@
 
 ```ts
 
+import { CallServiceCommand } from 'homeassistant-typescript';
 import { CallServiceResponse } from 'homeassistant-typescript';
 import { Event as Event_2 } from 'homeassistant-typescript';
 import { IClient } from 'homeassistant-typescript';
@@ -31,7 +32,7 @@ export class Action<I = void, O = void> extends Block<I, O> {
     // (undocumented)
     run(client: LegoClient, input: I): Promise<BlockOutput<O>>;
     // (undocumented)
-    readonly typeString = "action";
+    readonly typeString: string;
 }
 
 // @alpha
@@ -348,6 +349,24 @@ export const renderSimpleLog: (bus: EventBus, staticLog: boolean) => void;
 
 // @alpha (undocumented)
 export const sequence: <const A extends readonly any[], I = GetSequenceInput<A>, O = GetSequenceOutput<A>>(actions: BlockRetainType<A> & A & ValidInputOutputSequence<I, O, A>, mode?: ExecutionMode) => Automation<A, I, O>;
+
+// @alpha (undocumented)
+export class ServiceCall extends Action {
+    constructor(serviceConfig: {
+        name: string;
+        params: Omit<CallServiceCommand, "id" | "type">;
+    });
+    // (undocumented)
+    toJson(): {
+        type: string;
+        id: string;
+        name: string;
+        params: Omit<CallServiceCommand, "id" | "type">;
+        response: CallServiceResponse | undefined;
+    };
+    // (undocumented)
+    typeString: string;
+}
 
 // @alpha (undocumented)
 export interface StateChanged {
