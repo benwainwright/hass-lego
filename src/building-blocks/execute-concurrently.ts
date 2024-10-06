@@ -56,10 +56,10 @@ export class ExecuteConcurrently<
       [...this.config.actions],
       client,
       events,
-      this,
       triggerId,
       input,
       SequenceExecutionMode.Parallel,
+      this,
     );
 
     void executor.run();

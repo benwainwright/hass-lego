@@ -30,10 +30,10 @@ export class SequenceExecutor<I, O> {
     sequence: Block<unknown, unknown>[],
     private client: LegoClient,
     private events: EventBus,
-    private parent: Block<unknown, unknown>,
     public triggerId: string,
     private input?: I,
     private executionMode?: SequenceExecutionMode,
+    private parent?: Block<unknown, unknown>,
   ) {
     const queueItems = sequence.map((item) => ({
       executionId: v4(),
@@ -79,7 +79,7 @@ export class SequenceExecutor<I, O> {
       name: block.name,
       block: block.toJson(),
       triggeredBy: undefined,
-      parent: this.parent.toJson(),
+      parent: this.parent?.toJson(),
     };
     try {
       if (this.aborted) {
@@ -178,7 +178,7 @@ export class SequenceExecutor<I, O> {
 
         const abortedCallback = () => {
           this.bus.off(SEQUENCE_EXECUTOR_ABORTED, abortedCallback);
-          reject(new SequenceAbortedError(this.parent.name));
+          reject(new SequenceAbortedError(this.parent?.name ?? ""));
         };
 
         this.bus.on(SEQUENCE_EXECUTOR_ABORTED, abortedCallback);

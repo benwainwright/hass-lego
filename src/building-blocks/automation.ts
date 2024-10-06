@@ -103,17 +103,26 @@ export class Automation<
             };
 
             const triggerId = v4();
-            const { result, output } = await thisTrigger.doTrigger(
+            const { output } = await thisTrigger.doTrigger(
               newEvent,
               client,
               bus,
               triggerId,
               this,
             );
+            await this.run(client, output, bus, triggerId);
 
-            if (result) {
-              await this.run(client, output, bus, triggerId);
-            }
+            const executor = new SequenceExecutor(
+              [this],
+              client,
+              bus,
+              triggerId,
+              output,
+            );
+
+            void executor.run();
+
+            await executor.finished();
           });
         }),
       );
@@ -142,16 +151,18 @@ export class Automation<
     if (!triggerId) {
       throw new Error("You must supply a trigger id");
     }
+
     try {
       const executor = new SequenceExecutor<I, O>(
         [...this.config.actions],
         client,
         events,
-        this,
         triggerId,
         input,
         SequenceExecutionMode.Sequence,
+        this,
       );
+
       const mode = this.config.mode ?? ExecutionMode.Restart;
       switch (mode) {
         case ExecutionMode.Restart:
