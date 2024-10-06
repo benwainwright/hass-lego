@@ -34,6 +34,7 @@ export {
   Action,
   Assertion,
   Block,
+  ServiceCall,
 } from "@building-blocks";
 
 export type {

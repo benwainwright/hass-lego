@@ -1,22 +1,40 @@
 import { Action } from "./action.ts";
-import { CallServiceCommand } from "homeassistant-typescript";
+import {
+  CallServiceCommand,
+  CallServiceResponse,
+} from "homeassistant-typescript";
 
+/**
+  * @alpha
+  */
 export class ServiceCall extends Action {
   private target: CallServiceCommand["target"];
 
-  public constructor(config: {
-    name: string;
-    params: Omit<CallServiceCommand, "id" | "type">;
-  }) {
+  public override typeString = "service-call";
+
+  private response: CallServiceResponse | undefined;
+
+  public constructor(
+    private readonly serviceConfig: {
+      name: string;
+      params: Omit<CallServiceCommand, "id" | "type">;
+    },
+  ) {
     super({
-      name: config.name,
-      callback: (client) => {
-        return client.callService(config.params);
+      name: serviceConfig.name,
+      callback: async (client) => {
+        this.response = await client.callService(serviceConfig.params);
       },
     });
-
-    this.target = config.params.target;
   }
 
-  override async validate() {}
+  public override toJson() {
+    return {
+      type: this.typeString,
+      id: this.id,
+      name: this.name,
+      params: this.serviceConfig.params,
+      response: this.response,
+    };
+  }
 }

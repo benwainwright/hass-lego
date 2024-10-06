@@ -17,6 +17,8 @@ import { Block } from "./block.ts";
 import { v4 } from "uuid";
 import { ExecutionAbortedError } from "@errors";
 import { md5 } from "@utils";
+import { ServiceCall } from "./service-call.ts";
+import { Action } from "./action.ts";
 
 /**
  * @alpha

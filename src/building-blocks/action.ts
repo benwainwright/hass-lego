@@ -23,7 +23,7 @@ export class Action<I = void, O = void> extends Block<I, O> {
     this.name = this.config.name;
   }
 
-  public override readonly typeString = "action";
+  public override readonly typeString: string = "action";
 
   public override async run(
     client: LegoClient,
