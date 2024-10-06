@@ -17,6 +17,7 @@ export type HassLegoEvent =
   | StateChanged
   | BlockFailed
   | BlockFinished
+  | BlockPending
   | BlockStarted
   | SequenceAborted;
 
@@ -85,6 +86,16 @@ export interface BlockFailed extends BaseHassEvent {
   message: string;
   error: Error;
   parent?: SerialisedBlock;
+}
+
+/**
+ * @alpha
+ */
+export interface BlockPending extends BaseHassEvent {
+  type: string;
+  status: "pending";
+  parent?: SerialisedBlock;
+  triggeredBy?: Trigger<unknown>;
 }
 
 export interface SequenceAborted extends BaseHassEvent {

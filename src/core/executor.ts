@@ -67,12 +67,8 @@ export class Executor<I, O> {
     });
   }
 
-  private async executeBlock<Out>(
-    executeId: string,
-    block: Block<unknown, Out>,
-    input: unknown,
-  ): Promise<BlockOutput<Out> & { success: boolean }> {
-    const eventArgs = {
+  private getEventArgs(executeId: string, block: Block<unknown, unknown>) {
+    return {
       executeId,
       triggerId: this.triggerId,
       type: block.typeString,
@@ -81,6 +77,14 @@ export class Executor<I, O> {
       triggeredBy: undefined,
       parent: this.parent?.toJson(),
     };
+  }
+
+  private async executeBlock<Out>(
+    executeId: string,
+    block: Block<unknown, Out>,
+    input: unknown,
+  ): Promise<BlockOutput<Out> & { success: boolean }> {
+    const eventArgs = this.getEventArgs(executeId, block);
     try {
       if (this.aborted) {
         throw new ExecutionAbortedError("Sequence was aborted");
@@ -118,11 +122,22 @@ export class Executor<I, O> {
     }
   }
 
+  public emitPendingMessages() {
+    this.executionQueue.toArray().forEach(({ block, executionId }) => {
+      const eventArgs = this.getEventArgs(executionId, block);
+      this.events.emit({
+        status: "pending",
+        ...eventArgs,
+      });
+    });
+  }
+
   public async run(): Promise<void> {
     let lastResult: (BlockOutput<unknown> & { success: boolean }) | undefined;
     let resultPromises: Promise<
       (BlockOutput<unknown> & { success: boolean }) | undefined
     >[] = [];
+    this.emitPendingMessages();
     while (this.executionQueue.length > 0) {
       const { block, executionId } = this.executionQueue.dequeue();
 
