@@ -112,7 +112,7 @@ export class Automation<
             );
 
             if (result) {
-              await this.run(client, output);
+              await this.run(client, output, bus, triggerId);
             }
           });
         }),
