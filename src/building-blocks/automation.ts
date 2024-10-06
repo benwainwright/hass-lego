@@ -103,7 +103,7 @@ export class Automation<
             };
 
             const triggerId = v4();
-            const { output } = await thisTrigger.doTrigger(
+            const { output, result } = await thisTrigger.doTrigger(
               newEvent,
               client,
               bus,
@@ -111,17 +111,19 @@ export class Automation<
               this,
             );
 
-            const executor = new SequenceExecutor(
-              [this],
-              client,
-              bus,
-              triggerId,
-              output,
-            );
+            if (result) {
+              const executor = new SequenceExecutor(
+                [this],
+                client,
+                bus,
+                triggerId,
+                output,
+              );
 
-            void executor.run();
+              void executor.run();
 
-            await executor.finished();
+              await executor.finished();
+            }
           });
         }),
       );
