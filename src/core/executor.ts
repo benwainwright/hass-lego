@@ -1,5 +1,5 @@
 import { Queue } from "queue-typescript";
-import { Block } from "./block.ts";
+import { Block } from "@building-blocks";
 import { EventBus, LegoClient } from "@core";
 import { BlockOutput } from "@types";
 import EventEmitter from "events";

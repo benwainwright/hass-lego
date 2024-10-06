@@ -14,10 +14,10 @@ export const sequence = <
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const A extends readonly any[],
   I = GetSequenceInput<A>,
-  O = GetSequenceOutput<A>
+  O = GetSequenceOutput<A>,
 >(
   actions: BlockRetainType<A> & A & ValidInputOutputSequence<I, O, A>,
-  mode: ExecutionMode = ExecutionMode.Restart
+  mode: ExecutionMode = ExecutionMode.Restart,
 ) => {
   return new Automation<A, I, O>({ name: "Run in sequence", mode, actions });
 };

@@ -1,8 +1,7 @@
-import { LegoClient, EventBus } from "@core";
+import { LegoClient, EventBus, BlockExecutionMode, Executor } from "@core";
 import { BlockOutput, GetOutputs } from "@types";
 import { Block } from "./block.ts";
 import { md5 } from "@utils";
-import { BlockExecutionMode, Executor } from "./sequence-executer.ts";
 
 /**
  * @alpha

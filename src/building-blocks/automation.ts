@@ -1,5 +1,7 @@
 import { Queue } from "queue-typescript";
-import { LegoClient, EventBus } from "@core";
+
+import { LegoClient, EventBus, Executor, BlockExecutionMode } from "@core";
+
 import { Trigger } from "./trigger.ts";
 import {
   StateChanged,
@@ -12,7 +14,6 @@ import {
 } from "@types";
 
 import { Block } from "./block.ts";
-import { BlockExecutionMode, Executor } from "./sequence-executer.ts";
 import { v4 } from "uuid";
 import { ExecutionAbortedError } from "@errors";
 import { md5 } from "@utils";
