@@ -43,7 +43,7 @@ export type {
 
 export {
   HassLegoError,
-  SequenceAbortedError,
+  ExecutionAbortedError,
   InitialStatesNotLoadedError,
   EntityDoesNotExistError,
 } from "@errors";

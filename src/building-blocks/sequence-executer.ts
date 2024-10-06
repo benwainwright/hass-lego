@@ -3,20 +3,20 @@ import { Block } from "./block.ts";
 import { EventBus, LegoClient } from "@core";
 import { BlockOutput } from "@types";
 import EventEmitter from "events";
-import { SequenceAbortedError } from "@errors";
+import { ExecutionAbortedError } from "@errors";
 import { v4 } from "uuid";
 
-const SEQUENCE_EXECUTOR_FINISHED = "sequence-executor-finished";
-const SEQUENCE_EXECUTOR_ABORTED = "sequence-executor-aborted";
+const EXECUTOR_FINISHED = "executor-finished";
+const EXECUTOR_ABORTED = "executor-aborted";
 
-export enum SequenceExecutionMode {
+export enum BlockExecutionMode {
   Parallel = "Parallel",
   Sequence = "Sequence",
 }
 
 type Output<O> = (BlockOutput<O> & { success: boolean }) | undefined;
 
-export class SequenceExecutor<I, O> {
+export class Executor<I, O> {
   private executionQueue: Queue<{
     executionId: string;
     block: Block<unknown, unknown>;
@@ -32,7 +32,7 @@ export class SequenceExecutor<I, O> {
     private events: EventBus,
     public triggerId: string,
     private input?: I,
-    private executionMode?: SequenceExecutionMode,
+    private executionMode?: BlockExecutionMode,
     private parent?: Block<unknown, unknown>,
   ) {
     const queueItems = sequence.map((item) => ({
@@ -49,8 +49,8 @@ export class SequenceExecutor<I, O> {
     const result = promiseFunction();
     return await new Promise<T>((accept, reject) => {
       const waitForAbortCallback = () => {
-        reject(new SequenceAbortedError("Sequence was aborted"));
-        this.bus.off(SEQUENCE_EXECUTOR_ABORTED, waitForAbortCallback);
+        reject(new ExecutionAbortedError("Sequence was aborted"));
+        this.bus.off(EXECUTOR_ABORTED, waitForAbortCallback);
       };
 
       result
@@ -63,7 +63,7 @@ export class SequenceExecutor<I, O> {
           }
         });
 
-      this.bus.on(SEQUENCE_EXECUTOR_ABORTED, waitForAbortCallback);
+      this.bus.on(EXECUTOR_ABORTED, waitForAbortCallback);
     });
   }
 
@@ -83,7 +83,7 @@ export class SequenceExecutor<I, O> {
     };
     try {
       if (this.aborted) {
-        throw new SequenceAbortedError("Sequence was aborted");
+        throw new ExecutionAbortedError("Sequence was aborted");
       }
 
       this.events.emit({
@@ -107,7 +107,7 @@ export class SequenceExecutor<I, O> {
     } catch (error) {
       if (error instanceof Error) {
         this.events.emit({
-          status: error instanceof SequenceAbortedError ? "aborted" : "failed",
+          status: error instanceof ExecutionAbortedError ? "aborted" : "failed",
           error,
           message: error.message,
           ...eventArgs,
@@ -134,7 +134,7 @@ export class SequenceExecutor<I, O> {
 
       resultPromises.push(lastResultPromise);
 
-      if (this.executionMode === SequenceExecutionMode.Sequence) {
+      if (this.executionMode === BlockExecutionMode.Sequence) {
         lastResult = await lastResultPromise;
         const blockIndicatedToStop = !lastResult.continue;
 
@@ -149,13 +149,13 @@ export class SequenceExecutor<I, O> {
       }
     }
 
-    if (this.executionMode === SequenceExecutionMode.Parallel) {
+    if (this.executionMode === BlockExecutionMode.Parallel) {
       const result = await Promise.all(resultPromises);
       this.result = result as Output<O>[];
     }
 
     this.result = [{ ...(lastResult as BlockOutput<O>), success: true }];
-    this.bus.emit(SEQUENCE_EXECUTOR_FINISHED);
+    this.bus.emit(EXECUTOR_FINISHED);
   }
 
   public async finished() {
@@ -164,7 +164,7 @@ export class SequenceExecutor<I, O> {
         accept(this.result);
       } else {
         const finishedCallback = () => {
-          this.bus.off(SEQUENCE_EXECUTOR_FINISHED, finishedCallback);
+          this.bus.off(EXECUTOR_FINISHED, finishedCallback);
           if (this.result) {
             accept(this.result);
           } else {
@@ -177,18 +177,18 @@ export class SequenceExecutor<I, O> {
         };
 
         const abortedCallback = () => {
-          this.bus.off(SEQUENCE_EXECUTOR_ABORTED, abortedCallback);
-          reject(new SequenceAbortedError(this.parent?.name ?? ""));
+          this.bus.off(EXECUTOR_ABORTED, abortedCallback);
+          reject(new ExecutionAbortedError(this.parent?.name ?? ""));
         };
 
-        this.bus.on(SEQUENCE_EXECUTOR_ABORTED, abortedCallback);
-        this.bus.on(SEQUENCE_EXECUTOR_FINISHED, finishedCallback);
+        this.bus.on(EXECUTOR_ABORTED, abortedCallback);
+        this.bus.on(EXECUTOR_FINISHED, finishedCallback);
       }
     });
   }
 
   public abort() {
     this.aborted = true;
-    this.bus.emit(SEQUENCE_EXECUTOR_ABORTED);
+    this.bus.emit(EXECUTOR_ABORTED);
   }
 }

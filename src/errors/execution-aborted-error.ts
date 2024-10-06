@@ -3,9 +3,8 @@ import { HassLegoError } from "./hass-lego-error.ts";
 /**
  * @alpha
  */
-export class SequenceAbortedError extends HassLegoError {
+export class ExecutionAbortedError extends HassLegoError {
   public constructor(name: string) {
-    
-    super(`Sequence '${name}' was aborted`);
+    super(`Execution '${name}' was aborted`);
   }
 }

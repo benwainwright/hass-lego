@@ -2,10 +2,7 @@ import { LegoClient, EventBus } from "@core";
 import { BlockOutput, GetOutputs } from "@types";
 import { Block } from "./block.ts";
 import { md5 } from "@utils";
-import {
-  SequenceExecutionMode,
-  SequenceExecutor,
-} from "./sequence-executer.ts";
+import { BlockExecutionMode, Executor } from "./sequence-executer.ts";
 
 /**
  * @alpha
@@ -52,13 +49,13 @@ export class ExecuteConcurrently<
       throw new Error("Must pass a triggerId");
     }
 
-    const executor = new SequenceExecutor<I, O>(
+    const executor = new Executor<I, O>(
       [...this.config.actions],
       client,
       events,
       triggerId,
       input,
-      SequenceExecutionMode.Parallel,
+      BlockExecutionMode.Parallel,
       this,
     );
 

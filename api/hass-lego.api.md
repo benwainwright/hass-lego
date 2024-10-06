@@ -165,6 +165,11 @@ export class EventBus {
 }
 
 // @alpha (undocumented)
+export class ExecutionAbortedError extends HassLegoError {
+    constructor(name: string);
+}
+
+// @alpha (undocumented)
 export enum ExecutionMode {
     Parallel = "Parallel",
     Queue = "Queue",
@@ -344,11 +349,6 @@ export const renderSimpleLog: (bus: EventBus, staticLog: boolean) => void;
 export const sequence: <const A extends readonly any[], I = GetSequenceInput<A>, O = GetSequenceOutput<A>>(actions: BlockRetainType<A> & A & ValidInputOutputSequence<I, O, A>, mode?: ExecutionMode) => Automation<A, I, O>;
 
 // @alpha (undocumented)
-export class SequenceAbortedError extends HassLegoError {
-    constructor(name: string);
-}
-
-// @alpha (undocumented)
 export interface StateChanged {
     // (undocumented)
     entity: string;
@@ -399,7 +399,7 @@ export const when: <TO = void, EO = void, PO = void, I = void>(config: {
 
 // Warnings were encountered during analysis:
 //
-// src/building-blocks/automation.ts:38:7 - (ae-forgotten-export) The symbol "BlockRetainType" needs to be exported by the entry point index.d.ts
+// src/building-blocks/automation.ts:35:7 - (ae-forgotten-export) The symbol "BlockRetainType" needs to be exported by the entry point index.d.ts
 // src/building-blocks/condition.ts:116:3 - (ae-incompatible-release-tags) The symbol "assertion" is marked as @public, but its signature references "Assertion" which is marked as @alpha
 // src/building-blocks/condition.ts:117:3 - (ae-incompatible-release-tags) The symbol "then" is marked as @public, but its signature references "Block" which is marked as @alpha
 // src/building-blocks/condition.ts:118:3 - (ae-incompatible-release-tags) The symbol "else" is marked as @public, but its signature references "Block" which is marked as @alpha

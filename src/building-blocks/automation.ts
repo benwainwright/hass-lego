@@ -12,12 +12,9 @@ import {
 } from "@types";
 
 import { Block } from "./block.ts";
-import {
-  SequenceExecutionMode,
-  SequenceExecutor,
-} from "./sequence-executer.ts";
+import { BlockExecutionMode, Executor } from "./sequence-executer.ts";
 import { v4 } from "uuid";
-import { SequenceAbortedError } from "@errors";
+import { ExecutionAbortedError } from "@errors";
 import { md5 } from "@utils";
 
 /**
@@ -29,7 +26,7 @@ export class Automation<
   I = GetSequenceInput<A>,
   O = GetSequenceOutput<A>,
 > extends Block<I, O> {
-  private executionQueue = new Queue<SequenceExecutor<I, O>>();
+  private executionQueue = new Queue<Executor<I, O>>();
   public readonly name: string;
   public constructor(
     public config: {
@@ -65,7 +62,7 @@ export class Automation<
           await executor.finished();
           this.executionQueue.dequeue();
         } catch (error) {
-          if (!(error instanceof SequenceAbortedError)) {
+          if (!(error instanceof ExecutionAbortedError)) {
             throw error;
           }
         }
@@ -112,7 +109,7 @@ export class Automation<
             );
 
             if (result) {
-              const executor = new SequenceExecutor(
+              const executor = new Executor(
                 [this],
                 client,
                 bus,
@@ -154,13 +151,13 @@ export class Automation<
     }
 
     try {
-      const executor = new SequenceExecutor<I, O>(
+      const executor = new Executor<I, O>(
         [...this.config.actions],
         client,
         events,
         triggerId,
         input,
-        SequenceExecutionMode.Sequence,
+        BlockExecutionMode.Sequence,
         this,
       );
 
@@ -188,7 +185,7 @@ export class Automation<
       }
       return result;
     } catch (error) {
-      if (error instanceof SequenceAbortedError) {
+      if (error instanceof ExecutionAbortedError) {
         return { continue: false };
       }
       throw error;
