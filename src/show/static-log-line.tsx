@@ -19,6 +19,12 @@ const getIcon = (event: HassLegoEvent) => {
 
       case "finished":
         return "🏁";
+
+      case "pending":
+        return "⌛"
+
+      case "registered":
+        return "✅"
     }
   }
 };

@@ -21,7 +21,10 @@ export class LegoClient {
   public states: Map<string, HassEntity> | undefined;
   private automations: Block<unknown, unknown>[] = [];
 
-  public constructor(private client: IClient, private bus: EventBus) {}
+  public constructor(
+    private client: IClient,
+    private bus: EventBus,
+  ) {}
 
   /**
    * Load all available states from home assistant. This will reset the state cache -
@@ -68,7 +71,7 @@ export class LegoClient {
     io.on("connection", (socket) => {
       socket.on("request-automations", () => {
         const automations = this.automations.map((automation) =>
-          automation.toJson()
+          automation.toJson(),
         );
         socket.emit("automations", automations);
       });
@@ -77,7 +80,7 @@ export class LegoClient {
         if (event.type !== "hass-state-changed") {
           socket.emit(
             "hass-lego-event",
-            JSON.parse(stringifyCircularJSON(event))
+            JSON.parse(stringifyCircularJSON(event)),
           );
         }
       });
@@ -116,7 +119,7 @@ export class LegoClient {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     I = any,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    O = any
+    O = any,
   >(automation: Automation<A, I, O>) {
     this.automations.push(automation);
     await automation.attachTrigger(this, this.bus);
@@ -136,7 +139,7 @@ export class LegoClient {
 
       if (!this.states.has(id)) {
         throw new Error(
-          "You tried to subscribe to an entity that doesn't exist"
+          "You tried to subscribe to an entity that doesn't exist",
         );
       }
 
