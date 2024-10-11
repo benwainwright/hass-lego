@@ -68,7 +68,7 @@ export class Automation<
           }
         }
       }
-      await new Promise((accept) => setTimeout(accept, 100));
+      await new Promise((accept) => setTimeout(accept, 1));
     }
   }
 

@@ -8,7 +8,6 @@ describe("the action block", () => {
     const callback = vi.fn();
 
     const client = mock<LegoClient>();
-    const bus = mock<EventBus>();
     const input = "input";
     const output = "output";
 
@@ -19,7 +18,7 @@ describe("the action block", () => {
       callback,
     });
 
-    const result = await action.execute(client, bus, input, "trigger");
+    const result = await action.run(input, "trigger");
 
     expect(result).toEqual({
       output,
@@ -33,7 +32,6 @@ describe("the action block", () => {
     const callback = vi.fn();
 
     const client = mock<LegoClient>();
-    const bus = mock<EventBus>();
     const input = "input";
 
     when(callback)
@@ -45,7 +43,7 @@ describe("the action block", () => {
       callback,
     });
 
-    const result = await action.execute(client, bus, input, "trigger");
+    const result = await action.run(client, input);
 
     expect(result).toEqual({ continue: false, success: false });
   });
@@ -65,7 +63,7 @@ describe("the action block", () => {
     });
 
     await expect(action.execute(client, bus, input, "trigger")).rejects.toThrow(
-      "A string?"
+      "A string?",
     );
   });
 });
