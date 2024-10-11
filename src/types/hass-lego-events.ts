@@ -2,10 +2,11 @@ import { Trigger } from "@building-blocks";
 import { Event } from "homeassistant-typescript";
 import { BlockOutput } from "./block-output.ts";
 
-interface SerialisedBlock {
+export interface SerialisedBlock {
   id: string;
   name: string;
   type: string;
+  params?: Record<string, unknown>
 }
 
 /**
