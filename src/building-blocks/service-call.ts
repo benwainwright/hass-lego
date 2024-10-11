@@ -1,18 +1,14 @@
 import { Action } from "./action.ts";
-import {
-  CallServiceCommand,
-  CallServiceResponse,
-} from "homeassistant-typescript";
+import { CallServiceCommand, State } from "homeassistant-typescript";
 
 /**
-  * @alpha
-  */
+ * @alpha
+ */
 export class ServiceCall extends Action {
-  private target: CallServiceCommand["target"];
 
   public override typeString = "service-call";
 
-  private response: CallServiceResponse | undefined;
+  private response: State[] | undefined;
 
   public constructor(
     private readonly serviceConfig: {
