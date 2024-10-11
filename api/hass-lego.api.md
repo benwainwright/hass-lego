@@ -5,12 +5,12 @@
 ```ts
 
 import { CallServiceCommand } from 'homeassistant-typescript';
-import { CallServiceResponse } from 'homeassistant-typescript';
 import { Event as Event_2 } from 'homeassistant-typescript';
 import { IClient } from 'homeassistant-typescript';
 import { IncomingMessage } from 'http';
 import { Server } from 'http';
 import { ServerResponse } from 'http';
+import { State } from 'homeassistant-typescript';
 
 // @alpha
 export class Action<I = void, O = void> extends Block<I, O> {
@@ -323,7 +323,7 @@ export class LegoClient {
             device_id?: string | string[];
         };
         data?: Record<string, unknown>;
-    }): Promise<CallServiceResponse>;
+    }): Promise<State[]>;
     // (undocumented)
     getEntity(id: string): HassEntity;
     // (undocumented)
@@ -362,7 +362,6 @@ export class ServiceCall extends Action {
         id: string;
         name: string;
         params: Omit<CallServiceCommand, "id" | "type">;
-        response: CallServiceResponse | undefined;
     };
     // (undocumented)
     typeString: string;
