@@ -41,7 +41,7 @@ jobs:
       - name: Setup job
         uses: ./.github/actions/install-dependencies
       - name: Run Eslint
-        run: pnpm run build
+        run: pnpm run test:ci
 
   release:
     name: Release

@@ -15,6 +15,7 @@
   },
   "scripts": {
     "test": "vitest",
+    "test:ci": "vitest --coverage",
     "test:ui": "vitest --watch --ui --coverage",
     "lint": "eslint .",
     "build:js": "swc src --out-dir dist",
