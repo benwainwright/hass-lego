@@ -1,4 +1,4 @@
-import { EventBus, LegoClient } from "@core";
+import { LegoClient } from "@core";
 import { Action } from "./action.ts";
 import { mock } from "vitest-mock-extended";
 import { when } from "vitest-when";
