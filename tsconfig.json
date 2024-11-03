@@ -12,7 +12,7 @@
     "declaration": true,
     "declarationMap": true,
     "jsx": "react-jsx",
-    "emitDeclarationOnly": true,
+    "noEmit": true,
     "outDir": "./dist/types",
     "strict": true,
     "esModuleInterop": true,

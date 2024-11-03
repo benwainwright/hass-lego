@@ -23,6 +23,15 @@ jobs:
       - name: Run Eslint
         run: pnpm run lint
 
+  types:
+    name: Types
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup job
+        uses: ./.github/actions/install-dependencies
+      - run: pnpm run types
+
   build:
     name: Build Package
     runs-on: ubuntu-latest
