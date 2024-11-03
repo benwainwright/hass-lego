@@ -225,7 +225,7 @@ describe("the automation class", () => {
           typeof oneAction,
           typeof twoAction,
           typeof threeAction,
-          typeof fourAction
+          typeof fourAction,
         ],
         string,
         number
@@ -279,7 +279,7 @@ describe("the automation class", () => {
           typeof oneAction,
           typeof twoAction,
           typeof threeAction,
-          typeof fourAction
+          typeof fourAction,
         ],
         string,
         number
@@ -333,7 +333,7 @@ describe("the automation class", () => {
           typeof oneAction,
           typeof twoAction,
           typeof threeAction,
-          typeof fourAction
+          typeof fourAction,
         ],
         string,
         number

@@ -6,7 +6,7 @@ export interface SerialisedBlock {
   id: string;
   name: string;
   type: string;
-  params?: Record<string, unknown>
+  params?: Record<string, unknown>;
 }
 
 /**

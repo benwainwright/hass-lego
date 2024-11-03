@@ -177,7 +177,8 @@ export class Automation<
           await executor.run();
           break;
       }
-      const [result] = await executor.finished();
+      const intResult = await executor.finished()
+      const [result] = intResult
 
       if (!result) {
         throw new Error(

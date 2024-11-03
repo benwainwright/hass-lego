@@ -19,7 +19,9 @@ export class EventBus {
   }
 
   public subscribe(
-    callback: (event: HassLegoEvent & { id: string; timestamp: string }) => void
+    callback: (
+      event: HassLegoEvent & { id: string; timestamp: string },
+    ) => void,
   ) {
     this.bus.on(AUTOMATION_EVENT, callback);
   }

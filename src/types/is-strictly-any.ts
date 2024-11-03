@@ -1,7 +1,7 @@
 // From: https://stackoverflow.com/a/50375286/62076
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends (
-  k: infer I
+  k: infer I,
 ) => void
   ? I
   : never;
@@ -10,6 +10,5 @@ type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends (
 type UnionForAny<T> = T extends never ? "A" : "B";
 
 // Returns true if type is any, or false for any other type.
-export type IsStrictlyAny<T> = UnionToIntersection<UnionForAny<T>> extends never
-  ? true
-  : false;
+export type IsStrictlyAny<T> =
+  UnionToIntersection<UnionForAny<T>> extends never ? true : false;

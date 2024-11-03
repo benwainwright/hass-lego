@@ -9,7 +9,7 @@ interface SummaryViewRowProps {
 
 const getIcon = (events: HassLegoEvent[]) => {
   const lastAutomationEvent = events.flatMap((event) =>
-    event.type === "automation" ? [event] : []
+    event.type === "automation" ? [event] : [],
   );
 
   const event = lastAutomationEvent.at(-1);

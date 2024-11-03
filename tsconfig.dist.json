@@ -1,13 +1,12 @@
-
 {
-    "extends": "./tsconfig.json",
-    "exclude": [
-        "src/**/*.spec.ts",
-        "*.config.ts",
-        "*.config.mts",
-        "*.config.cts",
-        "api/*",
-        "**/*.js",
-        "dist/**/*"
-    ]
+  "extends": "./tsconfig.json",
+  "exclude": [
+    "src/**/*.spec.ts",
+    "*.config.ts",
+    "*.config.mts",
+    "*.config.cts",
+    "api/*",
+    "**/*.js",
+    "dist/**/*"
+  ]
 }

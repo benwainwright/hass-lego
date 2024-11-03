@@ -24,8 +24,8 @@ if (result.succeeded && result.warningCount === 0 && result.errorCount === 0) {
 } else {
   console.log(
     `API extractor completed with ${String(
-      result.errorCount
-    )} errors and ${String(result.warningCount)} warnings`
+      result.errorCount,
+    )} errors and ${String(result.warningCount)} warnings`,
   );
   process.exitCode = 1;
 }

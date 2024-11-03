@@ -1,45 +1,130 @@
 import { mock } from "vitest-mock-extended";
-import { Automation } from "./automation.ts";
-import { Action } from "./action.ts";
 import { when } from "vitest-when";
-import { EventBus, LegoClient } from "@core";
 
-describe("Automation", () => {
-  it("Executes all the actions and passes the outputs through to the inputs", async () => {
-    const mockClient = mock<LegoClient>();
+import { BlockExecutionMode, EventBus, Executor, LegoClient } from "@core";
+import { Action, Automation } from "@building-blocks";
+import { ExecutionMode } from "@types";
 
-    const input = "foo";
+vi.mock("@core")
 
-    const action1 = mock<Action<string, number>>();
-    const output1 = 2;
+afterEach(() => {
+  vi.resetAllMocks()
+})
 
-    const action2 = mock<Action<number, string>>();
-    const output2 = "thing";
+describe("Automation.run", () => {
 
-    const action3 = mock<Action<string, boolean>>();
-    const output3 = false;
+  it("passes actions to an executor, runs it then returns the result when run in queue mode", async () => {
+    const actions = [mock<Action<string, string>>(), mock<Action<string, string>>()] as const
 
-    const bus = mock<EventBus>();
+    const mockClient = mock<LegoClient>()
+    const events = mock<EventBus>()
+    const triggerId = "trigger-id"
+    const input = "foo"
 
-    const auto = new Automation({
-      name: "Name",
-      actions: [action1, action2, action3],
-    });
+    const automation = new Automation({
+      name: "Test action",
+      actions,
+      mode: ExecutionMode.Queue
+    })
 
-    when(action1.execute)
-      .calledWith(mockClient, bus, input, "triggerid", auto)
-      .thenResolve({ output: output1, continue: true, success: true });
 
-    when(action2.execute)
-      .calledWith(mockClient, bus, output1, "triggerid", auto)
-      .thenResolve({ output: output2, success: true, continue: true });
 
-    when(action3.execute)
-      .calledWith(mockClient, bus, output2, "triggerid", auto)
-      .thenResolve({ output: output3, success: true, continue: true });
+    const mockExecutor = mock<Executor<string, string>>()
 
-    const result = await auto.execute(mockClient, bus, input, "triggerid");
+    when(vi.mocked(Executor)).calledWith([...actions], mockClient, events, triggerId, input, BlockExecutionMode.Sequence, automation).thenReturn(mockExecutor)
 
-    expect(result).toEqual({ output: output3, success: true, continue: true });
-  });
+    const runPromise = new Promise<void>((accept) => {
+      // eslint-disable-next-line @typescript-eslint/require-await
+      mockExecutor.run.mockImplementation(async () => {
+        accept()
+      })
+    })
+
+
+    mockExecutor.finished.mockImplementation(async () => {
+      await runPromise
+      return [{ continue: true, outputType: "block", output: "foo", success: true }]
+    })
+
+    const result = await automation.run(mockClient, input, events, triggerId)
+
+    if (result.continue) {
+      expect(result.output).toEqual("foo")
+      expect(result.continue).toEqual(true)
+      expect(result.outputType).toEqual("block")
+    }
+
+    expect.assertions(3)
+  })
+
+  it("when configured in queue mode, executions are queued", async () => {
+    const actions = [mock<Action<string, string>>(), mock<Action<string, string>>()] as const
+
+    const mockClient = mock<LegoClient>()
+    const events = mock<EventBus>()
+    const triggerIdOne = "trigger-id-one"
+    const triggerIdTwo = "trigger-id-two"
+    const input = "foo"
+
+    let secondActionRun = false;
+
+    const automation = new Automation({
+      name: "Test action",
+      actions,
+      mode: ExecutionMode.Queue
+    })
+
+    const mockExecutorOne = mock<Executor<string, string>>()
+
+
+    const runPromiseOne = new Promise<void>((accept) => {
+      // eslint-disable-next-line @typescript-eslint/require-await
+      mockExecutorOne.run.mockImplementation(async () => {
+        accept()
+        expect(secondActionRun).toEqual(false)
+      })
+    })
+
+
+    mockExecutorOne.finished.mockImplementation(async () => {
+      await runPromiseOne
+      expect(secondActionRun).toEqual(false)
+      return [{ continue: true, outputType: "block", output: "foo", success: true }]
+    })
+
+    when(vi.mocked(Executor)).calledWith([...actions], mockClient, events, triggerIdOne, input, BlockExecutionMode.Sequence, automation).thenReturn(mockExecutorOne)
+
+    const mockExecutorTwo = mock<Executor<string, string>>()
+
+
+    const runPromiseTwo = new Promise<void>((accept) => {
+      // eslint-disable-next-line @typescript-eslint/require-await
+      mockExecutorTwo.run.mockImplementation(async () => {
+        secondActionRun = true
+        accept()
+      })
+    })
+
+
+    mockExecutorTwo.finished.mockImplementation(async () => {
+      await runPromiseTwo
+      return [{ continue: true, outputType: "block", output: "foo", success: true }]
+    })
+
+    when(vi.mocked(Executor)).calledWith([...actions], mockClient, events, triggerIdTwo, input, BlockExecutionMode.Sequence, automation).thenReturn(mockExecutorTwo)
+
+
+    const firstPromise = automation.run(mockClient, input, events, triggerIdOne)
+    void automation.run(mockClient, input, events, triggerIdTwo)
+
+    const result = await firstPromise
+
+    if (result.continue) {
+      expect(result.output).toEqual("foo")
+      expect(result.continue).toEqual(true)
+      expect(result.outputType).toEqual("block")
+    }
+
+    expect.assertions(6)
+  })
 });

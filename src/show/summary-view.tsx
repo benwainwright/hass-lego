@@ -14,7 +14,7 @@ export const SummaryView = ({ events }: SummaryViewProps) => {
         accum[id] = [...(accum[id] ?? []), event];
       }
       return accum;
-    }, {})
+    }, {}),
   ).map(([name, events]) => ({
     name,
     events,

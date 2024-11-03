@@ -39,12 +39,10 @@ export type InputType<T extends Block<unknown, unknown>> = Exclude<
  *
  * @alpha
  */
-export type OutputType<T extends Block<unknown, unknown>> = Exclude<
-  T["outputType"],
-  undefined
-> extends Promise<infer T>
-  ? T
-  : Exclude<T["outputType"], undefined>;
+export type OutputType<T extends Block<unknown, unknown>> =
+  Exclude<T["outputType"], undefined> extends Promise<infer T>
+    ? T
+    : Exclude<T["outputType"], undefined>;
 
 export type OutputTypeKeepPromise<T extends Block<unknown, unknown>> = Exclude<
   T["outputType"],
@@ -57,7 +55,7 @@ export type OutputTypeKeepPromise<T extends Block<unknown, unknown>> = Exclude<
 export type ValidInputOutputSequence<
   I,
   O,
-  A extends readonly Block<unknown, unknown>[]
+  A extends readonly Block<unknown, unknown>[],
 > = A extends readonly [infer Only extends Block<unknown, unknown>]
   ? InputType<Only> extends I
     ? OutputType<Only> extends O
@@ -65,13 +63,16 @@ export type ValidInputOutputSequence<
       : never
     : never
   : A extends readonly [
-      infer First extends Block<unknown, unknown>,
-      ...infer Rest extends readonly Block<unknown, unknown>[]
-    ]
-  ? InputType<First> extends I
-    ? readonly [First, ...ValidInputOutputSequence<OutputType<First>, O, Rest>]
-    : never
-  : never;
+        infer First extends Block<unknown, unknown>,
+        ...infer Rest extends readonly Block<unknown, unknown>[],
+      ]
+    ? InputType<First> extends I
+      ? readonly [
+          First,
+          ...ValidInputOutputSequence<OutputType<First>, O, Rest>,
+        ]
+      : never
+    : never;
 
 /**
  * Get all of the outputs of a sequence of blocks
@@ -81,7 +82,7 @@ export type ValidInputOutputSequence<
 export type GetOutputs<T extends readonly Block<unknown, unknown>[]> =
   T extends readonly [
     infer First extends Block<unknown, unknown>,
-    ...infer Rest extends Block<unknown, unknown>[]
+    ...infer Rest extends Block<unknown, unknown>[],
   ]
     ? readonly [OutputType<First>, ...GetOutputs<Rest>]
     : readonly [];
@@ -94,11 +95,11 @@ export type GetOutputs<T extends readonly Block<unknown, unknown>[]> =
 export type GetResults<T extends readonly Block<unknown, unknown>[]> =
   T extends readonly [
     infer First extends Block<unknown, unknown>,
-    ...infer Rest extends Block<unknown, unknown>[]
+    ...infer Rest extends Block<unknown, unknown>[],
   ]
     ? readonly [
         { continue: boolean; output: OutputType<First> },
-        ...GetOutputs<Rest>
+        ...GetOutputs<Rest>,
       ]
     : readonly [];
 
@@ -108,10 +109,10 @@ export type GetResults<T extends readonly Block<unknown, unknown>[]> =
 export type BlockRetainType<A extends readonly Block<unknown, unknown>[]> =
   A extends readonly [
     infer First extends Block<unknown, unknown>,
-    ...infer Rest extends readonly Block<unknown, unknown>[]
+    ...infer Rest extends readonly Block<unknown, unknown>[],
   ]
     ? readonly [
         Block<InputType<First>, OutputTypeKeepPromise<First>>,
-        ...BlockRetainType<Rest>
+        ...BlockRetainType<Rest>,
       ]
     : readonly [];

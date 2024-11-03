@@ -16,6 +16,10 @@ export enum BlockExecutionMode {
 
 type Output<O> = (BlockOutput<O> & { success: boolean }) | undefined;
 
+/**
+  * Responsible for executing groups of blocks and emitting the associated events for
+  * each execution.
+  */
 export class Executor<I, O> {
   private executionQueue: Queue<{
     executionId: string;
@@ -132,6 +136,9 @@ export class Executor<I, O> {
     });
   }
 
+  /**
+    * Run blocks associated with this executor. Call `finished()` to get the execution outcome
+    */
   public async run(): Promise<void> {
     let lastResult: (BlockOutput<unknown> & { success: boolean }) | undefined;
     let resultPromises: Promise<

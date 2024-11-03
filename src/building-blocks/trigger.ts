@@ -12,18 +12,18 @@ export class Trigger<O> {
     public readonly id: string,
     private readonly predicate?: (
       event: StateChanged,
-      client: LegoClient
+      client: LegoClient,
     ) =>
       | boolean
       | { result: boolean; output: O }
-      | Promise<{ result: boolean; output: O }>
+      | Promise<{ result: boolean; output: O }>,
   ) {}
 
   private async getResult(
     result?:
       | boolean
       | Promise<{ result: boolean; output: O }>
-      | { result: boolean; output: O }
+      | { result: boolean; output: O },
   ) {
     if (typeof result === "boolean") {
       return { result, output: undefined as O };
@@ -45,7 +45,7 @@ export class Trigger<O> {
     client: LegoClient,
     events: EventBus,
     triggerId: string,
-    parent: Block<unknown, unknown>
+    parent: Block<unknown, unknown>,
   ): Promise<{ result: boolean; output: O }> {
     const trigger = {
       id: this.id,
@@ -65,13 +65,14 @@ export class Trigger<O> {
       const result = await this.predicate?.(event, client);
       const finalResult = await this.getResult(result);
 
-      const output: BlockOutput<O> =  finalResult.result ? {
-        outputType: "conditional",
-        continue: finalResult.result,
-        conditionResult: finalResult.result,
-        output: finalResult.output
-      } : { continue: false }
-
+      const output: BlockOutput<O> = finalResult.result
+        ? {
+            outputType: "conditional",
+            continue: finalResult.result,
+            conditionResult: finalResult.result,
+            output: finalResult.output,
+          }
+        : { continue: false };
 
       events.emit({
         type: "trigger",
@@ -96,7 +97,7 @@ export class Trigger<O> {
           name: this.name,
           message: error.message,
           error,
-          executeId: triggerId
+          executeId: triggerId,
         });
       }
       throw error;

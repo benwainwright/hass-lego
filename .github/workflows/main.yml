@@ -33,7 +33,6 @@ jobs:
       - name: Run Eslint
         run: pnpm run build
 
-
   test:
     name: Run test
     runs-on: ubuntu-latest

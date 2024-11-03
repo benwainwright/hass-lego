@@ -21,10 +21,10 @@ const getIcon = (event: HassLegoEvent) => {
         return "🏁";
 
       case "pending":
-        return "⌛"
+        return "⌛";
 
       case "registered":
-        return "✅"
+        return "✅";
     }
   }
 };
