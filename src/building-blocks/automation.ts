@@ -14,7 +14,6 @@ import {
 } from "@types";
 
 import { Block } from "./block.ts";
-import { v4 } from "uuid";
 import { ExecutionAbortedError } from "@errors";
 import { md5 } from "@utils";
 
@@ -34,7 +33,7 @@ export class Automation<
       name: string;
       id?: string;
       actions: BlockRetainType<A> & A & ValidInputOutputSequence<I, O, A>;
-      trigger?: Trigger<I> | Trigger<I>[];
+      trigger?: Trigger | Trigger[];
       mode?: ExecutionMode;
     },
   ) {
@@ -59,8 +58,7 @@ export class Automation<
       while (this.executionQueue.length > 0) {
         try {
           const executor = this.executionQueue.front;
-          void executor.run();
-          await executor.finished();
+          await executor.runToCompletion()
           this.executionQueue.dequeue();
         } catch (error) {
           if (!(error instanceof ExecutionAbortedError)) {
@@ -69,64 +67,6 @@ export class Automation<
         }
       }
       await new Promise((accept) => setTimeout(accept, 1));
-    }
-  }
-
-  private getTriggers(triggers?: Trigger<I> | Trigger<I>[]) {
-    if (!triggers) {
-      return undefined;
-    }
-
-    if (Array.isArray(triggers)) {
-      return triggers;
-    }
-
-    return [triggers];
-  }
-
-  public async attachTrigger(client: LegoClient, bus: EventBus) {
-    const triggers = this.getTriggers(this.config.trigger);
-
-    await this.validate(client);
-
-    if (triggers && triggers.length > 0) {
-      await Promise.all(
-        triggers.map(async (thisTrigger) => {
-          // eslint-disable-next-line @typescript-eslint/no-misused-promises
-          await client.onStateChanged(thisTrigger.id, async (event) => {
-            const newEvent: StateChanged = {
-              entity: event.data.entity_id,
-              hassEvent: event,
-              type: "hass-state-changed",
-            };
-
-            const triggerId = v4();
-            const { output, result } = await thisTrigger.doTrigger(
-              newEvent,
-              client,
-              bus,
-              triggerId,
-              this,
-            );
-
-            if (result) {
-              const executor = new Executor(
-                [this],
-                client,
-                bus,
-                triggerId,
-                output,
-              );
-
-              void executor.run();
-
-              await executor.finished();
-            }
-          });
-        }),
-      );
-    } else {
-      throw new Error("Automation has no trigger so cannot be attached");
     }
   }
 

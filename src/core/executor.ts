@@ -180,6 +180,11 @@ export class Executor<I, O> {
     this.bus.emit(EXECUTOR_FINISHED);
   }
 
+  public async runToCompletion() {
+    void this.run()
+    return await this.finished()
+  }
+
   public async finished() {
     return new Promise<Output<O>[]>((accept, reject) => {
       if (this.result) {

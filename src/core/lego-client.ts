@@ -1,4 +1,4 @@
-import { IClient, Event } from "homeassistant-typescript";
+import { IClient, Event, TriggerEventMessage } from "homeassistant-typescript";
 import { Automation, Block } from "@building-blocks";
 import { HassEntity } from "@types";
 import { EventBus } from "./event-bus.ts";
@@ -24,7 +24,7 @@ export class LegoClient {
   public constructor(
     private client: IClient,
     private bus: EventBus,
-  ) {}
+  ) { }
 
   /**
    * Load all available states from home assistant. This will reset the state cache -
@@ -100,6 +100,10 @@ export class LegoClient {
     return state;
   }
 
+  public async registerTrigger(trigger: Record<string, unknown>, callback: (event: unknown) => void | Promise<void>) {
+    await this.client.registerTrigger(trigger, callback)
+  }
+
   public async callService(params: {
     domain: string;
     service: string;
@@ -122,7 +126,14 @@ export class LegoClient {
     O = any,
   >(automation: Automation<A, I, O>) {
     this.automations.push(automation);
-    await automation.attachTrigger(this, this.bus);
+    const { trigger } = automation.config
+
+    const triggers = Array.isArray(trigger) ? trigger : [trigger]
+
+    await Promise.all(triggers.map(async (item) => {
+      await item?.attachToClient(this, automation, this.bus)
+    }))
+
     this.bus.emit({
       type: "automation",
       status: "registered",
@@ -143,11 +154,11 @@ export class LegoClient {
         );
       }
 
-      await this.client.subscribeToEvents((event: Event) => {
-        if (this.states) {
+      await this.client.subscribeToEvents((event: Event | TriggerEventMessage['event']) => {
+        if (this.states && "data" in event) {
           this.states.set(event.data.entity_id, event.data.new_state);
         }
-        if (event.data.entity_id === id) {
+        if ("data" in event && event.data.entity_id === id) {
           callback(event);
         }
       });

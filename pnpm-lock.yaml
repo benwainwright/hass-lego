@@ -18,8 +18,8 @@ importers:
         specifier: ^1.10.0
         version: 1.10.0(@types/node@22.5.4)(@types/react@18.3.5)(@vitest/expect@2.1.4)(eslint@9.10.0)(typescript@5.5.4)(vitest@2.1.4)
       homeassistant-typescript:
-        specifier: ^1.4.0
-        version: 1.4.0(@types/node@22.5.4)(eslint@9.10.0)(typescript@5.5.4)(vitest@2.1.4)
+        specifier: ^1.6.1
+        version: 1.6.1(@types/node@22.5.4)(eslint@9.10.0)(typescript@5.5.4)(vitest@2.1.4)
       homeassistant-ws:
         specifier: 0.2.3
         version: 0.2.3
@@ -1861,8 +1861,8 @@ packages:
   highlight.js@10.7.3:
     resolution: {integrity: sha512-tzcUFauisWKNHaRkN4Wjl/ZA07gENAjFl3J/c480dprkGTg5EQstgaNFqBfUqCq54kZRIEcreTsAgF/m2quD7A==}
 
-  homeassistant-typescript@1.4.0:
-    resolution: {integrity: sha512-Ct0WIrqBfsugdE9V3ZLBkEMc/cZ3cnRnSrjsenE4kWiIjAx/52abngWqvKDa+ROZ9gsCvrUn8n+zwfn7g/1hNQ==}
+  homeassistant-typescript@1.6.1:
+    resolution: {integrity: sha512-ENRcvQpubfK07di0NAKufw8Vwk7IPwx6lSBEM0o31uAYakOgsl4SsHtqGPvhY72DI9L9ZXRwHTPQVVloyfxsLQ==}
 
   homeassistant-ws@0.2.3:
     resolution: {integrity: sha512-JPutIMyrnUp6hN3Nyd8bGUfuu25vOvjREW3Tl9dzaqq1FnGyDqBMw0C/ry0KUfYg2pDvHhkcMw1GngV23cdr3Q==}
@@ -5583,7 +5583,7 @@ snapshots:
   hass-lego@1.10.0(@types/node@22.5.4)(@types/react@18.3.5)(@vitest/expect@2.1.4)(eslint@9.10.0)(typescript@5.5.4)(vitest@2.1.4):
     dependencies:
       '@types/ws': 8.5.12
-      homeassistant-typescript: 1.4.0(@types/node@22.5.4)(eslint@9.10.0)(typescript@5.5.4)(vitest@2.1.4)
+      homeassistant-typescript: 1.6.1(@types/node@22.5.4)(eslint@9.10.0)(typescript@5.5.4)(vitest@2.1.4)
       homeassistant-ws: 0.2.3
       ink: 5.0.1(@types/react@18.3.5)(react@18.3.1)
       ink-spinner: 5.0.0(ink@5.0.1(@types/react@18.3.5)(react@18.3.1))(react@18.3.1)
@@ -5633,7 +5633,7 @@ snapshots:
 
   highlight.js@10.7.3: {}
 
-  homeassistant-typescript@1.4.0(@types/node@22.5.4)(eslint@9.10.0)(typescript@5.5.4)(vitest@2.1.4):
+  homeassistant-typescript@1.6.1(@types/node@22.5.4)(eslint@9.10.0)(typescript@5.5.4)(vitest@2.1.4):
     dependencies:
       '@eslint/js': 8.57.1
       '@semantic-release/git': 10.0.1(semantic-release@24.1.2(typescript@5.5.4))
