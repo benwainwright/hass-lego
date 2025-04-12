@@ -6,6 +6,6 @@ export { Trigger } from "./trigger.ts";
 export { Block } from "./block.ts";
 export { ServiceCall } from "./service-call.ts";
 export { concurrently } from "./execute-concurrently.ts";
-export { when, IfThenElseCondition } from "./condition.ts";
-export type { IfThenElseConditionConfig } from "./condition.ts";
+export { IfThenElseCondition } from "./if-then-else-condition.ts";
+export type { IfThenElseConditionConfig } from "./if-then-else-condition.ts";
 export { sequence } from "./sequence.ts";
