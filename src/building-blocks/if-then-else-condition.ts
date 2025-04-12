@@ -70,7 +70,7 @@ export class IfThenElseCondition<
   public constructor(
     public readonly config: IfThenElseConditionConfig<TO, EO, PO, I>,
   ) {
-    super(config.id ?? md5(config.name));
+    super(config.id ?? md5(config.name), [config.assertion, config.then, config.else]);
     this.name = this.config.name;
   }
 
@@ -88,19 +88,19 @@ export class IfThenElseCondition<
 
     const branchExecutedResult =
       assertionResult.outputType === "conditional" &&
-      assertionResult.conditionResult
+        assertionResult.conditionResult
         ? await this.config.then.run(
-            client,
-            assertionResult.output,
-            events,
-            triggerId,
-          )
+          client,
+          assertionResult.output,
+          events,
+          triggerId,
+        )
         : await this.config.else.run(
-            client,
-            assertionResult.output,
-            events,
-            triggerId,
-          );
+          client,
+          assertionResult.output,
+          events,
+          triggerId,
+        );
 
     return branchExecutedResult;
   }

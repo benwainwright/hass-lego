@@ -5,7 +5,9 @@ import { BlockOutput } from "@types";
  * @alpha
  */
 export abstract class Block<I = void, O = void> {
-  public constructor(private _id: string) {}
+
+
+  public constructor(private _id: string, private children?: Block<unknown, unknown>[]) { }
   public toJson() {
     return {
       type: this.typeString,
@@ -38,9 +40,13 @@ export abstract class Block<I = void, O = void> {
    * If defined, this method will be called when the parent automation is registered.
    * If any configuration is invalid, an error should be thrown
    */
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
   public async validate(client: LegoClient): Promise<void> {
-    // Noop here
+    await Promise.all(
+      this.children?.map(async (action) => {
+        await action.validate(client);
+      }) ?? [],
+    );
   }
 
   public abstract readonly typeString: string;

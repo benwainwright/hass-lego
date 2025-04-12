@@ -36,19 +36,12 @@ export class Automation<
       mode?: ExecutionMode;
     },
   ) {
-    super(config.id ?? md5(config.name));
+    super(config.id ?? md5(config.name), [...config.actions]);
     this.name = this.config.name;
   }
 
   public override typeString = "automation";
 
-  public override async validate(client: LegoClient) {
-    await Promise.all(
-      this.config.actions.map(async (action) => {
-        await action.validate(client);
-      }),
-    );
-  }
 
   public override async run(
     client: LegoClient,

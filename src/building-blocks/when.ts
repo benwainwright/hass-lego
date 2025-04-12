@@ -1,6 +1,6 @@
 import { Assertion } from "./assertion.ts";
 import { Block } from "./block.ts";
-import { IfThenElseCondition } from "./condition.ts";
+import { IfThenElseCondition } from "./if-then-else-condition.ts";
 
 /**
  * @public
