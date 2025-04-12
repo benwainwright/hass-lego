@@ -128,6 +128,8 @@ export class LegoClient {
     this.automations.push(automation);
     const { trigger } = automation.config
 
+    await automation.validate(this)
+
     const triggers = Array.isArray(trigger) ? trigger : [trigger]
 
     await Promise.all(triggers.map(async (item) => {
