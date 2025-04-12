@@ -28,6 +28,7 @@
       "@errors": ["src/errors/index.ts"],
       "@types": ["src/types/index.ts"],
       "@utils": ["src/utils/index.ts"],
+      "@test-support": ["src/test-support/index.ts"],
       "@building-blocks": ["src/building-blocks/index.ts"]
     }
   },

@@ -26,7 +26,7 @@ export class Trigger {
         event,
       );
 
-      await executor.runToCompletion()
+      await executor.run()
     })
   }
 }

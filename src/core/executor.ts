@@ -1,7 +1,7 @@
 import { Queue } from "queue-typescript";
 import { Block } from "@building-blocks";
 import { EventBus, LegoClient } from "@core";
-import { BlockOutput } from "@types";
+import { BlockOutput, Runnable } from "@types";
 import EventEmitter from "events";
 import { ExecutionAbortedError } from "@errors";
 import { v4 } from "uuid";
@@ -20,7 +20,7 @@ type Output<O> = (BlockOutput<O> & { success: boolean }) | undefined;
   * Responsible for executing groups of blocks and emitting the associated events for
   * each execution.
   */
-export class Executor<I, O> {
+export class Executor<I, O> implements Runnable {
   private executionQueue: Queue<{
     executionId: string;
     block: Block<unknown, unknown>;
@@ -59,10 +59,12 @@ export class Executor<I, O> {
 
       result
         .then((result) => {
+          this.bus.off(EXECUTOR_ABORTED, waitForAbortCallback);
           accept(result);
         })
         .catch((error: unknown) => {
           if (error instanceof Error) {
+            this.bus.off(EXECUTOR_ABORTED, waitForAbortCallback);
             reject(error);
           }
         });
@@ -178,11 +180,6 @@ export class Executor<I, O> {
 
     this.result = [{ ...(lastResult as BlockOutput<O>), success: true }];
     this.bus.emit(EXECUTOR_FINISHED);
-  }
-
-  public async runToCompletion() {
-    void this.run()
-    return await this.finished()
   }
 
   public async finished() {

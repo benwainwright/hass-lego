@@ -33,6 +33,10 @@ export type {
   StopOutput,
 } from "./block-output.ts";
 
+export type {
+  Runnable
+} from "./runnable.ts"
+
 export { ExecutionMode } from "./execution-mode.ts";
 
 export type { Expand, ExpandRecursively } from "./expand.ts";

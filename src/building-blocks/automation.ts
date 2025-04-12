@@ -1,10 +1,7 @@
-import { Queue } from "queue-typescript";
-
-import { LegoClient, EventBus, Executor, BlockExecutionMode } from "@core";
+import { LegoClient, EventBus, Executor, BlockExecutionMode, RunQueue } from "@core";
 
 import { Trigger } from "./trigger.ts";
 import {
-  StateChanged,
   GetSequenceInput,
   GetSequenceOutput,
   BlockOutput,
@@ -26,8 +23,10 @@ export class Automation<
   I = GetSequenceInput<A>,
   O = GetSequenceOutput<A>,
 > extends Block<I, O> {
-  private executionQueue = new Queue<Executor<I, O>>();
   public readonly name: string;
+
+  private runQueue = new RunQueue()
+
   public constructor(
     public config: {
       name: string;
@@ -39,7 +38,6 @@ export class Automation<
   ) {
     super(config.id ?? md5(config.name));
     this.name = this.config.name;
-    void this.startLoop();
   }
 
   public override typeString = "automation";
@@ -50,31 +48,6 @@ export class Automation<
         await action.validate(client);
       }),
     );
-  }
-
-  private async startLoop() {
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    while (true) {
-      while (this.executionQueue.length > 0) {
-        try {
-          const executor = this.executionQueue.front;
-          await executor.runToCompletion()
-          this.executionQueue.dequeue();
-        } catch (error) {
-          if (!(error instanceof ExecutionAbortedError)) {
-            throw error;
-          }
-        }
-      }
-      await new Promise((accept) => setTimeout(accept, 1));
-    }
-  }
-
-  private abortAll() {
-    while (this.executionQueue.length > 0) {
-      const executor = this.executionQueue.dequeue();
-      executor.abort();
-    }
   }
 
   public override async run(
@@ -105,12 +78,12 @@ export class Automation<
       const mode = this.config.mode ?? ExecutionMode.Restart;
       switch (mode) {
         case ExecutionMode.Restart:
-          this.abortAll();
-          this.executionQueue.enqueue(executor);
+          this.runQueue.abortAll();
+          this.runQueue.enqueue(executor);
           break;
 
         case ExecutionMode.Queue:
-          this.executionQueue.enqueue(executor);
+          this.runQueue.enqueue(executor);
           break;
 
         case ExecutionMode.Parallel:
