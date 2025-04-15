@@ -1,6 +1,4 @@
-import { EventBus, Executor, BlockExecutionMode, RunQueue, Block } from "@core";
-
-import { Trigger } from "./trigger.ts";
+import { Executor, BlockExecutionMode, RunQueue, Block } from "@core";
 
 import {
   GetSequenceInput,
@@ -9,14 +7,17 @@ import {
   ValidInputOutputSequence,
 } from "./valid-input-output-sequence.ts";
 
-import { BlockOutput, ILegoClient, ExecutionMode } from "@types";
+import {
+  IEventBus,
+  BlockOutput,
+  ILegoClient,
+  ExecutionMode,
+  ITrigger,
+} from "@types";
 
 import { ExecutionAbortedError } from "@errors";
 import { md5 } from "@utils";
 
-/**
- * @alpha
- */
 export class Automation<
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const A extends readonly any[],
@@ -32,7 +33,7 @@ export class Automation<
       name: string;
       id?: string;
       actions: BlockRetainType<A> & A & ValidInputOutputSequence<I, O, A>;
-      trigger?: Trigger | Trigger[];
+      trigger?: ITrigger | ITrigger[];
       mode?: ExecutionMode;
     },
   ) {
@@ -45,7 +46,7 @@ export class Automation<
   public override async run(
     client: ILegoClient,
     input?: I,
-    events?: EventBus,
+    events?: IEventBus,
     triggerId?: string,
   ): Promise<BlockOutput<O>> {
     if (!events) {
@@ -99,3 +100,19 @@ export class Automation<
     }
   }
 }
+
+export const automation = <
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const A extends readonly any[],
+  I = GetSequenceInput<A>,
+  O = GetSequenceOutput<A>,
+>(config: {
+  name: string;
+  id?: string;
+  actions: BlockRetainType<A> & A & ValidInputOutputSequence<I, O, A>;
+  trigger?: ITrigger | ITrigger[];
+  mode?: ExecutionMode;
+}
+): Block<I, O> => {
+  return new Automation<A, I, O>(config);
+};

@@ -4,10 +4,7 @@ import { EventBus, BlockExecutionMode, Executor, Block } from "@core";
 import { BlockOutput, ILegoClient } from "@types";
 import { md5 } from "@utils";
 
-/**
- * @alpha
- */
-export class ExecuteConcurrently<
+class ExecuteConcurrently<
   A extends readonly Block<unknown, unknown>[],
   I = void,
   O = void,
@@ -81,10 +78,6 @@ export class ExecuteConcurrently<
   }
 }
 
-/**
- *
- * @alpha
- */
 export const concurrently = <
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters
   A extends readonly Block<unknown, unknown>[],

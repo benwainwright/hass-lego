@@ -1,10 +1,8 @@
 import { Action } from "./action.ts";
 import { CallServiceCommand } from "homeassistant-typescript";
+import { Block } from "@core";
 
-/**
- * @alpha
- */
-export class ServiceCall extends Action {
+class ServiceCall extends Action {
   public override typeString = "service-call";
 
   public constructor(
@@ -30,3 +28,10 @@ export class ServiceCall extends Action {
     };
   }
 }
+
+export const serviceCall = (serviceConfig: {
+  name: string;
+  params: Omit<CallServiceCommand, "id" | "type">;
+}): Block => {
+  return new ServiceCall(serviceConfig);
+};

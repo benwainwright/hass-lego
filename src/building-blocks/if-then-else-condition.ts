@@ -1,6 +1,6 @@
 import { EventBus, Block } from "@core";
+import { AssertionError } from "@errors";
 import { BlockOutput, ILegoClient } from "@types";
-import { Assertion } from "./assertion.ts";
 import { md5 } from "@utils";
 
 /**
@@ -37,7 +37,7 @@ export interface IfThenElseConditionConfig<
   /**
    * The result of this assertion decides which branch to take
    */
-  readonly assertion: Assertion<I, PO>;
+  readonly assertion: Block<I, PO>;
 
   /**
    * Execute this block if the predicate passes
@@ -89,22 +89,32 @@ export class IfThenElseCondition<
       return { continue: false };
     }
 
-    const branchExecutedResult =
-      assertionResult.outputType === "conditional" &&
-      assertionResult.conditionResult
-        ? await this.config.then.run(
-            client,
-            assertionResult.output,
-            events,
-            triggerId,
-          )
-        : await this.config.else.run(
-            client,
-            assertionResult.output,
-            events,
-            triggerId,
-          );
+    if (assertionResult.outputType !== "conditional") {
+      throw new AssertionError(
+        `Block in the 'assertion' property must return a conditional result`,
+      );
+    }
+
+    const branchExecutedResult = assertionResult.conditionResult
+      ? await this.config.then.run(
+          client,
+          assertionResult.output,
+          events,
+          triggerId,
+        )
+      : await this.config.else.run(
+          client,
+          assertionResult.output,
+          events,
+          triggerId,
+        );
 
     return branchExecutedResult;
   }
 }
+
+export const when = <TO = void, EO = void, PO = void, I = void>(
+  config: IfThenElseConditionConfig<TO, EO, PO, I>,
+): Block<I, TO | EO> => {
+  return new IfThenElseCondition(config);
+};

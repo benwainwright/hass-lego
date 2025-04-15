@@ -1,7 +1,7 @@
 import { md5 } from "@utils";
-import { IfThenElseCondition } from "@building-blocks";
+import { when } from "./if-then-else-condition.ts";
 import { Assertion } from "./assertion.ts";
-import { when } from "vitest-when";
+import { when as testWhen } from "vitest-when";
 import { Block } from "@core";
 import { mock } from "vitest-mock-extended";
 import { EventBus } from "@core";
@@ -26,7 +26,7 @@ describe("ifThenElseCondition.run", () => {
     const mockThenBlock = mock<Block<boolean>>();
     const mockElseBlock = mock<Block<boolean>>();
 
-    const condition = new IfThenElseCondition({
+    const condition = when({
       name: "foo",
       assertion: mockAssertion,
       then: mockThenBlock,
@@ -64,11 +64,11 @@ describe("ifThenElseCondition.run", () => {
       output: true,
     };
 
-    when(mockThenBlock.run)
+    testWhen(mockThenBlock.run)
       .calledWith(mockClient, mockAssertionOutput, mockEvents, triggerId)
       .thenReturn(blockOutput);
 
-    const condition = new IfThenElseCondition({
+    const condition = when({
       name: "foo",
       assertion: mockAssertion,
       then: mockThenBlock,
@@ -115,11 +115,11 @@ describe("ifThenElseCondition.run", () => {
       output: true,
     };
 
-    when(mockElseBlock.run)
+    testWhen(mockElseBlock.run)
       .calledWith(mockClient, mockAssertionOutput, mockEvents, triggerId)
       .thenReturn(blockOutput);
 
-    const condition = new IfThenElseCondition({
+    const condition = when({
       name: "foo",
       assertion: mockAssertion,
       then: mockThenBlock,
@@ -146,13 +146,13 @@ describe("ifThenElseCondition.run", () => {
 
 describe("ifThenElseCondition.constructor", () => {
   it("generates an md5 hash of the name the id if not supplied", () => {
-    when(md5).calledWith("foo").thenReturn("hash");
+    testWhen(md5).calledWith("foo").thenReturn("hash");
 
     const mockAssertion = mock<Assertion<string, boolean>>();
     const mockThenBlock = mock<Block<boolean, boolean>>();
     const mockElseBlock = mock<Block<boolean, boolean>>();
 
-    const assertion = new IfThenElseCondition({
+    const assertion = when({
       name: "foo",
       assertion: mockAssertion,
       then: mockThenBlock,
@@ -166,7 +166,8 @@ describe("ifThenElseCondition.constructor", () => {
     const mockAssertion = mock<Assertion<string, boolean>>();
     const mockThenBlock = mock<Block<boolean, boolean>>();
     const mockElseBlock = mock<Block<boolean, boolean>>();
-    const assertion = new IfThenElseCondition({
+
+    const assertion = when({
       name: "foo",
       id: "foo-id",
       assertion: mockAssertion,

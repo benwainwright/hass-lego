@@ -7,7 +7,8 @@ import {
   GetSequenceOutput,
 } from "./valid-input-output-sequence.ts";
 
-import { Automation } from "./automation.ts";
+import { automation } from "./automation.ts";
+import { Block } from "@core";
 
 /**
  * @alpha
@@ -20,6 +21,6 @@ export const sequence = <
 >(
   actions: BlockRetainType<A> & A & ValidInputOutputSequence<I, O, A>,
   mode: ExecutionMode = ExecutionMode.Restart,
-) => {
-  return new Automation<A, I, O>({ name: "Run in sequence", mode, actions });
+): Block<I, O> => {
+  return automation({ name: "Run in sequence", mode, actions });
 };

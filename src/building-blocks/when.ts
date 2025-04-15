@@ -13,7 +13,7 @@ export const when = <TO = void, EO = void, PO = void, I = void>(config: {
   assertion: Assertion<I, PO>;
   then: Block<PO, TO>;
   else: Block<PO, EO>;
-}) => {
+}): Block<I, TO | EO> => {
   return new IfThenElseCondition<TO, EO, PO, I>({
     ...config,
     name: "If then else condition",

@@ -4,8 +4,7 @@ import { v4 } from "uuid";
 
 import { BlockOutput, Runnable, ILegoClient, IEventBus } from "@types";
 import { ExecutionAbortedError } from "@errors";
-
-import { Block } from "./block.ts";
+import { Block } from "./block.ts"
 
 const EXECUTOR_FINISHED = "executor-finished";
 const EXECUTOR_ABORTED = "executor-aborted";

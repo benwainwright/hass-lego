@@ -1,4 +1,4 @@
-import { Trigger } from "@building-blocks";
+import { ITrigger } from "./i-trigger.ts";
 import { Event } from "homeassistant-typescript";
 import { BlockOutput } from "./block-output.ts";
 
@@ -65,7 +65,7 @@ export interface BlockStarted extends BaseHassEvent {
   type: string;
   status: "started";
   parent?: SerialisedBlock;
-  triggeredBy?: Trigger;
+  triggeredBy?: ITrigger;
 }
 
 /**
@@ -96,7 +96,7 @@ export interface BlockPending extends BaseHassEvent {
   type: string;
   status: "pending";
   parent?: SerialisedBlock;
-  triggeredBy?: Trigger;
+  triggeredBy?: ITrigger;
 }
 
 export interface SequenceAborted extends BaseHassEvent {

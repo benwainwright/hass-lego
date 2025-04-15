@@ -20,11 +20,6 @@ export interface AssertionConfig<I, O> {
     | Promise<{ result: boolean; output: O }>;
 }
 
-/**
- * @alpha
- *
- * Given a predicate, decide whether or not to continue executing an automation
- */
 export class Assertion<I = void, O = void> extends Block<I, O> {
   public constructor(public config: AssertionConfig<I, O>) {
     super(config.id ?? md5(config.name));
@@ -58,3 +53,9 @@ export class Assertion<I = void, O = void> extends Block<I, O> {
         };
   }
 }
+
+export const assertion = <I = void, O = void>(
+  config: AssertionConfig<I, O>,
+): Block<I, O> => {
+  return new Assertion(config);
+};

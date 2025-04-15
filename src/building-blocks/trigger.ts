@@ -2,10 +2,7 @@ import { Executor, Block } from "@core";
 import { ILegoClient, IEventBus } from "@types";
 import { v4 } from "uuid";
 
-/**
- * @alpha
- */
-export class Trigger {
+class Trigger {
   public constructor(
     public readonly name: string,
     public readonly id: string,
@@ -26,3 +23,11 @@ export class Trigger {
     });
   }
 }
+
+export const trigger = (
+  name: string,
+  id: string,
+  trigger: Record<string, unknown>,
+) => {
+  return new Trigger(name, id, trigger);
+};

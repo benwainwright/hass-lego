@@ -1,6 +1,8 @@
+import { mock } from "vitest-mock-extended";
 import { Action } from "./action.ts";
-import { Automation } from "./automation.ts";
-import { Trigger } from "./trigger.ts";
+import { automation } from "./automation.ts";
+import { Block } from "@core"
+import { ITrigger } from "@types";
 
 describe("the automation class", () => {
   it("should correctly type the sequence when there is only one item and that item has inputs and outputs", () => {
@@ -13,13 +15,13 @@ describe("the automation class", () => {
       },
     });
 
-    const foo = new Automation({
+    const foo = automation({
       name: "this automation",
       actions: [oneAction] as const,
     });
 
     expectTypeOf(foo).toExtend<
-      Automation<readonly [typeof oneAction], string, number>
+      Block<string, number>
     >();
   });
 
@@ -31,13 +33,13 @@ describe("the automation class", () => {
       },
     });
 
-    const foo = new Automation({
+    const foo = automation({
       name: "this automation",
       actions: [oneAction],
     });
 
     expectTypeOf(foo).toExtend<
-      Automation<readonly [typeof oneAction], void, void>
+      Block
     >();
   });
 
@@ -50,13 +52,13 @@ describe("the automation class", () => {
       },
     });
 
-    const foo = new Automation({
+    const foo = automation({
       name: "this automation",
       actions: [oneAction],
     });
 
     expectTypeOf(foo).toExtend<
-      Automation<readonly [typeof oneAction], string, void>
+      Block<string>
     >();
   });
 
@@ -69,13 +71,13 @@ describe("the automation class", () => {
       },
     });
 
-    const foo = new Automation({
+    const foo = automation({
       name: "this automation",
       actions: [oneAction],
     });
 
     expectTypeOf(foo).toExtend<
-      Automation<readonly [typeof oneAction], void, number>
+      Block<void, number>
     >();
   });
 
@@ -94,13 +96,13 @@ describe("the automation class", () => {
       },
     });
 
-    const foo = new Automation({
+    const foo = automation({
       name: "this automation",
       actions: [oneAction, twoAction],
     });
 
     expectTypeOf(foo).toExtend<
-      Automation<readonly [typeof oneAction, typeof twoAction], void, void>
+      Block
     >();
   });
 
@@ -120,13 +122,13 @@ describe("the automation class", () => {
       },
     });
 
-    const foo = new Automation({
+    const foo = automation({
       name: "this automation",
       actions: [oneAction, twoAction],
     });
 
     expectTypeOf(foo).toExtend<
-      Automation<readonly [typeof oneAction, typeof twoAction], string, void>
+      Block<string>
     >();
   });
 
@@ -146,13 +148,13 @@ describe("the automation class", () => {
       },
     });
 
-    const foo = new Automation({
+    const foo = automation({
       name: "this automation",
       actions: [oneAction, twoAction],
     });
 
     expectTypeOf(foo).toExtend<
-      Automation<readonly [typeof oneAction, typeof twoAction], void, number>
+      Block<void, number>
     >();
   });
 
@@ -173,13 +175,13 @@ describe("the automation class", () => {
       },
     });
 
-    const foo = new Automation({
+    const foo = automation({
       name: "this automation",
       actions: [oneAction, twoAction],
     });
 
     expectTypeOf(foo).toExtend<
-      Automation<readonly [typeof oneAction, typeof twoAction], string, number>
+      Block<string, number>
     >();
   });
 
@@ -214,19 +216,13 @@ describe("the automation class", () => {
       },
     });
 
-    const foo = new Automation({
+    const foo = automation({
       name: "this automation",
       actions: [oneAction, twoAction, threeAction, fourAction] as const,
     });
 
     expectTypeOf(foo).toExtend<
-      Automation<
-        readonly [
-          typeof oneAction,
-          typeof twoAction,
-          typeof threeAction,
-          typeof fourAction,
-        ],
+      Block<
         string,
         number
       >
@@ -268,19 +264,13 @@ describe("the automation class", () => {
       },
     });
 
-    const foo = new Automation({
+    const foo = automation({
       name: "this automation",
       actions: [oneAction, twoAction, threeAction, fourAction],
     });
 
     expectTypeOf(foo).toExtend<
-      Automation<
-        readonly [
-          typeof oneAction,
-          typeof twoAction,
-          typeof threeAction,
-          typeof fourAction,
-        ],
+      Block<
         string,
         number
       >
@@ -322,19 +312,13 @@ describe("the automation class", () => {
       },
     });
 
-    const foo = new Automation({
+    const foo = automation({
       name: "this automation",
       actions: [oneAction, twoAction, threeAction, fourAction],
     });
 
     expectTypeOf(foo).toExtend<
-      Automation<
-        readonly [
-          typeof oneAction,
-          typeof twoAction,
-          typeof threeAction,
-          typeof fourAction,
-        ],
+      Block<
         string,
         number
       >
@@ -368,19 +352,17 @@ describe("the automation class", () => {
       },
     });
 
-    const trigger = new Trigger("test", "foo", {});
+    const trigger = mock<ITrigger>();
 
-    const foo = new Automation({
+    const foo = automation({
       trigger,
       name: "this automation",
       actions: [oneAction, twoAction, threeAction] as const,
     });
 
     expectTypeOf(foo).toExtend<
-      Automation<
-        readonly [typeof oneAction, typeof twoAction, typeof threeAction],
-        number,
-        void
+      Block<
+        number
       >
     >();
   });
@@ -420,7 +402,7 @@ describe("the automation class", () => {
       },
     });
 
-    new Automation({
+    automation({
       name: "this automation",
       // @ts-expect-error Expected error - the types don't link!
       actions: [oneAction, twoAction, threeAction, fourAction],

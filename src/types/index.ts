@@ -10,6 +10,8 @@ export type {
 
 export type { LegoConnection } from "./lego-connection.ts";
 
+export type { ConnectionArgs } from "./connection-args.ts";
+
 export type { ILegoClient } from "./i-lego-client.ts";
 
 export type {
@@ -37,3 +39,4 @@ export type { IEventBus } from "./i-event-bus.ts";
 export type { CorsOptions } from "./cors-options.ts";
 export type { IBlock } from "./i-block.ts";
 export type { CallServiceParams } from "./call-service-params.ts";
+export type { ITrigger } from "./i-trigger.ts";

@@ -16,7 +16,7 @@ export class LegoClient implements ILegoClient {
   public constructor(
     private client: IClient,
     private bus: IEventBus,
-  ) {}
+  ) { }
 
   /**
    * Load all available states from home assistant. This will reset the state cache -
@@ -62,11 +62,7 @@ export class LegoClient implements ILegoClient {
   public async registerAutomation<
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     A extends ReadonlyArray<any>,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    I = any,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    O = any,
-  >(automation: Automation<A, I, O>) {
+  >(automation: Automation<A, unknown, unknown>) {
     this._automations.push(automation);
     const { trigger } = automation.config;
 

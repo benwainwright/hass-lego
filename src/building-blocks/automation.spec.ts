@@ -1,8 +1,10 @@
 import { mock } from "vitest-mock-extended";
 import { when } from "vitest-when";
 
-import { Action, Automation } from "@building-blocks";
 import { RunQueue, BlockExecutionMode, EventBus, Executor } from "@core";
+
+import { Action } from "./action.ts"
+import { Automation } from "./automation.ts"
 
 import { ILegoClient, ExecutionMode } from "@types";
 import { ExecutionAbortedError } from "@errors";

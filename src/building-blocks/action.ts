@@ -1,13 +1,11 @@
-import { EventBus, Block } from "@core";
-import { BlockOutput, ILegoClient } from "@types";
+import { Block } from "@core";
+import { BlockOutput, ILegoClient, IEventBus } from "@types";
 import { md5 } from "@utils";
 
-/**
- * @alpha
- *
- * Represents an action that can take place as part of a sequence of actions
- */
-export class Action<I = void, O = void> extends Block<I, O> {
+export class Action<I = void, O = void>
+  extends Block<I, O>
+  implements Block<I, O>
+{
   public readonly name: string;
   public constructor(
     public readonly config: {
@@ -28,7 +26,7 @@ export class Action<I = void, O = void> extends Block<I, O> {
     client: ILegoClient,
     input: I,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    _events?: EventBus,
+    _events?: IEventBus,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     _triggerId?: string,
   ): Promise<BlockOutput<O>> {
@@ -39,3 +37,13 @@ export class Action<I = void, O = void> extends Block<I, O> {
     return { output: result, continue: true, outputType: "block" };
   }
 }
+
+export const action = <I = void, O = void>(config: {
+  readonly name: string;
+  readonly id?: string;
+  callback:
+    | ((client: ILegoClient, input: I) => O)
+    | ((client: ILegoClient, input: I) => Promise<O>);
+}): Block<I, O> => {
+  return new Action(config);
+};

@@ -3,8 +3,7 @@ import { when } from "vitest-when";
 import { v4 } from "uuid";
 
 import { ILegoClient } from "@types";
-import { Action } from "@building-blocks";
-import { EventBus } from "@core";
+import { EventBus, Block } from "@core";
 
 import { BlockExecutionMode, Executor } from "./executor.ts";
 
@@ -16,17 +15,17 @@ afterEach(() => {
 
 describe("executor", () => {
   it("emits all the correct messages when blocks are executed", async () => {
-    const actionOne = mock<Action<string, string>>({
+    const actionOne = mock<Block<string, string>>({
       name: "foo",
       typeString: "action",
       toJson: () => ({ type: "action", id: "foo", name: "foo" }),
     });
-    const actionTwo = mock<Action<string, string>>({
+    const actionTwo = mock<Block<string, string>>({
       name: "bar",
       typeString: "action",
       toJson: () => ({ type: "action", id: "bar", name: "bar" }),
     });
-    const actionThree = mock<Action<string, string>>({
+    const actionThree = mock<Block<string, string>>({
       name: "baz",
       typeString: "action",
       toJson: () => ({ type: "action", id: "baz", name: "baz" }),
@@ -223,9 +222,9 @@ describe("executor", () => {
   });
 
   it("runs all the blocks and feeds inputs through to outputs", async () => {
-    const actionOne = mock<Action<string, string>>();
-    const actionTwo = mock<Action<string, string>>();
-    const actionThree = mock<Action<string, string>>();
+    const actionOne = mock<Block<string, string>>();
+    const actionTwo = mock<Block<string, string>>();
+    const actionThree = mock<Block<string, string>>();
 
     const mockClient = mock<ILegoClient>();
     const events = mock<EventBus>();

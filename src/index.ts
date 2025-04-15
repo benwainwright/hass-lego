@@ -1,54 +1,22 @@
-export { LegoClient } from "@client";
-
-export { EventBus, renderSimpleLog, Block } from "@core";
+export { getConnection } from "@client";
 
 export type {
   CorsOptions,
+  ConnectionArgs,
+  LegoConnection,
+  ILegoClient,
+  IEventBus,
+  CallServiceParams,
   HassLegoEvent,
-  StateChanged,
-  AutomationRegistered,
-  GeneralFailure,
-  HassEntity,
-  HassStateChangedEvent,
-  HassContext,
-  HassEntityAttributeBase,
-  HassEntityBase,
-  HassEvent,
-  HassEventBase,
-  ContinueOutput,
-  StopOutput,
 } from "@types";
 
-export { ExecutionMode } from "@types";
-
 export {
-  Trigger,
-  IfThenElseCondition,
-  sequence,
+  when,
+  action,
   concurrently,
-  Automation,
-  Action,
-  Assertion,
-  ServiceCall,
+  sequence,
+  serviceCall,
+  assertion,
+  trigger,
+  automation
 } from "@building-blocks";
-
-export type {
-  AssertionConfig,
-  IfThenElseConditionConfig,
-  ValidInputOutputSequence,
-  GetSequenceInput,
-  GetSequenceOutput,
-  InputType,
-  OutputType,
-  OutputTypeKeepPromise,
-  GetOutputs,
-  GetResults,
-  BlockRetainType,
-} from "@building-blocks";
-
-export {
-  HassLegoError,
-  ExecutionAbortedError,
-  InitialStatesNotLoadedError,
-  EntityDoesNotExistError,
-} from "@errors";
