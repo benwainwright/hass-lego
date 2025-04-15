@@ -7,7 +7,7 @@ describe("the automation class", () => {
     const oneAction = new Action({
       name: "This thing",
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      callback: (client, input: string) => {
+      callback: (_client, input: string) => {
         const foo = 3;
         return foo;
       },
@@ -18,7 +18,7 @@ describe("the automation class", () => {
       actions: [oneAction] as const,
     });
 
-    expectTypeOf(foo).toMatchTypeOf<
+    expectTypeOf(foo).toExtend<
       Automation<readonly [typeof oneAction], string, number>
     >();
   });
@@ -36,7 +36,7 @@ describe("the automation class", () => {
       actions: [oneAction],
     });
 
-    expectTypeOf(foo).toMatchTypeOf<
+    expectTypeOf(foo).toExtend<
       Automation<readonly [typeof oneAction], void, void>
     >();
   });
@@ -55,7 +55,7 @@ describe("the automation class", () => {
       actions: [oneAction],
     });
 
-    expectTypeOf(foo).toMatchTypeOf<
+    expectTypeOf(foo).toExtend<
       Automation<readonly [typeof oneAction], string, void>
     >();
   });
@@ -74,7 +74,7 @@ describe("the automation class", () => {
       actions: [oneAction],
     });
 
-    expectTypeOf(foo).toMatchTypeOf<
+    expectTypeOf(foo).toExtend<
       Automation<readonly [typeof oneAction], void, number>
     >();
   });
@@ -99,7 +99,7 @@ describe("the automation class", () => {
       actions: [oneAction, twoAction],
     });
 
-    expectTypeOf(foo).toMatchTypeOf<
+    expectTypeOf(foo).toExtend<
       Automation<readonly [typeof oneAction, typeof twoAction], void, void>
     >();
   });
@@ -125,7 +125,7 @@ describe("the automation class", () => {
       actions: [oneAction, twoAction],
     });
 
-    expectTypeOf(foo).toMatchTypeOf<
+    expectTypeOf(foo).toExtend<
       Automation<readonly [typeof oneAction, typeof twoAction], string, void>
     >();
   });
@@ -151,7 +151,7 @@ describe("the automation class", () => {
       actions: [oneAction, twoAction],
     });
 
-    expectTypeOf(foo).toMatchTypeOf<
+    expectTypeOf(foo).toExtend<
       Automation<readonly [typeof oneAction, typeof twoAction], void, number>
     >();
   });
@@ -178,7 +178,7 @@ describe("the automation class", () => {
       actions: [oneAction, twoAction],
     });
 
-    expectTypeOf(foo).toMatchTypeOf<
+    expectTypeOf(foo).toExtend<
       Automation<readonly [typeof oneAction, typeof twoAction], string, number>
     >();
   });
@@ -219,7 +219,7 @@ describe("the automation class", () => {
       actions: [oneAction, twoAction, threeAction, fourAction] as const,
     });
 
-    expectTypeOf(foo).toMatchTypeOf<
+    expectTypeOf(foo).toExtend<
       Automation<
         readonly [
           typeof oneAction,
@@ -273,7 +273,7 @@ describe("the automation class", () => {
       actions: [oneAction, twoAction, threeAction, fourAction],
     });
 
-    expectTypeOf(foo).toMatchTypeOf<
+    expectTypeOf(foo).toExtend<
       Automation<
         readonly [
           typeof oneAction,
@@ -327,7 +327,7 @@ describe("the automation class", () => {
       actions: [oneAction, twoAction, threeAction, fourAction],
     });
 
-    expectTypeOf(foo).toMatchTypeOf<
+    expectTypeOf(foo).toExtend<
       Automation<
         readonly [
           typeof oneAction,
@@ -376,7 +376,7 @@ describe("the automation class", () => {
       actions: [oneAction, twoAction, threeAction] as const,
     });
 
-    expectTypeOf(foo).toMatchTypeOf<
+    expectTypeOf(foo).toExtend<
       Automation<
         readonly [typeof oneAction, typeof twoAction, typeof threeAction],
         number,

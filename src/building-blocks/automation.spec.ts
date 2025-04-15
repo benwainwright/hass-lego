@@ -39,8 +39,6 @@ describe("automation.validate", () => {
       mode: ExecutionMode.Queue,
     });
 
-    const result = automation.validate(mockClient);
-
     await expect(automation.validate(mockClient)).resolves.not.toThrow();
     expect(mockActionOne.validate).toHaveBeenCalledWith(mockClient);
     expect(mockActionTwo.validate).toHaveBeenCalledWith(mockClient);

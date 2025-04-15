@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect } from "vitest";
 import { createServer } from "http";
 import { io as Client } from "socket.io-client";
 import { getWebsocketServer } from "./get-websocket-server.ts";

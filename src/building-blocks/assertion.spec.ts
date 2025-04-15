@@ -38,10 +38,12 @@ describe("assertion.run", () => {
     const mockClient = mock<ILegoClient>();
     const input = "foo";
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/require-await
     const predicate = async (
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       _client: ILegoClient,
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       _input: string | undefined,
+      // eslint-disable-next-line @typescript-eslint/require-await
     ) => true;
 
     const assertion = new Assertion({
