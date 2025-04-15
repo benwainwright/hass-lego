@@ -65,7 +65,7 @@ export interface BlockStarted extends BaseHassEvent {
   type: string;
   status: "started";
   parent?: SerialisedBlock;
-  triggeredBy?: Trigger<unknown>;
+  triggeredBy?: Trigger;
 }
 
 /**
@@ -96,7 +96,7 @@ export interface BlockPending extends BaseHassEvent {
   type: string;
   status: "pending";
   parent?: SerialisedBlock;
-  triggeredBy?: Trigger<unknown>;
+  triggeredBy?: Trigger;
 }
 
 export interface SequenceAborted extends BaseHassEvent {

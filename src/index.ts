@@ -1,15 +1,13 @@
-export { LegoClient, EventBus, renderSimpleLog } from "@core";
-export type { CorsOptions } from "@core";
+export { LegoClient } from "@client";
+
+export { EventBus, renderSimpleLog, Block } from "@core";
 
 export type {
-  GetSequenceOutput,
-  GetSequenceInput,
+  CorsOptions,
   HassLegoEvent,
   StateChanged,
   AutomationRegistered,
   GeneralFailure,
-  InputType,
-  OutputType,
   HassEntity,
   HassStateChangedEvent,
   HassContext,
@@ -17,7 +15,6 @@ export type {
   HassEntityBase,
   HassEvent,
   HassEventBase,
-  ValidInputOutputSequence,
   ContinueOutput,
   StopOutput,
 } from "@types";
@@ -26,20 +23,27 @@ export { ExecutionMode } from "@types";
 
 export {
   Trigger,
-  when,
   IfThenElseCondition,
   sequence,
   concurrently,
   Automation,
   Action,
   Assertion,
-  Block,
   ServiceCall,
 } from "@building-blocks";
 
 export type {
   AssertionConfig,
   IfThenElseConditionConfig,
+  ValidInputOutputSequence,
+  GetSequenceInput,
+  GetSequenceOutput,
+  InputType,
+  OutputType,
+  OutputTypeKeepPromise,
+  GetOutputs,
+  GetResults,
+  BlockRetainType,
 } from "@building-blocks";
 
 export {

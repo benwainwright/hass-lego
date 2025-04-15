@@ -1,3 +1,7 @@
+import dotEnv from "dotenv";
+
+import { getEnv } from "@utils";
+
 import {
   HASS_HOST_ENV,
   HASS_HTTP_PATH_ENV,
@@ -6,9 +10,6 @@ import {
   HASS_WS_PATH_ENV,
   SUPERVISOR_TOKEN_ENV,
 } from "./constants.ts";
-
-import { getEnv } from "@utils";
-import dotEnv from "dotenv";
 
 export interface HassConfig {
   /**

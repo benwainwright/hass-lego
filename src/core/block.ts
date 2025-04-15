@@ -1,13 +1,13 @@
-import { EventBus, LegoClient } from "@core";
-import { BlockOutput } from "@types";
+import { BlockOutput, IEventBus, IBlock, ILegoClient } from "@types";
 
 /**
  * @alpha
  */
-export abstract class Block<I = void, O = void> {
-
-
-  public constructor(private _id: string, private children?: Block<unknown, unknown>[]) { }
+export abstract class Block<I = void, O = void> implements IBlock<I, O> {
+  public constructor(
+    private _id: string,
+    private children?: Block<unknown, unknown>[],
+  ) {}
   public toJson() {
     return {
       type: this.typeString,
@@ -41,7 +41,7 @@ export abstract class Block<I = void, O = void> {
    * If any configuration is invalid, an error should be thrown
    */
 
-  public async validate(client: LegoClient): Promise<void> {
+  public async validate(client: ILegoClient): Promise<void> {
     await Promise.all(
       this.children?.map(async (action) => {
         await action.validate(client);
@@ -52,9 +52,9 @@ export abstract class Block<I = void, O = void> {
   public abstract readonly typeString: string;
 
   public abstract run(
-    client: LegoClient,
+    client: ILegoClient,
     input: I,
-    events?: EventBus,
+    events?: IEventBus,
     triggerId?: string,
   ): Promise<BlockOutput<O>> | BlockOutput<O>;
 }

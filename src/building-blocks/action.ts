@@ -1,6 +1,5 @@
-import { EventBus, LegoClient } from "@core";
-import { Block } from "./block.ts";
-import { BlockOutput } from "@types";
+import { EventBus, Block } from "@core";
+import { BlockOutput, ILegoClient } from "@types";
 import { md5 } from "@utils";
 
 /**
@@ -15,8 +14,8 @@ export class Action<I = void, O = void> extends Block<I, O> {
       readonly name: string;
       readonly id?: string;
       callback:
-      | ((client: LegoClient, input: I) => O)
-      | ((client: LegoClient, input: I) => Promise<O>);
+        | ((client: ILegoClient, input: I) => O)
+        | ((client: ILegoClient, input: I) => Promise<O>);
     },
   ) {
     super(config.id ?? md5(config.name));
@@ -26,12 +25,12 @@ export class Action<I = void, O = void> extends Block<I, O> {
   public override readonly typeString: string = "action";
 
   public override async run(
-    client: LegoClient,
+    client: ILegoClient,
     input: I,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    events?: EventBus,
+    _events?: EventBus,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    triggerId?: string,
+    _triggerId?: string,
   ): Promise<BlockOutput<O>> {
     const callbackResult = this.config.callback(client, input);
     const result =

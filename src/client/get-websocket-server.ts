@@ -1,16 +1,16 @@
-import { CorsOptions, EventBus } from "@core";
-import { createServer } from "http";
+import type { IEventBus, CorsOptions, IBlock } from "@types";
+
 import { Server } from "socket.io";
-import { Block } from "./block.ts";
+import { createServer } from "http";
 
 interface ServerProps {
-  cors: CorsOptions,
-  automations: Block<unknown, unknown>[]
-  bus: EventBus
+  cors: CorsOptions;
+  client: { getAutomations(): IBlock<unknown, unknown>[] };
+  bus: IEventBus;
 }
 
-export const getWebsocketServer = ({ cors, automations, bus }: ServerProps) => {
-  const server = createServer((request, response) => {
+export const getWebsocketServer = ({ cors, client, bus }: ServerProps) => {
+  const server = createServer((_request, response) => {
     response.writeHead(200, { "content-type": "text/plain" });
     response.end("Websocket server is running!");
   });
@@ -24,20 +24,22 @@ export const getWebsocketServer = ({ cors, automations, bus }: ServerProps) => {
 
   const stringifyCircularJSON = (obj: unknown) => {
     const seen = new WeakSet();
-    return JSON.stringify(obj, (k, v) => {
-      if (v !== null && typeof v === "object") {
+    return JSON.stringify(obj, (_key, value) => {
+      if (value !== null && typeof value === "object") {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-        if (seen.has(v)) return;
+        if (seen.has(value)) return;
         // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-        seen.add(v);
+        seen.add(value);
       }
       // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-      return v;
+      return value;
     });
   };
 
   io.on("connection", (socket) => {
     socket.on("request-automations", () => {
+      const automations = client.getAutomations();
+
       const serialisedAutomations = automations.map((automation) =>
         automation.toJson(),
       );
@@ -45,14 +47,9 @@ export const getWebsocketServer = ({ cors, automations, bus }: ServerProps) => {
     });
 
     bus.subscribe((event) => {
-      if (event.type !== "hass-state-changed") {
-        socket.emit(
-          "hass-lego-event",
-          JSON.parse(stringifyCircularJSON(event)),
-        );
-      }
+      socket.emit("hass-lego-event", JSON.parse(stringifyCircularJSON(event)));
     });
   });
 
   return server;
-}
+};

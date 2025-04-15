@@ -1,6 +1,8 @@
-import { LegoClient, EventBus } from "@core";
 import { BlockOutput } from "@types";
+
+import { ILegoClient } from "@types";
 import { Block } from "./block.ts";
+
 import { mock } from "vitest-mock-extended";
 
 describe("block.toJson", () => {
@@ -11,10 +13,10 @@ describe("block.toJson", () => {
       public override typeString = "foo-type";
 
       public override run(): BlockOutput<void> | Promise<BlockOutput<void>> {
-        throw new Error()
+        throw new Error();
       }
       public constructor() {
-        super("foo-id")
+        super("foo-id");
       }
     }
 
@@ -23,14 +25,11 @@ describe("block.toJson", () => {
     expect(foo.toJson()).toEqual({
       type: "foo-type",
       id: "foo-id",
-      name: "test-block"
-    })
-  })
-
-
-})
+      name: "test-block",
+    });
+  });
+});
 describe("block.validate", () => {
-
   it("does not error", async () => {
     class Foo extends Block {
       public override name = "test-block";
@@ -38,17 +37,17 @@ describe("block.validate", () => {
       public override typeString = "foo-type";
 
       public override run(): BlockOutput<void> | Promise<BlockOutput<void>> {
-        throw new Error()
+        throw new Error();
       }
       public constructor() {
-        super("foo-id")
+        super("foo-id");
       }
     }
 
     const foo = new Foo();
 
-    const client = mock<LegoClient>()
+    const client = mock<ILegoClient>();
 
-    await expect(foo.validate(client)).resolves.not.toThrow()
-  })
-})
+    await expect(foo.validate(client)).resolves.not.toThrow();
+  });
+});

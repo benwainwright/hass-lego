@@ -1,4 +1,4 @@
 export interface Runnable {
-  run: () => Promise<void>
-  abort: () => void
+  run: () => Promise<void>;
+  abort: () => void;
 }

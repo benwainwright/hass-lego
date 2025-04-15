@@ -3,3 +3,4 @@ dist
 temp
 .swc
 coverage
+.DS_Store

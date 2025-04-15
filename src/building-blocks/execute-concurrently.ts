@@ -1,6 +1,7 @@
-import { LegoClient, EventBus, BlockExecutionMode, Executor } from "@core";
-import { BlockOutput, GetOutputs } from "@types";
-import { Block } from "./block.ts";
+import { GetOutputs } from "./valid-input-output-sequence.ts";
+
+import { EventBus, BlockExecutionMode, Executor, Block } from "@core";
+import { BlockOutput, ILegoClient } from "@types";
 import { md5 } from "@utils";
 
 /**
@@ -26,7 +27,7 @@ export class ExecuteConcurrently<
     this.name = this.config.name;
   }
 
-  public override async validate(client: LegoClient) {
+  public override async validate(client: ILegoClient) {
     await Promise.all(
       this.config.actions.map(async (action) => {
         await action.validate(client);
@@ -35,7 +36,7 @@ export class ExecuteConcurrently<
   }
 
   public override async run(
-    client: LegoClient,
+    client: ILegoClient,
     input: I,
     events?: EventBus,
     triggerId?: string,

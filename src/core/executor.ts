@@ -1,10 +1,11 @@
 import { Queue } from "queue-typescript";
-import { Block } from "@building-blocks";
-import { EventBus, LegoClient } from "@core";
-import { BlockOutput, Runnable } from "@types";
 import EventEmitter from "events";
-import { ExecutionAbortedError } from "@errors";
 import { v4 } from "uuid";
+
+import { BlockOutput, Runnable, ILegoClient, IEventBus } from "@types";
+import { ExecutionAbortedError } from "@errors";
+
+import { Block } from "./block.ts";
 
 const EXECUTOR_FINISHED = "executor-finished";
 const EXECUTOR_ABORTED = "executor-aborted";
@@ -17,9 +18,9 @@ export enum BlockExecutionMode {
 type Output<O> = (BlockOutput<O> & { success: boolean }) | undefined;
 
 /**
-  * Responsible for executing groups of blocks and emitting the associated events for
-  * each execution.
-  */
+ * Responsible for executing groups of blocks and emitting the associated events for
+ * each execution.
+ */
 export class Executor<I, O> implements Runnable {
   private executionQueue: Queue<{
     executionId: string;
@@ -32,8 +33,8 @@ export class Executor<I, O> implements Runnable {
 
   public constructor(
     sequence: Block<unknown, unknown>[],
-    private client: LegoClient,
-    private events: EventBus,
+    private client: ILegoClient,
+    private events: IEventBus,
     public triggerId: string,
     private input?: I,
     private executionMode?: BlockExecutionMode,
@@ -139,8 +140,8 @@ export class Executor<I, O> implements Runnable {
   }
 
   /**
-    * Run blocks associated with this executor. Call `finished()` to get the execution outcome
-    */
+   * Run blocks associated with this executor. Call `finished()` to get the execution outcome
+   */
   public async run(): Promise<void> {
     let lastResult: (BlockOutput<unknown> & { success: boolean }) | undefined;
     let resultPromises: Promise<

@@ -2,16 +2,15 @@ import { ExecutionAbortedError } from "@errors";
 import { Runnable } from "@types";
 import { Queue } from "queue-typescript";
 
-
 export class RunQueue {
   private queue = new Queue<Runnable>();
 
   public constructor() {
-    void this.startLoop()
+    void this.startLoop();
   }
 
   public enqueue(runnable: Runnable) {
-    this.queue.enqueue(runnable)
+    this.queue.enqueue(runnable);
   }
 
   public abortAll() {
@@ -27,7 +26,7 @@ export class RunQueue {
       while (this.queue.length > 0) {
         try {
           const runnable = this.queue.front;
-          await runnable.run()
+          await runnable.run();
           this.queue.dequeue();
         } catch (error) {
           if (!(error instanceof ExecutionAbortedError)) {
@@ -38,7 +37,6 @@ export class RunQueue {
 
       await this.wait();
     }
-
   }
 
   private async wait() {

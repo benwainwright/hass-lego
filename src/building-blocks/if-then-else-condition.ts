@@ -1,6 +1,5 @@
-import { EventBus, LegoClient } from "@core";
-import { Block } from "./block.ts";
-import { BlockOutput } from "@types";
+import { EventBus, Block } from "@core";
+import { BlockOutput, ILegoClient } from "@types";
 import { Assertion } from "./assertion.ts";
 import { md5 } from "@utils";
 
@@ -8,7 +7,7 @@ import { md5 } from "@utils";
  * @public
  */
 export type ConditionPredicate<PO = void, I = void> = (
-  client: LegoClient,
+  client: ILegoClient,
   input?: I,
 ) =>
   | Promise<boolean>
@@ -70,12 +69,16 @@ export class IfThenElseCondition<
   public constructor(
     public readonly config: IfThenElseConditionConfig<TO, EO, PO, I>,
   ) {
-    super(config.id ?? md5(config.name), [config.assertion, config.then, config.else]);
+    super(config.id ?? md5(config.name), [
+      config.assertion,
+      config.then,
+      config.else,
+    ]);
     this.name = this.config.name;
   }
 
   public override async run(
-    client: LegoClient,
+    client: ILegoClient,
     input: I,
     events?: EventBus,
     triggerId?: string,
@@ -88,21 +91,20 @@ export class IfThenElseCondition<
 
     const branchExecutedResult =
       assertionResult.outputType === "conditional" &&
-        assertionResult.conditionResult
+      assertionResult.conditionResult
         ? await this.config.then.run(
-          client,
-          assertionResult.output,
-          events,
-          triggerId,
-        )
+            client,
+            assertionResult.output,
+            events,
+            triggerId,
+          )
         : await this.config.else.run(
-          client,
-          assertionResult.output,
-          events,
-          triggerId,
-        );
+            client,
+            assertionResult.output,
+            events,
+            triggerId,
+          );
 
     return branchExecutedResult;
   }
 }
-

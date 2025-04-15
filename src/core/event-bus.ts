@@ -1,5 +1,5 @@
 import EventEmitter from "events";
-import { HassLegoEvent } from "@types";
+import { HassLegoEvent, IEventBus } from "@types";
 import { v4 } from "uuid";
 
 const AUTOMATION_EVENT = "AUTOMATION_EVENT";
@@ -7,7 +7,7 @@ const AUTOMATION_EVENT = "AUTOMATION_EVENT";
 /**
  * @alpha
  */
-export class EventBus {
+export class EventBus implements IEventBus {
   private bus = new EventEmitter();
 
   public emit(event: HassLegoEvent) {

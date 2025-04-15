@@ -368,10 +368,7 @@ describe("the automation class", () => {
       },
     });
 
-    const trigger = new Trigger("test", "foo", () => ({
-      result: true,
-      output: 2,
-    }));
+    const trigger = new Trigger("test", "foo", {});
 
     const foo = new Automation({
       trigger,

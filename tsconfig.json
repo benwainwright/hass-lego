@@ -29,6 +29,7 @@
       "@types": ["src/types/index.ts"],
       "@utils": ["src/utils/index.ts"],
       "@test-support": ["src/test-support/index.ts"],
+      "@client": ["src/client/index.ts"],
       "@building-blocks": ["src/building-blocks/index.ts"]
     }
   },

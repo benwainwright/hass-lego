@@ -9,6 +9,12 @@ export default defineConfig({
     coverage: {
       all: true,
       include: ["src/**/*.ts"],
+      exclude: [
+        "src/index.ts",
+        "src/*d.ts",
+        "src/tools/*",
+        "src/test-support/*",
+      ],
       provider: "v8",
       cleanOnRerun: true,
       reporter: ["text", "html", "lcov"],

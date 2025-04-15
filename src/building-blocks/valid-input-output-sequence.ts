@@ -1,4 +1,4 @@
-import { Block } from "@building-blocks";
+import { Block } from "@core";
 
 /**
  * Given an array of blocks, get the input type from the first block

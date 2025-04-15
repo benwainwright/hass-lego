@@ -1,5 +1,6 @@
+import { Block } from "@core";
+
 import { Assertion } from "./assertion.ts";
-import { Block } from "./block.ts";
 import { IfThenElseCondition } from "./if-then-else-condition.ts";
 
 /**

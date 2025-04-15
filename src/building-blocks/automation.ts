@@ -1,16 +1,16 @@
-import { LegoClient, EventBus, Executor, BlockExecutionMode, RunQueue } from "@core";
+import { EventBus, Executor, BlockExecutionMode, RunQueue, Block } from "@core";
 
 import { Trigger } from "./trigger.ts";
+
 import {
   GetSequenceInput,
   GetSequenceOutput,
-  BlockOutput,
-  ExecutionMode,
   BlockRetainType,
   ValidInputOutputSequence,
-} from "@types";
+} from "./valid-input-output-sequence.ts";
 
-import { Block } from "./block.ts";
+import { BlockOutput, ILegoClient, ExecutionMode } from "@types";
+
 import { ExecutionAbortedError } from "@errors";
 import { md5 } from "@utils";
 
@@ -25,7 +25,7 @@ export class Automation<
 > extends Block<I, O> {
   public readonly name: string;
 
-  private runQueue = new RunQueue()
+  private runQueue = new RunQueue();
 
   public constructor(
     public config: {
@@ -42,9 +42,8 @@ export class Automation<
 
   public override typeString = "automation";
 
-
   public override async run(
-    client: LegoClient,
+    client: ILegoClient,
     input?: I,
     events?: EventBus,
     triggerId?: string,
@@ -83,8 +82,8 @@ export class Automation<
           await executor.run();
           break;
       }
-      const intResult = await executor.finished()
-      const [result] = intResult
+      const intResult = await executor.finished();
+      const [result] = intResult;
 
       if (!result) {
         throw new Error(

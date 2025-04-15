@@ -1,10 +1,12 @@
+import { ExecutionMode } from "@types";
+
 import {
+  ValidInputOutputSequence,
   BlockRetainType,
-  ExecutionMode,
   GetSequenceInput,
   GetSequenceOutput,
-  ValidInputOutputSequence,
-} from "@types";
+} from "./valid-input-output-sequence.ts";
+
 import { Automation } from "./automation.ts";
 
 /**
