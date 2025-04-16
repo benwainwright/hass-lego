@@ -9,6 +9,10 @@ interface ServerProps {
   bus: IEventBus;
 }
 
+/**
+ * Generate a Socket.io connection that forwards events published
+ * on the provided event bus to the socket
+ */
 export const getWebsocketServer = ({ cors, client, bus }: ServerProps) => {
   const server = createServer((_request, response) => {
     response.writeHead(200, { "content-type": "text/plain" });

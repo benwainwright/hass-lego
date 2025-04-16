@@ -3,6 +3,7 @@
   "display": "Node 21",
   "_version": "21.0.0",
   "compilerOptions": {
+    "allowJs": true,
     "lib": ["es2023"],
     "types": ["vitest/globals"],
     "module": "node16",
