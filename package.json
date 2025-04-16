@@ -27,7 +27,8 @@
     "build:api-rollup": "npm run build:types && tsconfig-replace-paths --project tsconfig.dist.json && vite-node ./src/tools/generate-api-report.ts",
     "clear:dist": "rm -rf dist",
     "build": "npm run clear:dist && npm run build:js && npm run build:api-rollup",
-    "watch": "npm-watch"
+    "watch": "npm-watch",
+    "prepare": "husky"
   },
   "watch": {
     "build": {
@@ -54,13 +55,16 @@
     "eslint-config-love": "^119.0.0",
     "homeassistant-typescript": "1.6.1",
     "homeassistant-ws": "0.2.3",
+    "husky": "^9.1.7",
     "ink": "5.0.1",
     "ink-spinner": "5.0.0",
     "ink-table": "3.1.0",
+    "lint-staged": "^15.5.1",
     "queue-typescript": "1.0.1",
     "react": "18.3.1",
     "socket.io": "4.7.5",
     "socket.io-client": "4.8.1",
+    "tsc-files": "^1.1.4",
     "uuid": "10.0.0",
     "ws": "8.18.0"
   },
